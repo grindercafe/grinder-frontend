@@ -5,6 +5,7 @@ import { useResolvedPath, useMatch, Link, useLocation } from 'react-router-dom'
 import axios from '../../axios'
 import moment from 'moment'
 import { arabicPeriods } from '../../utils/Helper'
+import MobileSidebar from './MobileSidebar'
 
 function MobileBookings() {
 
@@ -17,7 +18,7 @@ function MobileBookings() {
             const allBookings = []
 
             response.data.data.forEach(booking => {
-                
+
                 const date = moment(booking.event.date)
                 const start_time = moment(booking.event.start_time)
                 const end_time = moment(booking.event.end_time)
@@ -85,59 +86,13 @@ function MobileBookings() {
                         </button>
                     </div>
 
-                    {/* <div className="d-flex mb-4">
-                        <input className="form-control fs-7 ms-3" type="search" name="event-search" id="event-search" placeholder="بحث" />
-                        <button className="btn btn-transparent border-prime w-10 ms-3 fs-7">ترتيب</button>
-                        <button className="btn btn-transparent border-prime w-10 fs-7">تصفية</button>
-                    </div> */}
-
-                    {/* <div className='d-flex justify-content-between mt-4'> */}
                     <input className='form-control mt-4' type={'search'} name='search' placeholder='بحث' />
 
-                    {/* <button className='btn add-booking-btn' data-bs-toggle="modal" data-bs-target="#addBookingModal">إضافة حفلة</button> */}
-                    {/* <button className='btn btn-transparent border-prime me-3 fs-8'>ترتيب</button>
-                        <button className='btn btn-transparent border-prime me-3 fs-8'>تصفية</button> */}
-                    {/* </div> */}
-                    {/* <div className='mt-4 test-flex'>
-                        <div className="one">
-                            <button className='btn btn-transparent border-prime ms-3 fs-8'>تحديد الكل</button>
-                            <button className='btn btn-transparent border-prime ms-3 fs-8'>إلغاء التحديد</button>
-                            <button className='btn btn-transparent border-prime fs-8'>تعديل</button>
-                        </div>
-                        <div className="two">
-                            <button className='btn btn-transparent border-prime fs-8'>خيارات</button>
-                        </div>
-                    </div> */}
 
-                    <nav ref={nav} className="dashboard-mobile-nav nebras">
-                        <button className="dashboard-close-btn dashoboard-nav-btn" onClick={toggleNavbar}>
-                            <IoCloseOutline size={'2.2rem'} />
-                        </button>
-                        <CustomLink to={'/dashboard/events'}>الحفلات</CustomLink>
-                        <CustomLink to={'/dashboard/customers'}>العملاء</CustomLink>
-                        <CustomLink to={'/dashboard/bookings'}>الحجوزات</CustomLink>
-                    </nav>
+                    <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
+
                 </div>
                 <div className='dashboard-content-mobile'>
-                    {/* {
-                        events.map((event) => (
-                            <div key={event.id} className="table-card">
-                                <div scope="row">
-                                    <input type="checkbox" name="event" id="event-checkbox" />
-                                </div>
-                                <div>
-                                    {event.id}# <br />
-                                    {event.singer_name}
-                                </div>
-                                <div>
-                                    {event.date} <br />
-                                    {event.start_time} - {event.end_time}
-                                </div>
-                                <div>عدد المقاعد: {event.available_seats}</div>
-                                <div>جديدة</div>
-                            </div>
-                        ))
-                    }  */}
                     <div className="table-wrapper">
                         <table className="table mobile-table">
                             <thead>
@@ -151,14 +106,13 @@ function MobileBookings() {
                             </thead>
                             <tbody>
                                 {bookings.map((booking) => (
-
                                     <tr key={booking.id} className="table-card fs-7">
                                         <td>
                                             {booking.booking_number}#
                                         </td>
                                         <td>
-                                            <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`}>
-                                            {booking.customer.phone_number}</a> <br />
+                                            <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
+                                                {booking.customer.phone_number}</a> <br />
                                             {booking.event.id}#
                                         </td>
                                         <td>
@@ -175,83 +129,16 @@ function MobileBookings() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{ booking.party_size }</td>
-                                        <td>{ booking.total_price } ر.س</td>
+                                        <td>{booking.party_size}</td>
+                                        <td>{booking.total_price} ر.س</td>
                                     </tr>
                                 ))}
-
                             </tbody>
                         </table>
                     </div>
                 </div>
-                {/* <div className="modal fade" data-bs-backdrop="static" id="addBookingModal" tabIndex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                        
-                            <div className="modal-body text-black" style={{ backgroundColor: '#F3EEE9' }}>
-                                <div className="d-flex justify-content-center align-items-center">
-                                    <button className="modal-close-btn" data-bs-dismiss="modal">
-                                        <IoCloseOutline size={'2.2rem'} />
-                                    </button>
-                                    <div className="nebras fs-5">حفلة جديدة</div>
-                                </div>
-                                <form method="POST" className="px-5 py-3 add-Booking-form">
-
-                                    <label htmlFor="singer_name" className="form-label">اسم المغني</label>
-                                    <input type={"text"} className="form-control mb-4" />
-
-                                    <label htmlFor="date" className="form-label">التاريخ</label>
-                                    <input type={'date'} className="form-control mb-4" />
-
-                                    <div className="d-flex justify-content-between mb-4">
-                                        <div className="col-5">
-                                            <label htmlFor="start-time" className="form-label">من</label>
-                                            <input type={'time'} className="form-control" />
-                                        </div>
-                                        <div className="col-5">
-                                            <label htmlFor="end-time" className="form-label">إلى</label>
-                                            <input type={'time'} className="form-control" />
-                                        </div>
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
-                                        <input type={'file'} className="form-control w-50" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="available_seats" className="form-label">عدد المقاعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-center nebras">
-                                        <button className="btn hero-btn-primary fs-5">إضافة</button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
             </div>
         </>
-    )
-}
-
-function CustomLink({ to, children }) {
-    const resolvedPath = useResolvedPath(to)
-    const isActive = useMatch({ path: resolvedPath.pathname, end: true })
-    return (
-        <li className={isActive ? 'active-index' : ''}>
-            <Link to={to} className="dashboard-links">
-                {children}
-            </Link>
-        </li>
     )
 }
 

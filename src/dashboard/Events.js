@@ -4,10 +4,123 @@ import axios from '../axios'
 import moment from "moment"
 import { IoCloseOutline } from 'react-icons/io5'
 import MobileEvents from "./mobile/MobileEvents"
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalBody,
+    useDisclosure,
+    Progress,
+    CloseButton,
+    useToast,
+    Button,
+    Alert,
+    AlertIcon
+} from '@chakra-ui/react'
+import SearchField from "../components/SearchField"
+
+const schema = yup.object().shape({
+    'singer_name': yup.string().required(),
+    'singer_img': yup.string().required(),
+    'date': yup.string().required(),
+    'start_time': yup.string().required(),
+    'end_time': yup.string().required(),
+    'available_seats': yup.number().integer().required(),
+    'price_per_person': yup.number().required()
+})
 
 function Events() {
+    const toast = useToast()
+
     const [events, setEvents] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+
+    const [isPostEventLoading, setIsPostEventLoading] = useState(false)
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm(
+        { resolver: yupResolver(schema) }
+    )
+
+    const { isOpen, onOpen: openAddEventModal, onClose: closeAddEventModal } = useDisclosure()
+
+    const resetForm = () => {
+        reset()
+    }
+
+    const handleCloseModal = () => {
+        resetForm()
+        closeAddEventModal()
+    }
+
+    const handleOpenModal = () => {
+        openAddEventModal()
+    }
+
+
+    const successToast = () => {
+        toast({
+            render: () => (
+                <Alert status={'success'} variant='left-accent' color={'black'}>
+                    <AlertIcon />
+                    <div className="ps-5 pe-3 fs-7">
+                        {'تمت إضافة الحفلة بنجاح'}
+                    </div>
+
+                    <CloseButton onClick={() => toast.closeAll()} />
+                </Alert>
+
+            ),
+            duration: 5000,
+            position: 'top-left',
+        })
+    }
+
+    const errorToast = () => {
+        toast({
+            render: () => (
+                <Alert status={'error'} variant='left-accent' color={'black'}>
+                    <AlertIcon />
+                    <div className="ps-5 pe-3 fs-7">
+                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                    </div>
+
+                    <CloseButton onClick={() => toast.closeAll()} />
+                </Alert>
+
+            ),
+            duration: 5000,
+            position: 'top-left',
+        })
+    }
+
+    const onSubmit = async (data) => {
+        setIsPostEventLoading(true)
+        const body = {
+            'date': data.date,
+            'start_time': data.start_time,
+            'end_time': data.end_time,
+            'singer_name': data.singer_name,
+            'singer_img': data.singer_img,
+            'available_chairs': data.available_seats,
+            'price_per_person': data.price_per_person,
+        }
+        
+        try {
+            const response = await axios.post('/event', body)
+            console.log(response.data)
+            successToast()
+        } catch (error) {
+            console.log(error.response)
+            errorToast()
+        }
+        
+        handleCloseModal()
+        setIsPostEventLoading(false)
+    }
+
 
     useEffect(() => {
         async function getEvents() {
@@ -44,44 +157,28 @@ function Events() {
             return response
         }
         getEvents()
-    }, [])
+    }, [isPostEventLoading])
 
 
     return (
         <>
             <DashboardLayout>
                 <div className="dashboard-content">
-                    <div className="fs-2 mb-5 d-flex justify-content-between align-items-center">
-                        <div>قائمة الحفلات</div>
-                        <button className="btn btn-transparent border-prime w-10 fs-7" data-bs-toggle="modal" data-bs-target="#exampleModal">اضافة حفلة</button>
-                    </div>
-                    <div className="d-flex mb-4">
-                        <input className="form-control fs-7 ms-3" type="search" name="event-search" id="event-search" placeholder="بحث" />
-                        <button className="btn btn-transparent border-prime w-10 ms-3 fs-7">ترتيب</button>
-                        <button className="btn btn-transparent border-prime w-10 fs-7">تصفية</button>
-                    </div>
-                    <div className="d-flex justify-content-between mb-4">
-                        <div>
-                            <button className="btn btn-transparent border-prime ms-3  fs-7">تحديد الكل
-                            </button>
-                            <button className="btn btn-transparent border-prime ms-3 fs-7">إلغاء التحديد</button>
-                            <button className="btn btn-primary ms-3 fs-7">تعديل</button>
-                        </div>
-                        <div>
-                            <button className="btn btn-transparent border-prime fs-7">الخيارات</button>
-                        </div>
-                    </div>
+                    <div className="fs-3 mb-5">قائمة الحفلات</div>
 
+                    <div className="d-flex justify-content-between">
+                        <SearchField placeholder={'ابحث'} />
+                        <button className="btn btn-transparent border-prime fs-6 w-25" onClick={handleOpenModal}>اضافة حفلة</button>
+                    </div>
                     <div className="my-5">
                         <div className="table-wrapper">
+                            {
+                                isLoading && <Progress size='xs' isIndeterminate />
+                            }
                             <table className="table">
                                 <tbody>
                                     {events.map((event) => (
-
                                         <tr key={event.id} className="table-card fs-7">
-                                            <td scope="row">
-                                                <input type="checkbox" name="event" id="event" />
-                                            </td>
                                             <td>
                                                 {event.id}# <br />
                                                 الفنان: {event.singer_name}
@@ -102,67 +199,92 @@ function Events() {
                     </div>
                 </div>
 
-                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            {/* <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div> */}
-                            <div className="modal-body text-black" style={{backgroundColor: '#F3EEE9'}}>
+                <Modal isOpen={isOpen} size={'xl'} closeOnOverlayClick={false}>
+                    <ModalOverlay backdropFilter='blur(8px)' />
+                    <ModalContent>
+                        <ModalBody className="px-5 py-3 modal-event-body">
+                            <div className="text-prime">
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <button className="modal-close-btn" data-bs-dismiss="modal">
+                                    <button className="modal-close-btn" onClick={handleCloseModal}>
                                         <IoCloseOutline size={'2.2rem'} />
                                     </button>
-                                    <div className="nebras fs-5">حفلة جديدة</div>
+                                    <div className="nebras fs-5 py-3">حفلة جديدة</div>
                                 </div>
-                                <form method="POST" className="px-5 py-3 add-event-form">
+                                <form onSubmit={handleSubmit(onSubmit)} className="add-event-form">
+                                    <label htmlFor="singer_name" className="form-label">اسم الفنان</label>
+                                    <input
+                                        {...register('singer_name')}
+                                        id='singer_name' type={"text"} className={`form-control mb-2 ${errors.singer_name && 'error-border'}`} />
+                                    {errors.singer_name && <p className='error-message'>اسم الفنان مطلوب</p>}
 
-                                    <label htmlFor="singer_name" className="form-label">اسم المغني</label>
-                                    <input type={"text"} className="form-control mb-4" />
+                                    <label htmlFor="date" className="form-label mt-4">التاريخ</label>
+                                    <input
+                                        {...register('date')} 
+                                        name='date' id='date' type={'date'} className={`form-control mb-2 ${errors.date && 'error-border'}`} />
+                                    {errors.date && <p className='error-message'>التاريخ مطلوب</p>}
 
-                                    <label htmlFor="date" className="form-label">التاريخ</label>
-                                    <input type={'date'} className="form-control mb-4" />
 
-                                    <div className="d-flex justify-content-between mb-4">
+                                    <div className="d-flex justify-content-between mt-4">
                                         <div className="col-5">
                                             <label htmlFor="start-time" className="form-label">من</label>
-                                            <input type={'time'} className="form-control" />
+                                            <input
+                                                {...register('start_time')} 
+                                                name='start_time' id='start_time' type={'time'} className={`form-control ${errors.start_time && 'error-border'}`} />
+                                            {errors.start_time && <p className='error-message'>وقت البداية مطلوب</p>}
                                         </div>
                                         <div className="col-5">
                                             <label htmlFor="end-time" className="form-label">إلى</label>
-                                            <input type={'time'} className="form-control" />
+                                            <input
+                                                {...register('end_time')} 
+                                                name='end_time' id='end_time' type={'time'} className={`form-control ${errors.end_time && 'error-border'}`} />
+                                            {errors.end_time && <p className='error-message'>وقت النهاية مطلوب</p>}
+
                                         </div>
                                     </div>
 
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <div className="d-flex justify-content-between align-items-center mt-4">
                                         <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
-                                        <input type={'file'} className="form-control w-50" />
-                                    </div>
+                                        <input
+                                            {...register('singer_img')} 
+                                            name='singer_img' id='singer_img' type={'url'} className={`form-control w-50 ${errors.singer_img && 'error-border'}`} dir="ltr" />
 
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                    </div>
+                                    {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
+
+                                    <div className="d-flex justify-content-between align-items-center mt-4">
                                         <label htmlFor="available_seats" className="form-label">عدد المقاعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-                                    
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-                                    
-                                    <div className="d-flex justify-content-center nebras">
-                                        <button className="btn btn-primary px-5 py-2 fs-5">إضافة</button>
-                                    </div>
+                                        <input
+                                            {...register('available_seats')} 
+                                            name='available_seats' id='available_seats' type={'number'} className={`form-control w-50 ${errors.available_seats && 'error-border'}`} dir="ltr" />
 
+                                    </div>
+                                    {errors.available_seats && <p className='error-message'>عدد المقاعد مطلوب</p>}
+
+                                    <div className="d-flex justify-content-between align-items-center mt-4">
+                                        <label htmlFor="price_per_person" className="form-label">سعر المقعد</label>
+                                        <input
+                                            {...register('price_per_person')}
+                                            name='price_per_person' id='price_per_person' type={'number'} className={`form-control w-50 ${errors.price_per_person && 'error-border'}`} dir="ltr" />
+                                    </div>
+                                    {errors.price_per_person && <p className='error-message'>السعر مطلوب</p>}
+
+                                    <div className="nebras mt-5">
+                                        <button 
+                                        className="btn hero-btn-primary fs-5"
+                                        disabled={isPostEventLoading}
+                                        >
+                                            
+                                    {isPostEventLoading ? 
+                                        <i className="fas fa-spinner fa-spin"></i>:
+                                        <span className="m-5">إضافة</span>
+                                    }
+                                    </button>
+                                    </div>
                                 </form>
                             </div>
-                            {/* <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
-                        </div> */}
-                        </div>
-                    </div>
-                </div>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
             </DashboardLayout>
 
             <div className="d-lg-none">

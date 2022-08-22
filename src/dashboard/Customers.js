@@ -2,11 +2,13 @@ import DashboardLayout from "./DashboardLayout"
 import axios from "../axios"
 import { useEffect, useState } from "react"
 import MobileCustomers from "./mobile/MobileCustomers"
+import SearchField from "../components/SearchField"
 
 function Customers() {
 
     const [customers, setCustomers] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [searchKey, setSearchKey] = useState("")
 
     useEffect(() => {
         async function getCustomers() {
@@ -20,40 +22,44 @@ function Customers() {
 
     return (
         <>
-            <DashboardLayout>
+            <DashboardLayout isLoading={isLoading}>
                 <div className="dashboard-content">
                     <div className="fs-3 mb-5">قائمة العملاء</div>
-                    <div className="d-flex mb-4">
-                        <input className="form-control fs-7 ms-3" type="search" name="customer-search" id="customer-search" placeholder="بحث" />
-                        <button className="btn btn-transparent border-prime w-10 ms-3 fs-7">ترتيب</button>
-                        <button className="btn btn-transparent border-prime w-10 fs-7">تصفية</button>
-                    </div>
-                    <div className="d-flex justify-content-between mb-4">
-                        <div>
-                            <button className="btn btn-transparent border-prime ms-3 fs-7">تحديد الكل
-                            </button>
-                            <button className="btn btn-transparent border-prime ms-3 fs-7">إلغاء التحديد</button>
-                            <button className="btn btn-primary ms-3 fs-7">تعديل</button>
-                        </div>
-                        <div>
-                            <button className="btn btn-transparent border-prime fs-7">الخيارات</button>
-                        </div>
-                    </div>
 
+                    <SearchField onChange={(e)=> setSearchKey(e.target.value)}
+                    placeholder="ابحث بالاسم أو رقم الهاتف ..." />
+                    {/* <input
+                        onChange={(e) => setSearchKey(e.target.value)}
+                        className="form-control fs-6 p-3"
+                        type="search"
+                        name="customer_search"
+                        id="customer_search"
+                        placeholder="ابحث بإسم العميل او رقم الهاتف ..." /> */}
                     <div className="my-5">
                         <div className="table-wrapper">
                             <table className="table">
                                 <tbody>
-                                    {customers.map((customer) => (
 
-                                        <tr key={customer.id} className="table-card fs-7">
-                                            <td scope="row"><input type="checkbox" name="customer" id="customer" /></td>
-                                            <td>{customer.id}#</td>
-                                            <td>{customer.name}</td>
-                                            <td>{customer.phone_number}</td>
-                                            <td>{customer.num_of_bookings}</td>
-                                        </tr>
-                                    ))}
+                                    {
+                                        customers.filter((customer) => {
+                                            if (searchKey === "") {
+                                                return customer
+                                            }
+                                            else if (customer.name.toLowerCase().includes(searchKey.toLowerCase()) || customer.phone_number.includes(searchKey)) {
+                                                return customer
+                                            }
+                                            // else if () {
+                                            //     return customer
+                                            // }
+                                        })
+                                            .map((customer) => (
+                                                <tr key={customer.id} className="table-card fs-7">
+                                                    <td>{customer.id}#</td>
+                                                    <td>الاسم: {customer.name}</td>
+                                                    <td>{customer.phone_number}</td>
+                                                    <td>عدد الحجوزات: {customer.num_of_bookings}</td>
+                                                </tr>
+                                            ))}
 
                                 </tbody>
                             </table>

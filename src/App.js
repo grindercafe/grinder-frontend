@@ -11,39 +11,34 @@ import Events from './dashboard/Events'
 import Customers from './dashboard/Customers'
 import Bookings from './dashboard/Bookings'
 import NotFoundPage from "./pages/NotFoundPage";
+import { useEffect } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { HomePage } from "./pages/HomePage";
 
 
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-         <Route path="/events" element={<EventsPage />} />
-         <Route path="/location" element={<OurLocationPage />} />
-         <Route path="/test" element={<TestPage />} />
-         <Route path="/dashboard" element={<Dashboard />} />
-         <Route path="/dashboard/events" element={<Events /> } />
-         <Route path="/dashboard/customers" element={<Customers /> } />
-         <Route path="/dashboard/bookings" element={<Bookings /> } />
-         <Route path="*" element={ <NotFoundPage /> } />
-        {/*<Route path="/events/:id" element={<Event />} />
+    <ChakraProvider>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/location" element={<OurLocationPage />} />
+          <Route path="/test" element={<TestPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/events" element={<Events />} />
+          <Route path="/dashboard/customers" element={<Customers />} />
+          <Route path="/dashboard/bookings" element={<Bookings />} />
+          <Route path="*" element={<NotFoundPage />} />
+          {/*<Route path="/events/:id" element={<Event />} />
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/bookings/:id" element={<Booking />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/customers/:id" element={<Customer />} /> */}
-      </Routes>
-    </div>
-  );
-}
-
-function Home() {
-  return (
-    <>
-      <Layout child={'home'}>
-        <Hero />
-      </Layout>
-    </>
+        </Routes>
+      </div>
+    </ChakraProvider>
   );
 }
 

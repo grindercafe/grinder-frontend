@@ -1,5 +1,6 @@
 import coffee from '../assets/images/coffee.png'
 import { Link } from "react-router-dom"
+
 function Hero() {
     return (
         <>
@@ -39,32 +40,6 @@ function Hero() {
                             <Link to={'/location'} className={'btn hero-btn-transparent'}>
                                 موقعنا
                             </Link>
-                            {/* <div>
-                                <Button
-                                    to={'/events'}
-                                    text={'احجز الان'}
-                                    className={'btn btn-primary mb-3'}
-                                // height="30px"
-                                />
-                            </div>
-
-                            <div>
-                                <Button
-                                    to={'/'}
-                                    text={'قائمة الطعام'}
-                                    className={'btn btn-transparent border-prime mb-3'}
-                                // height="30px"
-                                />
-                            </div>
-
-                            <div>
-                                <Button
-                                    to={'/location'}
-                                    text={'موقعنا'}
-                                    className={'btn btn-transparent border-prime'}
-                                // height="30px"
-                                />
-                            </div> */}
                         </div>
                     </div>
                 </div>

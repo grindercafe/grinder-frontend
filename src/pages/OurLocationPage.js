@@ -1,9 +1,6 @@
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-import singer from '../assets/images/singer.png'
-import Counter from "../components/Counter"
+
 import Layout from "../components/Layout"
-import contactHeader from '../assets/images/contact-header.png'
+
 
 function OurLocationPage() {
 
@@ -20,8 +17,9 @@ function OurLocationPage() {
 
             <div className="container location-box">
                 <iframe
+                    title="grinder-cafe-location"
                     className="d-flex justify-content-center"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2371.2845995151006!2d46.65448958775813!3d24.796024980388616!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2ee340e61e579d%3A0x149c346a54859209!2zMjTCsDQ3JzQ1LjciTiA0NsKwMzknMTYuNiJF!5e0!3m2!1sen!2ssa!4v1659255898720!5m2!1sen!2ssa"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d906.1252925126232!2d46.70607151140271!3d24.709668900000008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03091833e245%3A0xb92eeb2dbc5e3e7a!2z2KzYsdmK2YbYr9ixINmD2KfZgdmK2Yc!5e0!3m2!1sen!2ssa!4v1660681955221!5m2!1sen!2ssa"
                     // style={{}}
                     loading="lazy"
                     width={"100%"}

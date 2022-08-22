@@ -35,10 +35,10 @@ function Header() {
                     <button className="nav-btn nav-close-btn" onClick={toggleNavbar}>
                         <IoCloseOutline size={'2.2rem'} />
                     </button>
-                    <Link to={'/'} className={location.pathname == '/' ? 'disabled-link':''}>الرئيسية</Link>
-                    <Link to={'/events'} className={location.pathname == '/events' ? 'disabled-link':''}>الحفلات</Link>
-                    <Link to={'/'} className={location.pathname == '/menu' ? 'disabled-link':''}>قائمة الطعام</Link>
-                    <Link to={'/location'} className={location.pathname == '/location' ? 'disabled-link':''}>موقعنا</Link>
+                    <Link to={'/'} className={location.pathname === '/' ? 'disabled-link':''}>الرئيسية</Link>
+                    <Link to={'/events'} className={location.pathname === '/events' ? 'disabled-link':''}>الحفلات</Link>
+                    <Link to={'/'} className={location.pathname === '/menu' ? 'disabled-link':''}>قائمة الطعام</Link>
+                    <Link to={'/location'} className={location.pathname === '/location' ? 'disabled-link':''}>موقعنا</Link>
                 </nav>
             </header>
         </>

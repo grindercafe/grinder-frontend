@@ -1,9 +1,8 @@
 import { HiOutlineMenuAlt2 } from 'react-icons/hi'
-import { IoCloseOutline } from 'react-icons/io5'
 import { useRef, useState, useEffect } from "react"
-import { useResolvedPath, useMatch, Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import axios from '../../axios'
-import MobileBookings from './MobileBookings'
+import MobileSidebar from './MobileSidebar'
 
 export default function MobileCustomers() {
 
@@ -40,6 +39,7 @@ export default function MobileCustomers() {
 
     return (
         <>
+
             <div className='dashboard-mobile din-next'>
                 <div className='dashboard-header-mobile'>
                     <div className='d-flex justify-content-between'>
@@ -75,14 +75,7 @@ export default function MobileCustomers() {
                         </div>
                     </div> */}
 
-                    <nav ref={nav} className="dashboard-mobile-nav nebras">
-                        <button className="dashboard-close-btn dashoboard-nav-btn" onClick={toggleNavbar}>
-                            <IoCloseOutline size={'2.2rem'} />
-                        </button>
-                        <CustomLink to={'/dashboard/events'}>الحفلات</CustomLink>
-                        <CustomLink to={'/dashboard/customers'}>العملاء</CustomLink>
-                        <CustomLink to={'/dashboard/bookings'}>الحجوزات</CustomLink>
-                    </nav>
+                <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
                 </div>
                 <div className='dashboard-content-mobile'>
                     {/* {
@@ -129,73 +122,7 @@ export default function MobileCustomers() {
                         </table>
                     </div>
                 </div>
-                {/* <div className="modal fade" data-bs-backdrop="static" id="addBookingModal" tabIndex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                        
-                            <div className="modal-body text-black" style={{ backgroundColor: '#F3EEE9' }}>
-                                <div className="d-flex justify-content-center align-items-center">
-                                    <button className="modal-close-btn" data-bs-dismiss="modal">
-                                        <IoCloseOutline size={'2.2rem'} />
-                                    </button>
-                                    <div className="nebras fs-5">حفلة جديدة</div>
-                                </div>
-                                <form method="POST" className="px-5 py-3 add-Booking-form">
-
-                                    <label htmlFor="singer_name" className="form-label">اسم المغني</label>
-                                    <input type={"text"} className="form-control mb-4" />
-
-                                    <label htmlFor="date" className="form-label">التاريخ</label>
-                                    <input type={'date'} className="form-control mb-4" />
-
-                                    <div className="d-flex justify-content-between mb-4">
-                                        <div className="col-5">
-                                            <label htmlFor="start-time" className="form-label">من</label>
-                                            <input type={'time'} className="form-control" />
-                                        </div>
-                                        <div className="col-5">
-                                            <label htmlFor="end-time" className="form-label">إلى</label>
-                                            <input type={'time'} className="form-control" />
-                                        </div>
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
-                                        <input type={'file'} className="form-control w-50" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="available_seats" className="form-label">عدد المقاعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
-                                        <input type={'number'} className="form-control w-50" dir="ltr" />
-                                    </div>
-
-                                    <div className="d-flex justify-content-center nebras">
-                                        <button className="btn hero-btn-primary fs-5">إضافة</button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
             </div>
         </>
-    )
-}
-
-function CustomLink({ to, children }) {
-    const resolvedPath = useResolvedPath(to)
-    const isActive = useMatch({ path: resolvedPath.pathname, end: true })
-    return (
-        <li className={isActive ? 'active-index' : ''}>
-            <Link to={to} className="dashboard-links">
-                {children}
-            </Link>
-        </li>
     )
 }
