@@ -111,9 +111,6 @@ function Bookings() {
                                                             الإجمالي: {booking.total_price}
                                                         </td>
                                                         <td>جديدة</td>
-                                                        {/* <td>{customer.name}</td>
-                                            <td>{customer.phone_number}</td>
-                                            <td>3</td> */}
                                                     </tr>
                                                 ))}
 

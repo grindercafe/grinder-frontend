@@ -1,4 +1,4 @@
-import { Routes, Route, Router } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import EventsPage from "./pages/EventsPage"
@@ -14,34 +14,33 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { HomePage } from "./pages/HomePage";
 import EventPage from "./pages/EventPage";
 import ScrollToTop from "./ScrollToTop";
-
+import LoginPage from "./pages/LoginPage";
 
 
 function App() {
   return (
     <ChakraProvider>
       <div className="App">
-        {/* <Router> */}
-          <ScrollToTop />
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/events" element={<EventsPage />} />
-                <Route path="/events/:id" element={<EventPage />} />
-                <Route path="/location" element={<OurLocationPage />} />
-                <Route path="/test" element={<TestPage />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/dashboard/events" element={<Events />} />
-                <Route path="/dashboard/customers" element={<Customers />} />
-                <Route path="/dashboard/bookings" element={<Bookings />} />
-                <Route path="/bookings/:uuid" element={<Booking />} />
-                <Route path="*" element={<NotFoundPage />} />
-                {/*<Route path="/events/:id" element={<Event />} />
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events/:id" element={<EventPage />} />
+          <Route path="/location" element={<OurLocationPage />} />
+          <Route path="/test" element={<TestPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/events" element={<Events />} />
+          <Route path="/dashboard/customers" element={<Customers />} />
+          <Route path="/dashboard/bookings" element={<Bookings />} />
+          <Route path="/bookings/:uuid" element={<Booking />} />
+          <Route path="/dashboard/login" element={<LoginPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+          {/*<Route path="/events/:id" element={<Event />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/bookings/:id" element={<Booking />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customers/:id" element={<Customer />} /> */}
-              </Routes>
-        {/* </Router> */}
+        </Routes>
       </div>
     </ChakraProvider>
   );

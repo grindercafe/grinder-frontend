@@ -56,12 +56,9 @@ function Booking() {
                 <Alert status='success' className="success-alert">
                     <AlertIcon marginLeft={10} />
                     <Box className="ms-5 lh-lg">
-                        {/* <AlertTitle className="mb-3">تم الحجز بنجاح!</AlertTitle> */}
-                        {/* <AlertDescription className="lh-lg bg-info"> */}
-                            تم الحجز بنجاح, وللإطلاع على تفاصيل الحجز يرجى الإحتفاظ برابط الصفحة التي تتواجد فيها حالياً.
-                            <br />
-                            <button onClick={handleCopyLink} className="btn text-light text-decoration-underline">اضغط هنا لنسخ الرابط</button>
-                        {/* </AlertDescription> */}
+                        تم الحجز بنجاح، يرجى الإحتفاظ برابط هذه الصفحة
+                        <br />
+                        <button onClick={handleCopyLink} className="btn text-light text-decoration-underline">اضغط هنا لنسخ الرابط</button>
                     </Box>
                     <CloseButton
                         position='absolute'
@@ -72,7 +69,6 @@ function Booking() {
             }
             {
                 !isLoading &&
-                // <div>{JSON.stringify(booking.event.date)}</div>
                 <div className="container col-lg-6 background-secondary py-4">
                     <div className="d-flex justify-content-between p-4 fs-4">
                         <div>رقم الحجز</div>

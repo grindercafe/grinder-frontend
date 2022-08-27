@@ -813,7 +813,8 @@ td {
 }
 
 .disabled-link {
-    color: #888888 !important;
+    /* color: #888888 !important; */
+    font-weight: bold;
     pointer-events: none;
 }
 
@@ -892,7 +893,7 @@ td {
 }
 
 .terms-and-conditions ul li {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     font-size: .9rem;
     font-weight: lighter;
 }
@@ -1066,4 +1067,12 @@ td {
     background-color: var(--dashboard-primary-color);
     color: var(--secondary-color);
     cursor: default;
+}
+
+.social-media-link {
+    transition: 200ms;
+}
+
+.social-media-link:hover {
+    color: #988879;
 }
