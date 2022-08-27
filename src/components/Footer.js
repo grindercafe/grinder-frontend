@@ -7,7 +7,7 @@ function Footer() {
         <div className="container px-md-5" style={{ paddingTop: '6rem', paddingBottom: '4rem' }}>
             <div className="d-md-flex justify-content-between mb-5">
                 <div className='mb-5 col-md-4'>
-                    <img src={logo} alt="logo" width={'100%'} className="mb-5" />
+                    <img src={logo} alt="logo" width={'50%'} className="mb-5 mx-auto" />
                     <div className='d-flex justify-content-around'>
                         <a href="/">
                             <BsTwitter size={'30px'} />

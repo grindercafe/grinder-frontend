@@ -16,7 +16,6 @@ import {
     Progress,
     CloseButton,
     useToast,
-    Button,
     Alert,
     AlertIcon
 } from '@chakra-ui/react'
@@ -28,17 +27,58 @@ const schema = yup.object().shape({
     'date': yup.string().required(),
     'start_time': yup.string().required(),
     'end_time': yup.string().required(),
-    'available_seats': yup.number().integer().required(),
-    'price_per_person': yup.number().required()
+    'price': yup.number().required()
 })
 
 function Events() {
     const toast = useToast()
-
+    
     const [events, setEvents] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-
+    const [error, setError] = useState(false)
+    const [searchKey, setSearchKey] = useState('')
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
+    
+    useEffect(() => {
+        async function getEvents() {
+
+            try {
+                const response = await axios.get('/events')
+
+                const all_events = []
+
+                response.data.data.forEach(event => {
+
+                    const date = moment(event.date)
+                    const start_time = moment(event.start_time)
+                    const end_time = moment(event.end_time)
+
+                    if (end_time.isBefore(start_time)) {
+                        end_time.add(1, 'day')
+                    }
+
+                    const eventTemplate = {
+                        'id': event.id,
+                        'date': date.format('YYYY-MM-DD'),
+                        'start_time': start_time.format('hh:mm'),
+                        'end_time': end_time.format('hh:mm'),
+                        'singer_name': event.singer_name,
+                        'singer_img': event.singer_img,
+                        'price': event.price
+                    }
+
+                    all_events.push(eventTemplate)
+
+                })
+                setEvents(all_events)
+            } catch (error) {
+                setError(true)
+            }
+            setIsLoading(false)
+        }
+        getEvents()
+    }, [isPostEventLoading])
+
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm(
         { resolver: yupResolver(schema) }
@@ -104,60 +144,21 @@ function Events() {
             'end_time': data.end_time,
             'singer_name': data.singer_name,
             'singer_img': data.singer_img,
-            'available_chairs': data.available_seats,
-            'price_per_person': data.price_per_person,
+            'price': data.price,
         }
-        
+
         try {
             const response = await axios.post('/event', body)
-            console.log(response.data)
             successToast()
         } catch (error) {
-            console.log(error.response)
             errorToast()
         }
-        
         handleCloseModal()
         setIsPostEventLoading(false)
     }
 
 
-    useEffect(() => {
-        async function getEvents() {
-            const response = await axios.get('/events')
 
-            const all_events = []
-
-            response.data.data.forEach(event => {
-
-                const date = moment(event.date)
-                const start_time = moment(event.start_time)
-                const end_time = moment(event.end_time)
-
-                if (end_time.isBefore(start_time)) {
-                    end_time.add(1, 'day')
-                }
-
-                const eventTemplate = {
-                    'id': event.id,
-                    'date': date.format('YYYY-MM-DD'),
-                    'start_time': start_time.format('hh:mm'),
-                    'end_time': end_time.format('hh:mm'),
-                    'singer_name': event.singer_name,
-                    'singer_img': event.singer_img,
-                    'available_seats': event.available_chairs,
-                    'price_per_person': event.price_per_person
-                }
-
-                all_events.push(eventTemplate)
-
-            })
-            setEvents(all_events)
-            setIsLoading(false)
-            return response
-        }
-        getEvents()
-    }, [isPostEventLoading])
 
 
     return (
@@ -167,7 +168,7 @@ function Events() {
                     <div className="fs-3 mb-5">قائمة الحفلات</div>
 
                     <div className="d-flex justify-content-between">
-                        <SearchField placeholder={'ابحث'} />
+                        <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder={'ابحث برقم الحفلة'} />
                         <button className="btn btn-transparent border-prime fs-6 w-25" onClick={handleOpenModal}>اضافة حفلة</button>
                     </div>
                     <div className="my-5">
@@ -175,26 +176,44 @@ function Events() {
                             {
                                 isLoading && <Progress size='xs' isIndeterminate />
                             }
-                            <table className="table">
-                                <tbody>
-                                    {events.map((event) => (
-                                        <tr key={event.id} className="table-card fs-7">
-                                            <td>
-                                                {event.id}# <br />
-                                                الفنان: {event.singer_name}
-                                            </td>
-                                            <td>
-                                                {event.date} <br />
-                                                {event.start_time} - {event.end_time}
-                                            </td>
-                                            <td>عدد المقاعد: {event.available_seats}</td>
-                                            <td>السعر للشخص: {event.price_per_person}</td>
-                                            <td>جديدة</td>
-                                        </tr>
-                                    ))}
+                            {
+                                error &&
+                                <div className="text-center">
+                                    حصل خطأ ما عند جلب البيانات, تأكد من اتصالك بالانترنت
+                                </div>
+                            }
 
-                                </tbody>
-                            </table>
+                            {
+                                (!isLoading && !error) &&
+                                <table className="table">
+                                    <tbody>
+                                        {
+                                            events.filter((event)=> {
+                                                if (searchKey === '') {
+                                                    return event
+                                                }
+                                                else if (event.id.toString().includes(searchKey)) {
+                                                    return event
+                                                }
+                                            }).map((event) => (
+                                                <tr key={event.id} className="table-card fs-7">
+                                                    <td>
+                                                        {event.id}# <br />
+                                                        الفنان: {event.singer_name}
+                                                    </td>
+                                                    <td>
+                                                        {event.date} <br />
+                                                        {event.start_time} - {event.end_time}
+                                                    </td>
+                                                    <td>السعر للشخص: {event.price}</td>
+                                                    <td>جديدة</td>
+                                                </tr>
+                                            ))
+                                        }
+
+                                    </tbody>
+                                </table>
+                            }
                         </div>
                     </div>
                 </div>
@@ -219,7 +238,7 @@ function Events() {
 
                                     <label htmlFor="date" className="form-label mt-4">التاريخ</label>
                                     <input
-                                        {...register('date')} 
+                                        {...register('date')}
                                         name='date' id='date' type={'date'} className={`form-control mb-2 ${errors.date && 'error-border'}`} />
                                     {errors.date && <p className='error-message'>التاريخ مطلوب</p>}
 
@@ -228,14 +247,14 @@ function Events() {
                                         <div className="col-5">
                                             <label htmlFor="start-time" className="form-label">من</label>
                                             <input
-                                                {...register('start_time')} 
+                                                {...register('start_time')}
                                                 name='start_time' id='start_time' type={'time'} className={`form-control ${errors.start_time && 'error-border'}`} />
                                             {errors.start_time && <p className='error-message'>وقت البداية مطلوب</p>}
                                         </div>
                                         <div className="col-5">
                                             <label htmlFor="end-time" className="form-label">إلى</label>
                                             <input
-                                                {...register('end_time')} 
+                                                {...register('end_time')}
                                                 name='end_time' id='end_time' type={'time'} className={`form-control ${errors.end_time && 'error-border'}`} />
                                             {errors.end_time && <p className='error-message'>وقت النهاية مطلوب</p>}
 
@@ -245,40 +264,31 @@ function Events() {
                                     <div className="d-flex justify-content-between align-items-center mt-4">
                                         <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
                                         <input
-                                            {...register('singer_img')} 
+                                            {...register('singer_img')}
                                             name='singer_img' id='singer_img' type={'url'} className={`form-control w-50 ${errors.singer_img && 'error-border'}`} dir="ltr" />
 
                                     </div>
                                     {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
 
                                     <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="available_seats" className="form-label">عدد المقاعد</label>
+                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
                                         <input
-                                            {...register('available_seats')} 
-                                            name='available_seats' id='available_seats' type={'number'} className={`form-control w-50 ${errors.available_seats && 'error-border'}`} dir="ltr" />
-
+                                            {...register('price')}
+                                            name='price' id='price' type={'number'} className={`form-control w-50 ${errors.price && 'error-border'}`} dir="ltr" />
                                     </div>
-                                    {errors.available_seats && <p className='error-message'>عدد المقاعد مطلوب</p>}
-
-                                    <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="price_per_person" className="form-label">سعر المقعد</label>
-                                        <input
-                                            {...register('price_per_person')}
-                                            name='price_per_person' id='price_per_person' type={'number'} className={`form-control w-50 ${errors.price_per_person && 'error-border'}`} dir="ltr" />
-                                    </div>
-                                    {errors.price_per_person && <p className='error-message'>السعر مطلوب</p>}
+                                    {errors.price && <p className='error-message'>السعر مطلوب</p>}
 
                                     <div className="nebras mt-5">
-                                        <button 
-                                        className="btn hero-btn-primary fs-5"
-                                        disabled={isPostEventLoading}
+                                        <button
+                                            className="btn hero-btn-primary fs-5"
+                                            disabled={isPostEventLoading}
                                         >
-                                            
-                                    {isPostEventLoading ? 
-                                        <i className="fas fa-spinner fa-spin"></i>:
-                                        <span className="m-5">إضافة</span>
-                                    }
-                                    </button>
+
+                                            {isPostEventLoading ?
+                                                <i className="fas fa-spinner fa-spin"></i> :
+                                                <span className="m-5">إضافة</span>
+                                            }
+                                        </button>
                                     </div>
                                 </form>
                             </div>

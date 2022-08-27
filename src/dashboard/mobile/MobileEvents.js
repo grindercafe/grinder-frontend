@@ -17,9 +17,8 @@ import {
     Progress,
     CloseButton,
     useToast,
-    Button,
     Alert,
-    AlertIcon
+    AlertIcon,
 } from '@chakra-ui/react'
 import SearchField from "../../components/SearchField"
 
@@ -30,8 +29,7 @@ const schema = yup.object().shape({
     'date': yup.string().required(),
     'start_time': yup.string().required(),
     'end_time': yup.string().required(),
-    'available_seats': yup.number().integer().required(),
-    'price_per_person': yup.number().required()
+    'price': yup.number().required()
 })
 
 function MobileEvents() {
@@ -40,6 +38,8 @@ function MobileEvents() {
 
     const [events, setEvents] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [searchKey, setSearchKey] = useState('')
 
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
 
@@ -107,16 +107,13 @@ function MobileEvents() {
             'end_time': data.end_time,
             'singer_name': data.singer_name,
             'singer_img': data.singer_img,
-            'available_chairs': data.available_seats,
-            'price_per_person': data.price_per_person,
+            'price': data.price,
         }
 
         try {
             const response = await axios.post('/event', body)
-            console.log(response.data)
             successToast()
         } catch (error) {
-            console.log(error.response)
             errorToast()
         }
 
@@ -127,37 +124,40 @@ function MobileEvents() {
 
     useEffect(() => {
         async function getEvents() {
-            const response = await axios.get('/events')
 
-            const all_events = []
+            try {
+                const response = await axios.get('/events')
 
-            response.data.data.forEach(event => {
+                const all_events = []
 
-                const date = moment(event.date)
-                const start_time = moment(event.start_time)
-                const end_time = moment(event.end_time)
+                response.data.data.forEach(event => {
 
-                if (end_time.isBefore(start_time)) {
-                    end_time.add(1, 'day')
-                }
+                    const date = moment(event.date)
+                    const start_time = moment(event.start_time)
+                    const end_time = moment(event.end_time)
 
-                const eventTemplate = {
-                    'id': event.id,
-                    'date': date.format('YYYY-MM-DD'),
-                    'start_time': start_time.format('hh:mm'),
-                    'end_time': end_time.format('hh:mm'),
-                    'singer_name': event.singer_name,
-                    'singer_img': event.singer_img,
-                    'available_seats': event.available_chairs,
-                    'price_per_person': event.price_per_person
-                }
+                    if (end_time.isBefore(start_time)) {
+                        end_time.add(1, 'day')
+                    }
 
-                all_events.push(eventTemplate)
+                    const eventTemplate = {
+                        'id': event.id,
+                        'date': date.format('YYYY-MM-DD'),
+                        'start_time': start_time.format('hh:mm'),
+                        'end_time': end_time.format('hh:mm'),
+                        'singer_name': event.singer_name,
+                        'singer_img': event.singer_img,
+                        'price': event.price
+                    }
 
-            })
-            setEvents(all_events)
+                    all_events.push(eventTemplate)
+
+                })
+                setEvents(all_events)
+            } catch (error) {
+                setError(true)
+            }
             setIsLoading(false)
-            return response
         }
         getEvents()
     }, [isPostEventLoading])
@@ -181,7 +181,6 @@ function MobileEvents() {
 
     return (
         <>
-            {isLoading && <div>Loading...</div>}
             <div className='dashboard-mobile din-next'>
                 <div className='dashboard-header-mobile'>
                     <div className='d-flex justify-content-between'>
@@ -192,7 +191,8 @@ function MobileEvents() {
                             <HiOutlineMenuAlt2 size={'2rem'} />
                         </button>
                     </div>
-                    <SearchField placeholder={'ابحث'} />
+                    <SearchField onChange={(e)=> setSearchKey(e.target.value)} 
+                    placeholder={'ابحث برقم الحفلة'} />
 
                     <button className='btn add-event-btn' onClick={handleOpenModal}>إضافة حفلة</button>
 
@@ -200,34 +200,54 @@ function MobileEvents() {
                 </div>
                 <div className='dashboard-content-mobile'>
                     <div className="table-wrapper">
-                        <table className="table mobile-table">
-                            <thead>
-                                <tr>
-                                    <th>الرقم</th>
-                                    <th>التاريخ والوقت</th>
-                                    <th>عدد المقاعد</th>
-                                    <th>الحالة</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {events.map((event) => (
-
-                                    <tr key={event.id} className="table-card fs-7">
-                                        <td>
-                                            {event.singer_name} <br />
-                                            {event.id}#
-                                        </td>
-                                        <td>
-                                            {event.date} <br />
-                                            {event.start_time} - {event.end_time}
-                                        </td>
-                                        <td>{event.available_seats}/ 100</td>
-                                        <td>جديدة</td>
+                        {
+                            isLoading && <Progress size='xs' isIndeterminate />
+                        }
+                        {
+                            error &&
+                            <div className="text-center">
+                                حصل خطأ ما عند جلب البيانات, تأكد من اتصالك بالانترنت
+                            </div>
+                        }
+                        {
+                            (!isLoading && !error) &&
+                            <table className="table mobile-table">
+                                <thead>
+                                    <tr>
+                                        <th>الرقم</th>
+                                        <th>التاريخ والوقت</th>
+                                        <th>الحالة</th>
                                     </tr>
-                                ))}
+                                </thead>
+                                <tbody>
+                                    {
+                                        events.filter((event) => {
+                                            if (searchKey === '') {
+                                                return event
+                                            }
+                                            else if (event.id.toString().includes(searchKey)) {
+                                                return event
+                                            }
+                                        }).map((event) => (
 
-                            </tbody>
-                        </table>
+                                            <tr key={event.id} className="table-card fs-7">
+                                                <td>
+                                                    {event.singer_name} <br />
+                                                    {event.id}#
+                                                </td>
+                                                <td>
+                                                    {event.date} <br />
+                                                    {event.start_time} - {event.end_time}
+                                                </td>
+                                                <td>جديدة</td>
+                                            </tr>
+                                        ))
+                                    }
+
+                                </tbody>
+                            </table>
+                        }
+
                     </div>
                 </div>
                 <Modal isOpen={isOpen} size={'xl'} closeOnOverlayClick={false}>
@@ -283,21 +303,12 @@ function MobileEvents() {
                                     {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
 
                                     <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="available_seats" className="form-label">عدد المقاعد</label>
+                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
                                         <input
-                                            {...register('available_seats')}
-                                            name='available_seats' id='available_seats' type={'number'} className={`form-control w-50 ${errors.available_seats && 'error-border'}`} dir="ltr" />
-
+                                            {...register('price')}
+                                            name='price' id='price' type={'number'} className={`form-control w-50 ${errors.price && 'error-border'}`} dir="ltr" />
                                     </div>
-                                    {errors.available_seats && <p className='error-message'>عدد المقاعد مطلوب</p>}
-
-                                    <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="price_per_person" className="form-label">سعر المقعد</label>
-                                        <input
-                                            {...register('price_per_person')}
-                                            name='price_per_person' id='price_per_person' type={'number'} className={`form-control w-50 ${errors.price_per_person && 'error-border'}`} dir="ltr" />
-                                    </div>
-                                    {errors.price_per_person && <p className='error-message'>السعر مطلوب</p>}
+                                    {errors.price && <p className='error-message'>السعر مطلوب</p>}
 
                                     <div className="nebras mt-5">
                                         <button

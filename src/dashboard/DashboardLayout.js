@@ -2,7 +2,7 @@ import logo from '../assets/images/black-logo.png'
 import { Link, useMatch, useResolvedPath } from "react-router-dom"
 import { useRef } from "react"
 
-function DashboardLayout({ children, isLoading }) {
+function DashboardLayout({ children }) {
     const nav = useRef()
     const body = document.getElementById('body')
 
@@ -17,12 +17,12 @@ function DashboardLayout({ children, isLoading }) {
 
     return (
         <div>
-            {
+            {/* {
                 isLoading &&
                 <div className={'bg-overlay'}>
                     <i className="mx-4 fas fa-spinner fa-pulse fs-1"></i>
                 </div>
-            }
+            } */}
             <div className="bg-white text-black d-lg-block d-none" style={{ height: '100vh' }}>
                 <div className="d-flex bg-white">
                     <div className="sidebar">

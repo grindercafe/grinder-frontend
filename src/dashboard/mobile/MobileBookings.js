@@ -6,51 +6,58 @@ import axios from '../../axios'
 import moment from 'moment'
 import { arabicPeriods } from '../../utils/Helper'
 import MobileSidebar from './MobileSidebar'
+import { Progress } from '@chakra-ui/react'
+import SearchField from '../../components/SearchField'
 
 function MobileBookings() {
 
     const [bookings, setBookings] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [searchKey, setSearchKey] = useState('')
 
     useEffect(() => {
         async function getBookings() {
-            const response = await axios.get('/bookings')
-            const allBookings = []
 
-            response.data.data.forEach(booking => {
+            try {
+                const response = await axios.get('/bookings')
+                const allBookings = []
 
-                const date = moment(booking.event.date)
-                const start_time = moment(booking.event.start_time)
-                const end_time = moment(booking.event.end_time)
+                response.data.data.forEach(booking => {
 
-                if (end_time.isBefore(start_time)) {
-                    end_time.add(1, 'day')
-                }
+                    const date = moment(booking.event?.date)
+                    const start_time = moment(booking.event?.start_time)
+                    const end_time = moment(booking.event?.end_time)
 
-                const bookingTemplate = {
-                    'id': booking.id,
-                    'booking_number': booking.booking_number,
-                    'event': {
-                        'id': booking.event.id,
-                        'date': date.format('YYYY-MM-DD'),
-                        'start_time': start_time,
-                        'end_time': end_time,
-                    },
-                    'customer': {
-                        'id': booking.customer.id,
-                        'name': booking.customer.name,
-                        'phone_number': booking.customer.phone_number
-                    },
-                    'party_size': booking.party_size,
-                    'total_price': booking.total_price
-                }
+                    if (end_time.isBefore(start_time)) {
+                        end_time.add(1, 'day')
+                    }
 
-                allBookings.push(bookingTemplate)
+                    const bookingTemplate = {
+                        'id': booking.id,
+                        'booking_number': booking.booking_number,
+                        'event': {
+                            'id': booking.event?.id,
+                            'date': date.format('YYYY-MM-DD'),
+                            'start_time': start_time,
+                            'end_time': end_time,
+                        },
+                        'customer': {
+                            'id': booking.customer?.id,
+                            'name': booking.customer?.name,
+                            'phone_number': booking.customer?.phone_number
+                        },
+                        'total_price': booking.total_price
+                    }
 
-            });
-            setBookings(allBookings)
+                    allBookings.push(bookingTemplate)
+
+                });
+                setBookings(allBookings)
+            } catch (error) {
+                setError(true)
+            }
             setIsLoading(false)
-            return response
         }
         getBookings()
     }, [])
@@ -86,7 +93,11 @@ function MobileBookings() {
                         </button>
                     </div>
 
-                    <input className='form-control mt-4' type={'search'} name='search' placeholder='بحث' />
+                    <div className="mt-5">
+                        <SearchField
+                            onChange={(e) => setSearchKey(e.target.value)}
+                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل" />
+                    </div>
 
 
                     <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
@@ -94,47 +105,67 @@ function MobileBookings() {
                 </div>
                 <div className='dashboard-content-mobile'>
                     <div className="table-wrapper">
-                        <table className="table mobile-table">
-                            <thead>
-                                <tr>
-                                    <th>رقم الحجز</th>
-                                    <th>العميل والحفلة</th>
-                                    <th>التاريخ والوقت</th>
-                                    <th>المقاعد</th>
-                                    <th>الاجمالي</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {bookings.map((booking) => (
-                                    <tr key={booking.id} className="table-card fs-7">
-                                        <td>
-                                            {booking.booking_number}#
-                                        </td>
-                                        <td>
-                                            <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
-                                                {booking.customer.phone_number}</a> <br />
-                                            {booking.event.id}#
-                                        </td>
-                                        <td>
-                                            {booking.event.date} <br />
-                                            <div className='d-flex'>
-                                                <div>
-                                                    <div>{booking.event.start_time.format('hh:mm')}</div>
-                                                    <div>{arabicPeriods(booking.event.start_time.format('A'))}</div>
-                                                </div>
-                                                -
-                                                <div>
-                                                    <div>{booking.event.end_time.format('hh:mm')}</div>
-                                                    <div>{arabicPeriods(booking.event.end_time.format('A'))}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{booking.party_size}</td>
-                                        <td>{booking.total_price} ر.س</td>
+                        {
+                            isLoading && <Progress size='xs' isIndeterminate />
+                        }
+                        {
+                            error &&
+                            <div className="text-center">
+                                حصل خطأ ما عند جلب البيانات, تأكد من اتصالك بالانترنت
+                            </div>
+                        }
+                        {
+                            (!isLoading && !error) &&
+                            <table className="table mobile-table">
+                                <thead>
+                                    <tr>
+                                        <th>رقم الحجز</th>
+                                        <th>العميل والحفلة</th>
+                                        <th>التاريخ والوقت</th>
+                                        <th>الاجمالي</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {
+                                        bookings.filter((booking) => {
+                                            if (searchKey === '')
+                                                return booking
+                                            else if (booking.id.toString().includes(searchKey) ||
+                                                booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
+                                                return booking
+                                            }
+                                        }).map((booking) => (
+                                            <tr key={booking.id} className="table-card fs-7">
+                                                <td>
+                                                    {booking.booking_number}#
+                                                </td>
+                                                <td>
+                                                    <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
+                                                        {booking.customer.phone_number}</a> <br />
+                                                    {booking.event.id}#
+                                                </td>
+                                                <td>
+                                                    {booking.event.date} <br />
+                                                    <div className='d-flex'>
+                                                        <div>
+                                                            <div>{booking.event.start_time.format('hh:mm')}</div>
+                                                            <div>{arabicPeriods(booking.event.start_time.format('A'))}</div>
+                                                        </div>
+                                                        -
+                                                        <div>
+                                                            <div>{booking.event.end_time.format('hh:mm')}</div>
+                                                            <div>{arabicPeriods(booking.event.end_time.format('A'))}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{booking.total_price} ر.س</td>
+                                            </tr>
+                                        ))
+                                    }
+                                </tbody>
+                            </table>
+                        }
+
                     </div>
                 </div>
             </div>

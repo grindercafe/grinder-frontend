@@ -5,9 +5,11 @@ import axios from '../axios'
 function TestPage() {
 
     const [tables, setTables] = useState([])
-    const event_id = 3
+    const list = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+    ]
 
-    useEffect(()=> {
+    useEffect(() => {
         async function getTables() {
             try {
                 const response = await axios.get('/atables')
@@ -21,13 +23,17 @@ function TestPage() {
     }, [])
     return (
         <>
-            <div>
-                {
-                    tables.map((table)=> (
-                        <div>{table.name}</div>
-                    ))
-                }
-            </div>  
+            {/* <div className="container my-5"> */}
+                <div className="row row-cols-10">
+                    {
+                        list.map((num) => (
+                            <div className="bg-info text-prime">
+                                {num}
+                            </div>
+                        ))
+                    }
+                </div>
+            {/* </div> */}
         </>
     )
 }
