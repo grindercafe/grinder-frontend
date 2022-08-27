@@ -81,15 +81,18 @@ function Bookings() {
                                 <table className="table">
                                     <tbody>
                                         {
-
-                                            bookings.filter((booking) => {
-                                                if (searchKey === '')
-                                                    return booking
-                                                else if (booking.id.toString().includes(searchKey) ||
-                                                    booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
-                                                    return booking
-                                                }
-                                            }).map((booking) => (
+                                            bookings.length === 0 ?
+                                                <div className="text-center text-muted">
+                                                    لا توجد حجوزات بعد
+                                                </div> :
+                                                bookings.filter((booking) => {
+                                                    if (searchKey === '')
+                                                        return booking
+                                                    else if (booking.id.toString().includes(searchKey) ||
+                                                        booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
+                                                        return booking
+                                                    }
+                                                }).map((booking) => (
 
                                                     <tr key={booking.id} className="table-card fs-7">
                                                         <td>{booking.id}#</td>

@@ -127,40 +127,44 @@ function MobileBookings() {
                                 </thead>
                                 <tbody>
                                     {
-                                        bookings.filter((booking) => {
-                                            if (searchKey === '')
-                                                return booking
-                                            else if (booking.id.toString().includes(searchKey) ||
-                                                booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
-                                                return booking
-                                            }
-                                        }).map((booking) => (
-                                            <tr key={booking.id} className="table-card fs-7">
-                                                <td>
-                                                    {booking.booking_number}#
-                                                </td>
-                                                <td>
-                                                    <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
-                                                        {booking.customer.phone_number}</a> <br />
-                                                    {booking.event.id}#
-                                                </td>
-                                                <td>
-                                                    {booking.event.date} <br />
-                                                    <div className='d-flex'>
-                                                        <div>
-                                                            <div>{booking.event.start_time.format('hh:mm')}</div>
-                                                            <div>{arabicPeriods(booking.event.start_time.format('A'))}</div>
+                                        bookings.length === 0 ?
+                                            <div className="text-center text-muted">
+                                                لا توجد حجوزات بعد
+                                            </div> :
+                                            bookings.filter((booking) => {
+                                                if (searchKey === '')
+                                                    return booking
+                                                else if (booking.id.toString().includes(searchKey) ||
+                                                    booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
+                                                    return booking
+                                                }
+                                            }).map((booking) => (
+                                                <tr key={booking.id} className="table-card fs-7">
+                                                    <td>
+                                                        {booking.booking_number}#
+                                                    </td>
+                                                    <td>
+                                                        <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
+                                                            {booking.customer.phone_number}</a> <br />
+                                                        {booking.event.id}#
+                                                    </td>
+                                                    <td>
+                                                        {booking.event.date} <br />
+                                                        <div className='d-flex'>
+                                                            <div>
+                                                                <div>{booking.event.start_time.format('hh:mm')}</div>
+                                                                <div>{arabicPeriods(booking.event.start_time.format('A'))}</div>
+                                                            </div>
+                                                            -
+                                                            <div>
+                                                                <div>{booking.event.end_time.format('hh:mm')}</div>
+                                                                <div>{arabicPeriods(booking.event.end_time.format('A'))}</div>
+                                                            </div>
                                                         </div>
-                                                        -
-                                                        <div>
-                                                            <div>{booking.event.end_time.format('hh:mm')}</div>
-                                                            <div>{arabicPeriods(booking.event.end_time.format('A'))}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>{booking.total_price} ر.س</td>
-                                            </tr>
-                                        ))
+                                                    </td>
+                                                    <td>{booking.total_price} ر.س</td>
+                                                </tr>
+                                            ))
                                     }
                                 </tbody>
                             </table>

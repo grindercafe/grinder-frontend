@@ -32,13 +32,13 @@ const schema = yup.object().shape({
 
 function Events() {
     const toast = useToast()
-    
+
     const [events, setEvents] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
-    
+
     useEffect(() => {
         async function getEvents() {
 
@@ -188,27 +188,31 @@ function Events() {
                                 <table className="table">
                                     <tbody>
                                         {
-                                            events.filter((event)=> {
-                                                if (searchKey === '') {
-                                                    return event
-                                                }
-                                                else if (event.id.toString().includes(searchKey)) {
-                                                    return event
-                                                }
-                                            }).map((event) => (
-                                                <tr key={event.id} className="table-card fs-7">
-                                                    <td>
-                                                        {event.id}# <br />
-                                                        الفنان: {event.singer_name}
-                                                    </td>
-                                                    <td>
-                                                        {event.date} <br />
-                                                        {event.start_time} - {event.end_time}
-                                                    </td>
-                                                    <td>السعر للشخص: {event.price}</td>
-                                                    <td>جديدة</td>
-                                                </tr>
-                                            ))
+                                            events.length === 0 ?
+                                                <div className="text-center text-muted">
+                                                    لا توجد حفلات بعد
+                                                </div> :
+                                                events.filter((event) => {
+                                                    if (searchKey === '') {
+                                                        return event
+                                                    }
+                                                    else if (event.id.toString().includes(searchKey)) {
+                                                        return event
+                                                    }
+                                                }).map((event) => (
+                                                    <tr key={event.id} className="table-card fs-7">
+                                                        <td>
+                                                            {event.id}# <br />
+                                                            الفنان: {event.singer_name}
+                                                        </td>
+                                                        <td>
+                                                            {event.date} <br />
+                                                            {event.start_time} - {event.end_time}
+                                                        </td>
+                                                        <td>السعر للشخص: {event.price}</td>
+                                                        <td>جديدة</td>
+                                                    </tr>
+                                                ))
                                         }
 
                                     </tbody>

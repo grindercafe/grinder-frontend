@@ -63,6 +63,7 @@ function EventsPage() {
 
                 setEvents(all_events)
             } catch (error) {
+                console.log(error);
                 setError(true)
             }
 
@@ -121,28 +122,33 @@ function EventsPage() {
                 (!isLoading && !error) &&
                 <div className="row row-cols-lg-2 justify-content-center">
                     {
-                        events.map((event) => (
-                            <div key={event.id} className="event-card-mobile">
-                                <div className="event-card-frame">
-                                    <div className="event-card-content">
-                                        <img src={event.singer_img} alt="singer" />
-                                        <div className="d-flex justify-content-between my-4">
-                                            <div className="ms-4" style={{ fontSize: '23px' }}>{event.singer_name}</div>
-                                            <div style={{ fontSize: '20px' }}>{event.price} ر.س</div>
-                                        </div>
-                                        <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التاريخ / {event.date}</div>
-                                        <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التوقيت / {event.start_time} إلى {event.end_time}</div>
-                                        <div className="mb-4 din-next" style={{ fontSize: '15px' }}>محتوى نصي محتوى نصي محتوى نصي محتوى نصي محتوى نصي</div>
+                        events.length === 0 ?
+                            <div className="text-center text-muted">
+                                لا توجد حفلات في الوقت الحالي
+                            </div>
+                            :
+                            events.map((event) => (
+                                <div key={event.id} className="event-card-mobile">
+                                    <div className="event-card-frame">
+                                        <div className="event-card-content">
+                                            <img src={event.singer_img} alt="singer" />
+                                            <div className="d-flex justify-content-between my-4">
+                                                <div className="ms-4" style={{ fontSize: '23px' }}>{event.singer_name}</div>
+                                                <div style={{ fontSize: '20px' }}>{event.price} ر.س</div>
+                                            </div>
+                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التاريخ / {event.date}</div>
+                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التوقيت / {event.start_time} إلى {event.end_time}</div>
+                                            <div className="mb-4 din-next" style={{ fontSize: '15px' }}>محتوى نصي محتوى نصي محتوى نصي محتوى نصي محتوى نصي</div>
 
-                                        <Link
-                                            to={`/events/${event.id}`}
-                                            className={'btn btn-secondary p-3 fs-5 w-100'}>
-                                            احجز الان
-                                        </Link>
+                                            <Link
+                                                to={`/events/${event.id}`}
+                                                className={'btn btn-secondary p-3 fs-5 w-100'}>
+                                                احجز الان
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            ))
                     }
                 </div>
             }

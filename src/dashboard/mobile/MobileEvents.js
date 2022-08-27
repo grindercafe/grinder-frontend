@@ -191,8 +191,8 @@ function MobileEvents() {
                             <HiOutlineMenuAlt2 size={'2rem'} />
                         </button>
                     </div>
-                    <SearchField onChange={(e)=> setSearchKey(e.target.value)} 
-                    placeholder={'ابحث برقم الحفلة'} />
+                    <SearchField onChange={(e) => setSearchKey(e.target.value)}
+                        placeholder={'ابحث برقم الحفلة'} />
 
                     <button className='btn add-event-btn' onClick={handleOpenModal}>إضافة حفلة</button>
 
@@ -221,27 +221,31 @@ function MobileEvents() {
                                 </thead>
                                 <tbody>
                                     {
-                                        events.filter((event) => {
-                                            if (searchKey === '') {
-                                                return event
-                                            }
-                                            else if (event.id.toString().includes(searchKey)) {
-                                                return event
-                                            }
-                                        }).map((event) => (
+                                        events.length === 0 ?
+                                            <div className="text-center text-muted">
+                                                لا توجد حفلات بعد
+                                            </div> :
+                                            events.filter((event) => {
+                                                if (searchKey === '') {
+                                                    return event
+                                                }
+                                                else if (event.id.toString().includes(searchKey)) {
+                                                    return event
+                                                }
+                                            }).map((event) => (
 
-                                            <tr key={event.id} className="table-card fs-7">
-                                                <td>
-                                                    {event.singer_name} <br />
-                                                    {event.id}#
-                                                </td>
-                                                <td>
-                                                    {event.date} <br />
-                                                    {event.start_time} - {event.end_time}
-                                                </td>
-                                                <td>جديدة</td>
-                                            </tr>
-                                        ))
+                                                <tr key={event.id} className="table-card fs-7">
+                                                    <td>
+                                                        {event.singer_name} <br />
+                                                        {event.id}#
+                                                    </td>
+                                                    <td>
+                                                        {event.date} <br />
+                                                        {event.start_time} - {event.end_time}
+                                                    </td>
+                                                    <td>جديدة</td>
+                                                </tr>
+                                            ))
                                     }
 
                                 </tbody>

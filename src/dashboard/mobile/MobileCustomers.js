@@ -92,24 +92,28 @@ function MobileCustomers() {
                                 </thead>
                                 <tbody>
                                     {
-                                        customers.filter((customer) => {
-                                            if (searchKey === '') {
-                                                return customer
-                                            }
-                                            else if (
-                                                customer.name.toLowerCase().includes(searchKey.toLowerCase()) ||
-                                                customer.phone_number.includes(searchKey)) {
-                                                return customer
-                                            }
-                                        }).map((customer) => (
+                                        customers.length === 0 ?
+                                            <div className="text-center text-muted">
+                                                لا يوجد عملاء بعد
+                                            </div> :
+                                            customers.filter((customer) => {
+                                                if (searchKey === '') {
+                                                    return customer
+                                                }
+                                                else if (
+                                                    customer.name.toLowerCase().includes(searchKey.toLowerCase()) ||
+                                                    customer.phone_number.includes(searchKey)) {
+                                                    return customer
+                                                }
+                                            }).map((customer) => (
 
-                                            <tr key={customer.id} className="table-card fs-7">
-                                                <td>{customer.id}</td>
-                                                <td>{customer.name}</td>
-                                                <td>{customer.phone_number}</td>
-                                                <td>{customer.num_of_bookings}</td>
-                                            </tr>
-                                        ))
+                                                <tr key={customer.id} className="table-card fs-7">
+                                                    <td>{customer.id}</td>
+                                                    <td>{customer.name}</td>
+                                                    <td>{customer.phone_number}</td>
+                                                    <td>{customer.num_of_bookings}</td>
+                                                </tr>
+                                            ))
                                     }
 
                                 </tbody>
