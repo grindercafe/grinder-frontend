@@ -32,7 +32,7 @@
 }
 
 body {
-    background-color: #1F1F1F !important;
+    /* background-color: #1F1F1F !important; */
     color: #D8C7B7 !important;
     font-family: 'nebras', sans-serif !important;
     letter-spacing: 1px;
@@ -234,6 +234,10 @@ input::-webkit-inner-spin-button {
     color: #D8C7B7 !important;
     background-color: #1F1F1F !important;
     border: #D8C7B7 solid 1px !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover-color) !important;
 }
 
 .border-prime {
@@ -638,6 +642,11 @@ td {
 
 .not-found-inner a:hover {
     color: #575757;
+}
+
+.dashboard {
+    background-color: white;
+    color: #1F1F1F;
 }
 
 .dashboard-mobile {
@@ -1075,4 +1084,38 @@ td {
 
 .social-media-link:hover {
     color: #988879;
+}
+
+.login-form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8rem;
+}
+
+.login-form {
+    background-color: var(--dashboard-secondary-color);
+    height: 60%;
+    padding: 2rem 3rem;
+}
+
+.login-form img {
+    width: 40%;
+    margin: 0 auto;
+}
+
+.login-form form {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form div {
+    margin-bottom: 2rem;
+}
+
+.login-form button {
+    padding: .8rem !important;
+    width: 100%;
+    margin-top: 1rem !important;
 }

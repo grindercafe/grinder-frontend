@@ -14,7 +14,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { HomePage } from "./pages/HomePage";
 import EventPage from "./pages/EventPage";
 import ScrollToTop from "./ScrollToTop";
-import LoginPage from "./pages/LoginPage";
+import Login from "./dashboard/Login";
 
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
           <Route path="/dashboard/customers" element={<Customers />} />
           <Route path="/dashboard/bookings" element={<Bookings />} />
           <Route path="/bookings/:uuid" element={<Booking />} />
-          <Route path="/dashboard/login" element={<LoginPage />} />
+          <Route path="/dashboard/login" element={<Login />} />
           <Route path="*" element={<NotFoundPage />} />
           {/*<Route path="/events/:id" element={<Event />} />
             <Route path="/bookings" element={<Bookings />} />

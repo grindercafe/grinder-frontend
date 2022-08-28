@@ -23,7 +23,7 @@ function CustomLink({ to, children }) {
     const isActive = useMatch({ path: resolvedPath.pathname, end: true })
     return (
         <li className={isActive && 'active-index'}>
-            <Link to={to} className={`dashboard-links ${isActive && 'disabled-link'}`}>
+            <Link to={to} className={`dashboard-links ${isActive ? 'disabled-link':''}`}>
                 {children}
             </Link>
         </li>

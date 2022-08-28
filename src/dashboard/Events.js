@@ -20,6 +20,7 @@ import {
     AlertIcon
 } from '@chakra-ui/react'
 import SearchField from "../components/SearchField"
+import AuthProvider from "../components/AuthProvider"
 
 const schema = yup.object().shape({
     'singer_name': yup.string().required(),
@@ -163,147 +164,154 @@ function Events() {
 
     return (
         <>
-            <DashboardLayout>
-                <div className="dashboard-content">
-                    <div className="fs-3 mb-5">قائمة الحفلات</div>
+            <AuthProvider>
+                <DashboardLayout>
+                    <div className="dashboard-content">
+                        <div className="fs-3 mb-5">قائمة الحفلات</div>
 
-                    <div className="d-flex justify-content-between">
-                        <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder={'ابحث برقم الحفلة'} />
-                        <button className="btn btn-transparent border-prime fs-6 w-25" onClick={handleOpenModal}>اضافة حفلة</button>
-                    </div>
-                    <div className="my-5">
-                        <div className="table-wrapper">
-                            {
-                                isLoading && <Progress size='xs' isIndeterminate />
-                            }
-                            {
-                                error &&
-                                <div className="text-center">
-                                    حصل خطأ ما عند جلب البيانات, تأكد من اتصالك بالانترنت
-                                </div>
-                            }
+                        <div className="d-flex justify-content-between">
+                            <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder={'ابحث برقم الحفلة'} />
+                            <button className="btn btn-transparent border-prime fs-6 w-25" onClick={handleOpenModal}>اضافة حفلة</button>
+                        </div>
+                        <div className="my-5">
+                            <div className="table-wrapper">
+                                {
+                                    isLoading && <Progress size='xs' isIndeterminate />
+                                }
+                                {
+                                    error &&
+                                    <div className="text-center">
+                                        حصل خطأ ما عند جلب البيانات, تأكد من اتصالك بالانترنت
+                                    </div>
+                                }
 
-                            {
-                                (!isLoading && !error) &&
-                                <table className="table">
-                                    <tbody>
-                                        {
-                                            events.length === 0 ?
-                                                <div className="text-center text-muted">
-                                                    لا توجد حفلات بعد
-                                                </div> :
-                                                events.filter((event) => {
-                                                    if (searchKey === '') {
-                                                        return event
-                                                    }
-                                                    else if (event.id.toString().includes(searchKey)) {
-                                                        return event
-                                                    }
-                                                }).map((event) => (
-                                                    <tr key={event.id} className="table-card fs-7">
-                                                        <td>
-                                                            {event.id}# <br />
-                                                            الفنان: {event.singer_name}
-                                                        </td>
-                                                        <td>
-                                                            {event.date} <br />
-                                                            {event.start_time} - {event.end_time}
-                                                        </td>
-                                                        <td>السعر للشخص: {event.price}</td>
-                                                        <td>جديدة</td>
-                                                    </tr>
-                                                ))
-                                        }
+                                {
+                                    (!isLoading && !error) &&
+                                    <table className="table">
+                                        <tbody>
+                                            {
+                                                events.length === 0 ?
+                                                    <div className="text-center text-muted">
+                                                        لا توجد حفلات بعد
+                                                    </div> :
+                                                    events.filter((event) => {
+                                                        if (searchKey === '') {
+                                                            return event
+                                                        }
+                                                        else if (event.id.toString().includes(searchKey)) {
+                                                            return event
+                                                        }
+                                                    }).map((event) => (
+                                                        <tr key={event.id} className="table-card fs-7">
+                                                            <td>
+                                                                {event.id}# <br />
+                                                                الفنان: {event.singer_name}
+                                                            </td>
+                                                            <td>
+                                                                {event.date} <br />
+                                                                {event.start_time} - {event.end_time}
+                                                            </td>
+                                                            <td>السعر للشخص: {event.price}</td>
+                                                            <td>جديدة</td>
+                                                        </tr>
+                                                    ))
+                                            }
 
-                                    </tbody>
-                                </table>
-                            }
+                                        </tbody>
+                                    </table>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <Modal isOpen={isOpen} size={'xl'} closeOnOverlayClick={false}>
-                    <ModalOverlay backdropFilter='blur(8px)' />
-                    <ModalContent>
-                        <ModalBody className="px-5 py-3 modal-event-body">
-                            <div className="text-prime">
-                                <div className="d-flex justify-content-center align-items-center">
-                                    <button className="modal-close-btn" onClick={handleCloseModal}>
-                                        <IoCloseOutline size={'2.2rem'} />
-                                    </button>
-                                    <div className="nebras fs-5 py-3">حفلة جديدة</div>
-                                </div>
-                                <form onSubmit={handleSubmit(onSubmit)} className="add-event-form">
-                                    <label htmlFor="singer_name" className="form-label">اسم الفنان</label>
-                                    <input
-                                        {...register('singer_name')}
-                                        id='singer_name' type={"text"} className={`form-control mb-2 ${errors.singer_name && 'error-border'}`} />
-                                    {errors.singer_name && <p className='error-message'>اسم الفنان مطلوب</p>}
-
-                                    <label htmlFor="date" className="form-label mt-4">التاريخ</label>
-                                    <input
-                                        {...register('date')}
-                                        name='date' id='date' type={'date'} className={`form-control mb-2 ${errors.date && 'error-border'}`} />
-                                    {errors.date && <p className='error-message'>التاريخ مطلوب</p>}
-
-
-                                    <div className="d-flex justify-content-between mt-4">
-                                        <div className="col-5">
-                                            <label htmlFor="start-time" className="form-label">من</label>
-                                            <input
-                                                {...register('start_time')}
-                                                name='start_time' id='start_time' type={'time'} className={`form-control ${errors.start_time && 'error-border'}`} />
-                                            {errors.start_time && <p className='error-message'>وقت البداية مطلوب</p>}
-                                        </div>
-                                        <div className="col-5">
-                                            <label htmlFor="end-time" className="form-label">إلى</label>
-                                            <input
-                                                {...register('end_time')}
-                                                name='end_time' id='end_time' type={'time'} className={`form-control ${errors.end_time && 'error-border'}`} />
-                                            {errors.end_time && <p className='error-message'>وقت النهاية مطلوب</p>}
-
-                                        </div>
-                                    </div>
-
-                                    <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
-                                        <input
-                                            {...register('singer_img')}
-                                            name='singer_img' id='singer_img' type={'url'} className={`form-control w-50 ${errors.singer_img && 'error-border'}`} dir="ltr" />
-
-                                    </div>
-                                    {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
-
-                                    <div className="d-flex justify-content-between align-items-center mt-4">
-                                        <label htmlFor="price" className="form-label">سعر المقعد</label>
-                                        <input
-                                            {...register('price')}
-                                            name='price' id='price' type={'number'} className={`form-control w-50 ${errors.price && 'error-border'}`} dir="ltr" />
-                                    </div>
-                                    {errors.price && <p className='error-message'>السعر مطلوب</p>}
-
-                                    <div className="nebras mt-5">
-                                        <button
-                                            className="btn hero-btn-primary fs-5"
-                                            disabled={isPostEventLoading}
-                                        >
-
-                                            {isPostEventLoading ?
-                                                <i className="fas fa-spinner fa-spin"></i> :
-                                                <span className="m-5">إضافة</span>
-                                            }
+                    <Modal isOpen={isOpen} size={'xl'} closeOnOverlayClick={false}>
+                        <ModalOverlay backdropFilter='blur(8px)' />
+                        <ModalContent>
+                            <ModalBody className="px-5 py-3 modal-event-body">
+                                <div className="text-prime">
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <button className="modal-close-btn" onClick={handleCloseModal}>
+                                            <IoCloseOutline size={'2.2rem'} />
                                         </button>
+                                        <div className="nebras fs-5 py-3">حفلة جديدة</div>
                                     </div>
-                                </form>
-                            </div>
-                        </ModalBody>
-                    </ModalContent>
-                </Modal>
-            </DashboardLayout>
+                                    <form onSubmit={handleSubmit(onSubmit)} className="add-event-form">
+                                        <label htmlFor="singer_name" className="form-label">اسم الفنان</label>
+                                        <input
+                                            {...register('singer_name')}
+                                            id='singer_name' type={"text"} className={`form-control mb-2 ${errors.singer_name && 'error-border'}`} />
+                                        {errors.singer_name && <p className='error-message'>اسم الفنان مطلوب</p>}
 
-            <div className="d-lg-none">
-                <MobileEvents />
-            </div>
+                                        <label htmlFor="date" className="form-label mt-4">التاريخ</label>
+                                        <input
+                                            {...register('date')}
+                                            name='date' id='date' type={'date'} className={`form-control mb-2 ${errors.date && 'error-border'}`} />
+                                        {errors.date && <p className='error-message'>التاريخ مطلوب</p>}
+
+
+                                        <div className="d-flex justify-content-between mt-4">
+                                            <div className="col-5">
+                                                <label htmlFor="start-time" className="form-label">من</label>
+                                                <input
+                                                    {...register('start_time')}
+                                                    name='start_time' id='start_time' type={'time'} className={`form-control ${errors.start_time && 'error-border'}`} />
+                                                {errors.start_time && <p className='error-message'>وقت البداية مطلوب</p>}
+                                            </div>
+                                            <div className="col-5">
+                                                <label htmlFor="end-time" className="form-label">إلى</label>
+                                                <input
+                                                    {...register('end_time')}
+                                                    name='end_time' id='end_time' type={'time'} className={`form-control ${errors.end_time && 'error-border'}`} />
+                                                {errors.end_time && <p className='error-message'>وقت النهاية مطلوب</p>}
+
+                                            </div>
+                                        </div>
+
+
+                                        <label htmlFor="description" className="form-label mt-4"> وصف الحفلة</label>
+                                        <textarea className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
+
+
+                                        <div className="d-flex justify-content-between align-items-center mt-4">
+                                            <label htmlFor="singer-img" className="form-label">صورة الفنان</label>
+                                            <input
+                                                {...register('singer_img')}
+                                                name='singer_img' id='singer_img' type={'url'} className={`form-control w-50 ${errors.singer_img && 'error-border'}`} dir="ltr" />
+
+                                        </div>
+                                        {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
+
+                                        <div className="d-flex justify-content-between align-items-center mt-4">
+                                            <label htmlFor="price" className="form-label">سعر المقعد</label>
+                                            <input
+                                                {...register('price')}
+                                                name='price' id='price' type={'number'} className={`form-control w-50 ${errors.price && 'error-border'}`} dir="ltr" />
+                                        </div>
+                                        {errors.price && <p className='error-message'>السعر مطلوب</p>}
+
+                                        <div className="nebras mt-5">
+                                            <button
+                                                className="btn hero-btn-primary fs-5"
+                                                disabled={isPostEventLoading}
+                                            >
+
+                                                {isPostEventLoading ?
+                                                    <i className="fas fa-spinner fa-spin"></i> :
+                                                    <span className="m-5">إضافة</span>
+                                                }
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
+                </DashboardLayout>
+
+                <div className="d-lg-none">
+                    <MobileEvents />
+                </div>
+            </AuthProvider>
         </>
     )
 }

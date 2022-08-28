@@ -34,7 +34,6 @@ function EventsPage() {
         async function getEvents() {
             try {
                 const response = await axios.get('/events')
-
                 const all_events = []
 
                 for (const singleEvent of response.data.data) {
@@ -55,7 +54,8 @@ function EventsPage() {
                         'end_time': end_time.format('hh:mmA'),
                         'singer_name': data.singer_name,
                         'singer_img': data.singer_img,
-                        'price': data.price
+                        'price': data.price,
+                        'description': data.description
                     }
 
                     all_events.push(event)
@@ -138,7 +138,9 @@ function EventsPage() {
                                             </div>
                                             <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التاريخ / {event.date}</div>
                                             <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التوقيت / {event.start_time} إلى {event.end_time}</div>
-                                            <div className="mb-4 din-next" style={{ fontSize: '15px' }}>محتوى نصي محتوى نصي محتوى نصي محتوى نصي محتوى نصي</div>
+                                            <div className="mb-4 din-next" style={{ fontSize: '15px' }}>
+                                                {event.description}
+                                            </div>
 
                                             <Link
                                                 to={`/events/${event.id}`}

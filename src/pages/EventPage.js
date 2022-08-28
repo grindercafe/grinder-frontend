@@ -338,6 +338,7 @@ function EventPage() {
     })
 
 
+    // get event
     useEffect(() => {
         async function getEvent() {
 
@@ -360,6 +361,7 @@ function EventPage() {
                     'singer_name': data.singer_name,
                     'singer_img': data.singer_img,
                     'price': data.price,
+                    'description': data.description,
                     'bookings': data.bookings
                 }
 
@@ -377,6 +379,7 @@ function EventPage() {
     }, [id])
 
 
+    // get tables
     useEffect(() => {
         async function getTables() {
             try {

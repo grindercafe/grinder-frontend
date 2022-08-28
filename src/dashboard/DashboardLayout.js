@@ -1,8 +1,12 @@
 import logo from '../assets/images/black-logo.png'
-import { Link, useMatch, useResolvedPath } from "react-router-dom"
+import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom"
 import { useRef } from "react"
+import Dashboard from './Dashboard'
+import { logout } from '../Auth'
+import AuthProvider from '../components/AuthProvider'
 
 function DashboardLayout({ children }) {
+    const navigate = useNavigate()
     const nav = useRef()
     const body = document.getElementById('body')
 
@@ -15,16 +19,21 @@ function DashboardLayout({ children }) {
     //     }
     // }
 
+    const handleLogout = () => {
+        logout()
+        navigate('/dashboard/login')
+    }
+
     return (
-        <div>
+        <Dashboard>
             {/* {
                 isLoading &&
                 <div className={'bg-overlay'}>
                     <i className="mx-4 fas fa-spinner fa-pulse fs-1"></i>
                 </div>
             } */}
-            <div className="bg-white text-black d-lg-block d-none" style={{ height: '100vh' }}>
-                <div className="d-flex bg-white">
+            <div className="d-none d-lg-block">
+                <div className="d-flex">
                     <div className="sidebar">
                         <Link to={'/'}>
                             <img src={logo} alt="logo" className='' />
@@ -35,13 +44,14 @@ function DashboardLayout({ children }) {
                             <CustomLink to={'/dashboard/bookings'}>الحجوزات</CustomLink>
                         </ul>
                         <div>
-                            <Link to={'/'} className="text-danger text-decoration-none">تسجيل الخروج</Link>
+                            <button onClick={handleLogout} className="text-danger text-decoration-none">تسجيل الخروج</button>
                         </div>
                     </div>
                     <div className='col-8 sidebar-content din-next'>{children}</div>
                 </div>
             </div>
-        </div>
+        </Dashboard>
+
     )
 }
 
