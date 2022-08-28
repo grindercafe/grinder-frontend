@@ -603,7 +603,7 @@ function EventPage() {
                                 <div className="mt-4 fs-3">{event.singer_name}</div>
                                 <div className="mt-3 fs-5">التاريخ: {event.date}</div>
                                 <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
-                                <div className="mt-5 fs-5">وصف نصي وصف نصي وصف نصي</div>
+                                <div className="mt-5 fs-5">{event.description}</div>
                             </Box>
                         </Collapse>
                     </div>
