@@ -146,20 +146,19 @@ function Events() {
             'singer_name': data.singer_name,
             'singer_img': data.singer_img,
             'price': data.price,
+            'description': data.description
         }
 
         try {
             const response = await axios.post('/event', body)
             successToast()
         } catch (error) {
+            console.log(error);
             errorToast()
         }
         handleCloseModal()
         setIsPostEventLoading(false)
     }
-
-
-
 
 
     return (
@@ -269,7 +268,7 @@ function Events() {
 
 
                                         <label htmlFor="description" className="form-label mt-4"> وصف الحفلة</label>
-                                        <textarea className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
+                                        <textarea {...register('description')} className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
 
 
                                         <div className="d-flex justify-content-between align-items-center mt-4">

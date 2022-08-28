@@ -668,7 +668,7 @@ function EventPage() {
                             cursor: 'pointer'
                         }} onClick={onTogglePaymentForm}>
                             <div>
-                                الدفع
+                                معلومات الاتصال
                             </div>
                             <BsChevronDown className={`arrow ${isPaymentFormOpen && 'down-arrow'}`} />
                         </div>
