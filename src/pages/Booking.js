@@ -56,9 +56,9 @@ function Booking() {
                 <Alert status='success' className="success-alert">
                     <AlertIcon marginLeft={10} />
                     <Box className="ms-5 lh-lg">
-                        تم الحجز بنجاح، يرجى الإحتفاظ برابط هذه الصفحة
+                        تم الحجز بنجاح، سنتواصل معك في أقرب وقت
                         <br />
-                        <button onClick={handleCopyLink} className="btn text-light text-decoration-underline">اضغط هنا لنسخ الرابط</button>
+                        {/* <button onClick={handleCopyLink} className="btn text-light text-decoration-underline">اضغط هنا لنسخ الرابط</button> */}
                     </Box>
                     <CloseButton
                         position='absolute'

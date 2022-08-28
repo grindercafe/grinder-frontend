@@ -1,5 +1,4 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom"
-import axios from '../axios'
 import { useState, useEffect } from "react"
 import moment from "moment"
 import Layout from "../components/Layout"
@@ -11,6 +10,8 @@ import { BsChevronDown } from "react-icons/bs"
 import { useForm } from "react-hook-form"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+// import axios from 'axios'
+import axios from '../axios'
 import {
     Alert,
     AlertIcon,
@@ -318,6 +319,29 @@ const schema = yup.object().shape({
 })
 
 function EventPage() {
+
+
+
+    // async function getToken() {
+    //     try {
+    // const body = {
+    //     'amount': totalPrice,
+    //     "phone_number": data.phone_number,
+    //     "name": data.name,
+    //     "booking_id": booking.id
+    // }
+    //         const response = await axios.get('/payment')
+    //         setToken(response.data)
+    //         // return response.data
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
+
+    // useEffect(()=> {
+    //     getToken()
+    // }, [])
+
     const [tables, setTables] = useState([])
     const { id } = useParams()
     const [event, setEvent] = useState({})
@@ -424,7 +448,7 @@ function EventPage() {
 
         setTimeout(() => {
             setTablesLoading(false)
-        }, 1500)
+        }, 2000)
     }, [event])
 
     const isEmptyPlace = (index) => {
@@ -491,7 +515,7 @@ function EventPage() {
     const toast = useToast()
 
     const onSubmit = async (data) => {
-        if(selectedTables.length === 0)
+        if (selectedTables.length === 0)
             return toast({
                 render: () => (
                     <Alert status={'error'} variant='left-accent' color={'black'}>
@@ -499,15 +523,15 @@ function EventPage() {
                         <div className="ps-5 pe-3 fs-7">
                             {'يرجى اختيار طاولة'}
                         </div>
-    
+
                         <CloseButton onClick={() => toast.closeAll()} />
                     </Alert>
-    
+
                 ),
                 duration: 9000,
                 position: 'top-left',
             })
-        setIsPostBookingLoading(true)
+
         const body = {
             'total_price': totalPrice,
             // 'total': totalCapacity,
@@ -519,6 +543,7 @@ function EventPage() {
             }
         }
         try {
+            setIsPostBookingLoading(true)
             const response = await axios.post('/booking', body)
             const booking = response.data.data
             navigate('/bookings/' + booking.uuid + '?token=' + booking.token, {
@@ -532,10 +557,10 @@ function EventPage() {
                         <div className="ps-5 pe-3 fs-7">
                             {'حصل خطأ ما, حاول مجدداً لاحقاً'}
                         </div>
-    
+
                         <CloseButton onClick={() => toast.closeAll()} />
                     </Alert>
-    
+
                 ),
                 duration: 9000,
                 position: 'top-left',
@@ -561,145 +586,145 @@ function EventPage() {
             }
 
             {
-                (!isLoading && !error ) &&
+                (!isLoading && !error) &&
                 <div className="container col-lg-8">
-                <div>
-                    <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
-                        cursor: 'pointer'
-                    }} onClick={onToggleEventSummary}>
-                        <div>
-                            ملخص الحفلة
+                    <div>
+                        <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
+                            cursor: 'pointer'
+                        }} onClick={onToggleEventSummary}>
+                            <div>
+                                ملخص الحفلة
+                            </div>
+                            <BsChevronDown className={`arrow ${isEventSummaryOpen && 'down-arrow'}`} />
                         </div>
-                        <BsChevronDown className={`arrow ${isEventSummaryOpen && 'down-arrow'}`} />
+                        <Collapse in={isEventSummaryOpen} animateOpacity>
+                            <Box className="background-secondary p-5">
+                                <img src={event.singer_img} alt="singer_img" />
+                                <div className="mt-4 fs-3">{event.singer_name}</div>
+                                <div className="mt-3 fs-5">التاريخ: {event.date}</div>
+                                <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
+                                <div className="mt-5 fs-5">وصف نصي وصف نصي وصف نصي</div>
+                            </Box>
+                        </Collapse>
                     </div>
-                    <Collapse in={isEventSummaryOpen} animateOpacity>
-                        <Box className="background-secondary p-5">
-                            <img src={event.singer_img} alt="singer_img" />
-                            <div className="mt-4 fs-3">{event.singer_name}</div>
-                            <div className="mt-3 fs-5">التاريخ: {event.date}</div>
-                            <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
-                            <div className="mt-5 fs-5">وصف نصي وصف نصي وصف نصي</div>
-                        </Box>
-                    </Collapse>
-                </div>
-                <div className="mt-4">
-                    <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
-                        cursor: 'pointer'
-                    }} onClick={onToggleBookingDetails}>
-                        <div>
-                            تفاصيل الحجز
+                    <div className="mt-4">
+                        <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
+                            cursor: 'pointer'
+                        }} onClick={onToggleBookingDetails}>
+                            <div>
+                                تفاصيل الحجز
+                            </div>
+                            <BsChevronDown className={`arrow ${isBookingDetailsOpen && 'down-arrow'}`} />
                         </div>
-                        <BsChevronDown className={`arrow ${isBookingDetailsOpen && 'down-arrow'}`} />
-                    </div>
-                    <Collapse in={isBookingDetailsOpen} animateOpacity>
-                        {
-                            tablesLoading || isLoading ?
-                                <div>Loading</div> :
-                                <Box className="background-secondary p-4">
-                                    <div className="position-relative">
-                                        <div className="grid-container" dir="ltr">
-                                            {
-                                                tables.map((table, index) => (
-                                                    table ?
-                                                        <div
-                                                            key={'number:' + table.number}
-                                                            onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                        <Collapse in={isBookingDetailsOpen} animateOpacity>
+                            {
+                                tablesLoading || isLoading ?
+                                    <div>Loading</div> :
+                                    <Box className="background-secondary p-4">
+                                        <div className="position-relative">
+                                            <div className="grid-container" dir="ltr">
+                                                {
+                                                    tables.map((table, index) => (
+                                                        table ?
+                                                            <div
+                                                                key={'number:' + table.number}
+                                                                onClick={() => table.is_available && toggleSelectedTable(index)} className={`
                                                         text-prime 
                                                         grid-item
                                                         position-relative 
                                                         ${table.selected && 'selected-grid'}
                                                         ${!table.is_available && 'grid-item-disabled'}`}
-                                                        >
-                                                            <img className="seat-img" src={table.img} width={'60%'} alt="" />
-                                                            <div className="seat-id">{table.number}</div>
-                                                        </div> :
-                                                        <div key={index}></div>
-                                                ))
-                                            }
+                                                            >
+                                                                <img className="seat-img" src={table.img} width={'60%'} alt="" />
+                                                                <div className="seat-id">{table.number}</div>
+                                                            </div> :
+                                                            <div key={index}></div>
+                                                    ))
+                                                }
+                                            </div>
+                                            <div className="stage">
+                                                المسرح
+                                            </div>
+                                            <div className="entry">
+                                                المدخل
+                                            </div>
                                         </div>
-                                        <div className="stage">
-                                            المسرح
+                                        <div className="container w-75 mt-5">
+                                            <div className="d-flex justify-content-between align-items-center mb-3">
+                                                <div className="booking-details-label fs-5">عدد المقاعد</div>
+                                                <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
+                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div className="booking-details-label fs-5">الإجمالي</div>
+                                                <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
+                                            </div>
                                         </div>
-                                        <div className="entry">
-                                            المدخل
-                                        </div>
-                                    </div>
-                                    <div className="container w-75 mt-5">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="booking-details-label fs-5">عدد المقاعد</div>
-                                            <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div className="booking-details-label fs-5">الإجمالي</div>
-                                            <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
-                                        </div>
-                                    </div>
-                                </Box>
-                        }
-                    </Collapse>
-                </div>
-                <div className="mt-4">
-                    <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
-                        cursor: 'pointer'
-                    }} onClick={onTogglePaymentForm}>
-                        <div>
-                            الدفع
-                        </div>
-                        <BsChevronDown className={`arrow ${isPaymentFormOpen && 'down-arrow'}`} />
+                                    </Box>
+                            }
+                        </Collapse>
                     </div>
-                    <Collapse in={isPaymentFormOpen} animateOpacity>
-                        <Box className="background-secondary p-4">
-                            <form onSubmit={handleSubmit(onSubmit)}>
-                                <div>
-                                    <label
-                                        className="mb-2 form-label"
-                                        htmlFor="customer_name">الاسم *</label>
-                                    <input
-                                        {...register('customer_name')}
-                                        className={`form-control mb-2 p-3 ${errors.customer_name && 'error-border'}`}
-                                        type="text"
-                                        id="customer_name"
-                                        placeholder="أدخل الاسم"
-                                    />
-                                    {errors.customer_name && <p className="error-message">اسم العميل مطلوب</p>}
-                                    <label
-                                        className="mb-2 form-label mt-4" htmlFor="customer_phone_number">رقم الهاتف *</label>
-                                    <input
-                                        {...register('phone_number')}
-                                        className={`form-control p-3 ${errors.phone_number && 'error-border'}`}
-                                        placeholder="Ex: 05xxxxxxxx"
-                                        id="customer_phone_number"
-                                        type="text"
-                                        dir="ltr"
-                                    />
-                                    {errors.phone_number && <p className="error-message mt-2">يجب ان يكون رقم الهاتف صالح</p>}
+                    <div className="mt-4">
+                        <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
+                            cursor: 'pointer'
+                        }} onClick={onTogglePaymentForm}>
+                            <div>
+                                الدفع
+                            </div>
+                            <BsChevronDown className={`arrow ${isPaymentFormOpen && 'down-arrow'}`} />
+                        </div>
+                        <Collapse in={isPaymentFormOpen} animateOpacity>
+                            <Box className="background-secondary p-4">
+                                <form onSubmit={handleSubmit(onSubmit)}>
+                                    <div>
+                                        <label
+                                            className="mb-2 form-label"
+                                            htmlFor="customer_name">الاسم *</label>
+                                        <input
+                                            {...register('customer_name')}
+                                            className={`form-control mb-2 p-3 ${errors.customer_name && 'error-border'}`}
+                                            type="text"
+                                            id="customer_name"
+                                            placeholder="أدخل الاسم"
+                                        />
+                                        {errors.customer_name && <p className="error-message">اسم العميل مطلوب</p>}
+                                        <label
+                                            className="mb-2 form-label mt-4" htmlFor="customer_phone_number">رقم الهاتف *</label>
+                                        <input
+                                            {...register('phone_number')}
+                                            className={`form-control p-3 ${errors.phone_number && 'error-border'}`}
+                                            placeholder="Ex: 05xxxxxxxx"
+                                            id="customer_phone_number"
+                                            type="text"
+                                            dir="ltr"
+                                        />
+                                        {errors.phone_number && <p className="error-message mt-2">يجب ان يكون رقم الهاتف صالح</p>}
 
-                                    <label
-                                        className="mb-2 form-label mt-4" htmlFor="customer_phone_number_confirmation">تأكيد رقم الهاتف *</label>
-                                    <input
-                                        {...register('phone_number_confirmation')}
-                                        className={`form-control p-3 
+                                        <label
+                                            className="mb-2 form-label mt-4" htmlFor="customer_phone_number_confirmation">تأكيد رقم الهاتف *</label>
+                                        <input
+                                            {...register('phone_number_confirmation')}
+                                            className={`form-control p-3 
                                         ${errors.phone_number_confirmation && 'error-border'}`}
-                                        placeholder="Ex: 05xxxxxxxx"
-                                        id="phone_number_confirmation"
-                                        type="text"
-                                        dir="ltr"
-                                    />
-                                    {errors.phone_number_confirmation && <p className="error-message mt-2">يجب ان تتطابق الارقام</p>}
+                                            placeholder="Ex: 05xxxxxxxx"
+                                            id="phone_number_confirmation"
+                                            type="text"
+                                            dir="ltr"
+                                        />
+                                        {errors.phone_number_confirmation && <p className="error-message mt-2">يجب ان تتطابق الارقام</p>}
 
-                                </div>
-                                <button type={"submit"} className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isPostBookingLoading}>
-                                    {isPostBookingLoading ?
-                                        <i className="fas fa-spinner fa-spin"></i> :
-                                        <span className="m-5">إتمام الحجز</span>
-                                    }
-                                </button>
-                            </form>
-                        </Box>
-                    </Collapse>
+                                    </div>
+                                    <button className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isPostBookingLoading}>
+                                        {isPostBookingLoading ?
+                                            <i className="fas fa-spinner fa-spin"></i> :
+                                            <span className="m-5">إتمام الحجز</span>
+                                        }
+                                    </button>
+                                </form>
+                            </Box>
+                        </Collapse>
+                    </div>
                 </div>
-            </div>
-                
+
             }
         </Layout>
     )
