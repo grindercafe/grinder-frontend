@@ -510,10 +510,27 @@ function EventPage() {
         setSelectedTables(selectedTs)
     }
 
+    // async function getToken() {
+    //     try {
+    //         const res = await axios.
+    //     } catch (error) {
+
+    //     }
+    // }
+
     const navigate = useNavigate()
     const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
     const toast = useToast()
 
+    const [payment, setPayment] = useState({
+        'transactionNo': '',
+        'url': ''
+    })
+
+    async function makePayment(data) {
+        // try {
+
+    }
     const onSubmit = async (data) => {
         if (selectedTables.length === 0)
             return toast({
@@ -532,40 +549,53 @@ function EventPage() {
                 position: 'top-left',
             })
 
-        const body = {
-            'total_price': totalPrice,
-            // 'total': totalCapacity,
-            'event_id': id,
-            'tables': selectedTables,
-            'customer': {
-                'name': data.customer_name,
-                'phone_number': data.phone_number,
-            }
+        const paymentData = {
+            'amount': totalPrice,
+            'name': data.customer_name,
+            'phone_number': data.phone_number
         }
-        try {
-            setIsPostBookingLoading(true)
-            const response = await axios.post('/booking', body)
-            const booking = response.data.data
-            navigate('/bookings/' + booking.uuid + '?token=' + booking.token, {
-                state: { isAlertOpen: 1 }
-            })
-        } catch (error) {
-            return toast({
-                render: () => (
-                    <Alert status={'error'} variant='left-accent' color={'black'}>
-                        <AlertIcon />
-                        <div className="ps-5 pe-3 fs-7">
-                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
-                        </div>
 
-                        <CloseButton onClick={() => toast.closeAll()} />
-                    </Alert>
+        axios.post('/payment', paymentData)
+            .then(async (res) => {
+                setIsPostBookingLoading(true)
+                const body = {
+                    'total_price': totalPrice,
+                    'event_id': id,
+                    'tables': selectedTables,
+                    'customer': {
+                        'name': data.customer_name,
+                        'phone_number': data.phone_number,
+                    },
+                    'transactionNo': res.data.transactionNo,
+                }
 
-                ),
-                duration: 9000,
-                position: 'top-left',
+                await axios.post('/booking', body)
+                    .then((re) => {
+                        window.location.replace(res.data.url)
+
+                    })
+                    .catch((error) => {
+                        return toast({
+                            render: () => (
+                                <Alert status={'error'} variant='left-accent' color={'black'}>
+                                    <AlertIcon />
+                                    <div className="ps-5 pe-3 fs-7">
+                                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                    </div>
+
+                                    <CloseButton onClick={() => toast.closeAll()} />
+                                </Alert>
+
+                            ),
+                            duration: 9000,
+                            position: 'top-left',
+                        })
+                    })
+
+                setIsPostBookingLoading(false)
             })
-        }
+            .catch((error) => console.log(error))
+
         setIsPostBookingLoading(false)
     }
 

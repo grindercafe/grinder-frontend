@@ -38,16 +38,16 @@ function MobileBookings() {
                         'booking_number': booking.booking_number,
                         'event': {
                             'id': booking.event?.id,
-                            'date': date.format('YYYY-MM-DD'),
-                            'start_time': start_time,
-                            'end_time': end_time,
+                            'singer_name': booking.event?.singer_name,
                         },
                         'customer': {
                             'id': booking.customer?.id,
                             'name': booking.customer?.name,
                             'phone_number': booking.customer?.phone_number
                         },
-                        'total_price': booking.total_price
+                        'total_price': booking.total_price,
+                        'payment': booking.payment?.status,
+                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA")
                     }
 
                     allBookings.push(bookingTemplate)
@@ -78,6 +78,19 @@ function MobileBookings() {
     useEffect(() => {
         body.style.overflow = 'auto'
     }, [location])
+
+    const handleDelete = async (id) => {
+        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+            try {
+                const response = await axios.delete('/bookings/' + id)
+                console.log(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+            window.location.reload(false);
+        }
+
+    }
 
 
     return (
@@ -121,8 +134,10 @@ function MobileBookings() {
                                     <tr>
                                         <th>رقم الحجز</th>
                                         <th>العميل والحفلة</th>
-                                        <th>التاريخ والوقت</th>
+                                        <th>حالة الدفع</th>
                                         <th>الاجمالي</th>
+                                        <th> مضى عليه </th>
+                                        <th>خيارات</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,14 +156,15 @@ function MobileBookings() {
                                             }).map((booking) => (
                                                 <tr key={booking.id} className="table-card fs-7">
                                                     <td>
-                                                        {booking.booking_number}#
+                                                        {booking.id}#
                                                     </td>
                                                     <td>
                                                         <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
                                                             {booking.customer.phone_number}</a> <br />
-                                                        {booking.event.id}#
+                                                        #<Link to={`/events/${booking.event.id}`} className='text-primary'>{booking.event.singer_name}</Link>
                                                     </td>
-                                                    <td>
+                                                    <td>{booking.payment}</td>
+                                                    {/* <td>
                                                         {booking.event.date} <br />
                                                         <div className='d-flex'>
                                                             <div>
@@ -161,8 +177,12 @@ function MobileBookings() {
                                                                 <div>{arabicPeriods(booking.event.end_time.format('A'))}</div>
                                                             </div>
                                                         </div>
-                                                    </td>
+                                                    </td> */}
                                                     <td>{booking.total_price} ر.س</td>
+                                                    <td>{booking.created_at}</td>
+                                                    <td className='text-danger'>
+                                                        <button onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                    </td>
                                                 </tr>
                                             ))
                                     }
