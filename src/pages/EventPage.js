@@ -524,54 +524,54 @@ function EventPage() {
 
 
     async function onSubmit(data) {
-            if (selectedTables.length === 0)
-                return toast({
-                    render: () => (
-                        <Alert status={'error'} variant='left-accent' color={'black'}>
-                            <AlertIcon />
-                            <div className="ps-5 pe-3 fs-7">
-                                {'يرجى اختيار طاولة'}
-                            </div>
+        if (selectedTables.length === 0)
+            return toast({
+                render: () => (
+                    <Alert status={'error'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'يرجى اختيار طاولة'}
+                        </div>
 
-                            <CloseButton onClick={() => toast.closeAll()} />
-                        </Alert>
+                        <CloseButton onClick={() => toast.closeAll()} />
+                    </Alert>
 
-                    ),
-                    duration: 9000,
-                    position: 'top-left',
-                })
+                ),
+                duration: 9000,
+                position: 'top-left',
+            })
 
-            const paymentData = {
-                'amount': totalPrice,
-                'name': data.customer_name,
-                'phone_number': data.phone_number
-            }
+        const paymentData = {
+            'amount': totalPrice,
+            'name': data.customer_name,
+            'phone_number': data.phone_number
+        }
 
-            axios.post('/payment', paymentData)
-                .then(async (res) => {
-                    const body = {
-                        'total_price': totalPrice,
-                        'event_id': id,
-                        'tables': selectedTables,
-                        'customer': {
-                            'name': data.customer_name,
-                            'phone_number': data.phone_number,
-                        },
-                        'transactionNo': res.data.transactionNo,
-                    }
+        axios.post('/payment', paymentData)
+            .then(async (res) => {
+                const body = {
+                    'total_price': totalPrice,
+                    'event_id': id,
+                    'tables': selectedTables,
+                    'customer': {
+                        'name': data.customer_name,
+                        'phone_number': data.phone_number,
+                    },
+                    'transactionNo': res.data.transactionNo,
+                }
 
-                    await axios.post('/booking', body)
-                        .then((re) => {
-                            window.location.replace(res.data.url)
-
-                        })
-                        .catch((error) => {
+                await axios.post('/booking', body)
+                    .then((re) => {
+                        window.location.replace(res.data.url)
+                    })
+                    .catch((error) => {
+                        if (error.response.data.message) {
                             return toast({
                                 render: () => (
                                     <Alert status={'error'} variant='left-accent' color={'black'}>
                                         <AlertIcon />
                                         <div className="ps-5 pe-3 fs-7">
-                                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                            {'أحد الطاولات محجوزة مسبقا'}
                                         </div>
 
                                         <CloseButton onClick={() => toast.closeAll()} />
@@ -581,9 +581,25 @@ function EventPage() {
                                 duration: 9000,
                                 position: 'top-left',
                             })
+                        }
+                        return toast({
+                            render: () => (
+                                <Alert status={'error'} variant='left-accent' color={'black'}>
+                                    <AlertIcon />
+                                    <div className="ps-5 pe-3 fs-7">
+                                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                    </div>
+
+                                    <CloseButton onClick={() => toast.closeAll()} />
+                                </Alert>
+
+                            ),
+                            duration: 9000,
+                            position: 'top-left',
                         })
-                })
-                .catch((error) => console.log(error))
+                    })
+            })
+            .catch((error) => console.log('payment error: ' + error))
 
     }
 
