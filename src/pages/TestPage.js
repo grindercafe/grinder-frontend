@@ -236,7 +236,7 @@ function TestPage() {
                     'transactionNo': res.data.transactionNo,
                 }
 
-                await axios.post('/booking', body)
+                await axios.post('/test_booking', body)
                     .then((re) => {
                         window.location.replace(res.data.url)
                     })
