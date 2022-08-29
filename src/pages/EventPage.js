@@ -541,7 +541,8 @@ function EventPage() {
                         window.location.replace(res.data.url)
                     })
                     .catch((error) => {
-                        if (error.response.data.message) {
+                        console.log(error)
+                        if (error.response.data.message == 'overlapping') {
                             return toast({
                                 render: () => (
                                     <Alert status={'error'} variant='left-accent' color={'black'}>
