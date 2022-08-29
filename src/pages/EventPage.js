@@ -357,7 +357,7 @@ function EventPage() {
     const [error, setError] = useState(false)
 
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(schema)
     })
 
@@ -519,84 +519,72 @@ function EventPage() {
     // }
 
     const navigate = useNavigate()
-    const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
+    // const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
     const toast = useToast()
 
-    const [payment, setPayment] = useState({
-        'transactionNo': '',
-        'url': ''
-    })
 
-    async function makePayment(data) {
-        // try {
+    async function onSubmit(data) {
+            if (selectedTables.length === 0)
+                return toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'يرجى اختيار طاولة'}
+                            </div>
 
-    }
-    const onSubmit = async (data) => {
-        if (selectedTables.length === 0)
-            return toast({
-                render: () => (
-                    <Alert status={'error'} variant='left-accent' color={'black'}>
-                        <AlertIcon />
-                        <div className="ps-5 pe-3 fs-7">
-                            {'يرجى اختيار طاولة'}
-                        </div>
+                            <CloseButton onClick={() => toast.closeAll()} />
+                        </Alert>
 
-                        <CloseButton onClick={() => toast.closeAll()} />
-                    </Alert>
+                    ),
+                    duration: 9000,
+                    position: 'top-left',
+                })
 
-                ),
-                duration: 9000,
-                position: 'top-left',
-            })
+            const paymentData = {
+                'amount': totalPrice,
+                'name': data.customer_name,
+                'phone_number': data.phone_number
+            }
 
-        const paymentData = {
-            'amount': totalPrice,
-            'name': data.customer_name,
-            'phone_number': data.phone_number
-        }
+            axios.post('/payment', paymentData)
+                .then(async (res) => {
+                    const body = {
+                        'total_price': totalPrice,
+                        'event_id': id,
+                        'tables': selectedTables,
+                        'customer': {
+                            'name': data.customer_name,
+                            'phone_number': data.phone_number,
+                        },
+                        'transactionNo': res.data.transactionNo,
+                    }
 
-        axios.post('/payment', paymentData)
-            .then(async (res) => {
-                setIsPostBookingLoading(true)
-                const body = {
-                    'total_price': totalPrice,
-                    'event_id': id,
-                    'tables': selectedTables,
-                    'customer': {
-                        'name': data.customer_name,
-                        'phone_number': data.phone_number,
-                    },
-                    'transactionNo': res.data.transactionNo,
-                }
+                    await axios.post('/booking', body)
+                        .then((re) => {
+                            window.location.replace(res.data.url)
 
-                await axios.post('/booking', body)
-                    .then((re) => {
-                        window.location.replace(res.data.url)
-
-                    })
-                    .catch((error) => {
-                        return toast({
-                            render: () => (
-                                <Alert status={'error'} variant='left-accent' color={'black'}>
-                                    <AlertIcon />
-                                    <div className="ps-5 pe-3 fs-7">
-                                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
-                                    </div>
-
-                                    <CloseButton onClick={() => toast.closeAll()} />
-                                </Alert>
-
-                            ),
-                            duration: 9000,
-                            position: 'top-left',
                         })
-                    })
+                        .catch((error) => {
+                            return toast({
+                                render: () => (
+                                    <Alert status={'error'} variant='left-accent' color={'black'}>
+                                        <AlertIcon />
+                                        <div className="ps-5 pe-3 fs-7">
+                                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                        </div>
 
-                setIsPostBookingLoading(false)
-            })
-            .catch((error) => console.log(error))
+                                        <CloseButton onClick={() => toast.closeAll()} />
+                                    </Alert>
 
-        setIsPostBookingLoading(false)
+                                ),
+                                duration: 9000,
+                                position: 'top-left',
+                            })
+                        })
+                })
+                .catch((error) => console.log(error))
+
     }
 
     return (
@@ -743,8 +731,9 @@ function EventPage() {
                                         {errors.phone_number_confirmation && <p className="error-message mt-2">يجب ان تتطابق الارقام</p>}
 
                                     </div>
-                                    <button className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isPostBookingLoading}>
-                                        {isPostBookingLoading ?
+                                    <button
+                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isSubmitting}>
+                                        {isSubmitting ?
                                             <i className="fas fa-spinner fa-spin"></i> :
                                             <span className="m-5">إتمام الحجز</span>
                                         }

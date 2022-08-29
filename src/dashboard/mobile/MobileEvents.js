@@ -179,6 +179,20 @@ function MobileEvents() {
         body.style.overflow = 'auto'
     }, [location])
 
+
+    const handleDelete = async (id) => {
+        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+            try {
+                const response = await axios.delete('/events/' + id)
+                console.log(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+            window.location.reload(false);
+        }
+
+    }
+
     return (
         <>
             <div className='dashboard-mobile din-next'>
@@ -216,6 +230,7 @@ function MobileEvents() {
                                     <tr>
                                         <th>الرقم</th>
                                         <th>التاريخ والوقت</th>
+                                        <th>السعر</th>
                                         <th>الحالة</th>
                                     </tr>
                                 </thead>
@@ -243,7 +258,10 @@ function MobileEvents() {
                                                         {event.date} <br />
                                                         {event.start_time} - {event.end_time}
                                                     </td>
-                                                    <td>جديدة</td>
+                                                    <td>{event.price}</td>
+                                                    <td className='text-danger'>
+                                                        <button onClick={() => handleDelete(event.id)}>حذف</button>
+                                                    </td>
                                                 </tr>
                                             ))
                                     }

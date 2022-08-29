@@ -160,6 +160,18 @@ function Events() {
         setIsPostEventLoading(false)
     }
 
+    const handleDelete = async (id) => {
+        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+            try {
+                const response = await axios.delete('/events/' + id)
+                console.log(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+            window.location.reload(false);
+        }
+
+    }
 
     return (
         <>
@@ -187,6 +199,14 @@ function Events() {
                                 {
                                     (!isLoading && !error) &&
                                     <table className="table">
+                                        <thead>
+                                            <tr>
+                                                <th>الرقم</th>
+                                                <th>التاريخ والوقت</th>
+                                                <th>السعر</th>
+                                                <th>خيارات</th>
+                                            </tr>
+                                        </thead>
                                         <tbody>
                                             {
                                                 events.length === 0 ?
@@ -203,15 +223,17 @@ function Events() {
                                                     }).map((event) => (
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
-                                                                {event.id}# <br />
-                                                                الفنان: {event.singer_name}
+                                                                {event.singer_name} <br />
+                                                                {event.id}#
                                                             </td>
                                                             <td>
                                                                 {event.date} <br />
                                                                 {event.start_time} - {event.end_time}
                                                             </td>
-                                                            <td>السعر للشخص: {event.price}</td>
-                                                            <td>جديدة</td>
+                                                            <td>{event.price}</td>
+                                                            <td className='text-danger'>
+                                                                <button onClick={() => handleDelete(event.id)}>حذف</button>
+                                                            </td>
                                                         </tr>
                                                     ))
                                             }
