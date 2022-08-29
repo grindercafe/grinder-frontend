@@ -16,8 +16,7 @@ import {
     Alert,
     AlertIcon,
     CloseButton,
-    useToast,
-    Progress
+    useToast
 } from '@chakra-ui/react'
 
 const t = [
@@ -319,29 +318,6 @@ const schema = yup.object().shape({
 })
 
 function EventPage() {
-
-
-
-    // async function getToken() {
-    //     try {
-    // const body = {
-    //     'amount': totalPrice,
-    //     "phone_number": data.phone_number,
-    //     "name": data.name,
-    //     "booking_id": booking.id
-    // }
-    //         const response = await axios.get('/payment')
-    //         setToken(response.data)
-    //         // return response.data
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
-    // useEffect(()=> {
-    //     getToken()
-    // }, [])
-
     const [tables, setTables] = useState([])
     const { id } = useParams()
     const [event, setEvent] = useState({})
@@ -605,7 +581,6 @@ function EventPage() {
 
     return (
         <Layout>
-
             {
                 isLoading &&
                 <div className="container col-lg-8 mt-5 text-center">

@@ -58,7 +58,9 @@ function EventsPage() {
                         'description': data.description
                     }
 
-                    all_events.push(event)
+                    if(event.id != 18) {
+                        all_events.push(event)
+                    }
                 }
 
                 setEvents(all_events)

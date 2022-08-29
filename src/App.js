@@ -27,7 +27,6 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:id" element={<EventPage />} />
           <Route path="/location" element={<OurLocationPage />} />
-          <Route path="/test" element={<TestPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/events" element={<Events />} />
           <Route path="/dashboard/customers" element={<Customers />} />
@@ -35,6 +34,7 @@ function App() {
           <Route path="/bookings/:uuid" element={<Booking />} />
           <Route path="/dashboard/login" element={<Login />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/test" element={<TestPage /> } />
           {/*<Route path="/events/:id" element={<Event />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/bookings/:id" element={<Booking />} />
