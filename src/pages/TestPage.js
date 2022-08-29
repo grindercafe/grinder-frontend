@@ -52,7 +52,7 @@ function TestPage() {
         async function getEvent() {
 
             try {
-                const response = await axios.get('/events/18')
+                const response = await axios.get('/events/25')
 
                 const data = response.data.data
 
