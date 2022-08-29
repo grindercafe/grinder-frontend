@@ -227,7 +227,7 @@ function TestPage() {
             .then(async (res) => {
                 const body = {
                     'total_price': totalPrice,
-                    'event_id': id,
+                    'event_id': 25,
                     'tables': selectedTables,
                     'customer': {
                         'name': data.customer_name,
