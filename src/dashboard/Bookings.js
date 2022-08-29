@@ -84,7 +84,7 @@ function Bookings() {
                         <div className="fs-3 mb-5">قائمة الحجوزات</div>
                         <SearchField
                             onChange={(e) => setSearchKey(e.target.value)}
-                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل" />
+                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
 
                         <div className="my-5">
                             <div className="table-wrapper">
@@ -121,7 +121,8 @@ function Bookings() {
                                                         if (searchKey === '')
                                                             return booking
                                                         else if (booking.id.toString().includes(searchKey) ||
-                                                            booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
+                                                            booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase()) ||
+                                                            booking.event.singer_name.toLowerCase().includes(searchKey.toLowerCase())) {
                                                             return booking
                                                         }
                                                     }).map((booking) => (

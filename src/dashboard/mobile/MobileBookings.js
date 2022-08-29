@@ -110,7 +110,7 @@ function MobileBookings() {
                     <div className="mt-5">
                         <SearchField
                             onChange={(e) => setSearchKey(e.target.value)}
-                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل" />
+                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
                     </div>
 
 
@@ -151,8 +151,11 @@ function MobileBookings() {
                                             bookings.filter((booking) => {
                                                 if (searchKey === '')
                                                     return booking
-                                                else if (booking.id.toString().includes(searchKey) ||
-                                                    booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase())) {
+                                                else if (
+                                                    booking.id.toString().includes(searchKey) ||
+                                                    booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase()) ||
+                                                    booking.event.singer_name.toLowerCase().includes(searchKey.toLowerCase())
+                                                    ) {
                                                     return booking
                                                 }
                                             }).map((booking) => (
