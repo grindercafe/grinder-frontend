@@ -419,7 +419,7 @@ input::-webkit-inner-spin-button {
 
 .event-card-content img {
     width: 100%;
-    height: 150px;
+    height: 220px;
     object-fit: cover;
     object-position: 0 12%;
 
@@ -828,11 +828,6 @@ td {
     pointer-events: none;
 }
 
-.booking-singer-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
 
 .frame {
     border: #D8C7B7 solid 1px;
@@ -1119,4 +1114,8 @@ td {
     padding: .8rem !important;
     width: 100%;
     margin-top: 1rem !important;
+}
+
+.event-summary img {
+   max-height: 400px;
 }

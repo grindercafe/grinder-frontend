@@ -10,7 +10,7 @@ function Hero() {
                     <p className="mb-5 text-white" style={{ fontSize: "21px" }}>إستمتع بجلسات قرايندر وأصنع يوماً مميزاً <br />
                         قهوة, طرب و اكثر...</p>
                     <Link to={'/events'} className={'btn hero-button-secondary'}>
-                        احجز الان
+                        قائمة الحفلات
                     </Link>
                     <a href='https://drive.google.com/file/d/1ou9XHYQZMMdciUHEVDZl4CYd9LVmkQkA/view' target={'_blank'} className='btn hero-button-transparent'>
                         قائمة الطعام
@@ -32,7 +32,7 @@ function Hero() {
                         </div>
                         <div className="hero-section-mobile-buttons">
                             <Link to={'/events'} className={'btn hero-btn-primary'}>
-                                احجز الان
+                                قائمة الحفلات
                             </Link>
                             <a href='https://drive.google.com/file/d/1ou9XHYQZMMdciUHEVDZl4CYd9LVmkQkA/view' target={'_blank'} className='btn hero-btn-transparent'>
                                 قائمة الطعام

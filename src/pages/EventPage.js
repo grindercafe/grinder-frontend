@@ -600,7 +600,7 @@ function EventPage() {
                             <BsChevronDown className={`arrow ${isEventSummaryOpen && 'down-arrow'}`} />
                         </div>
                         <Collapse in={isEventSummaryOpen} animateOpacity>
-                            <Box className="background-secondary p-5">
+                            <Box className="background-secondary p-5 event-summary">
                                 <img src={event.singer_img} alt="singer_img" />
                                 <div className="mt-4 fs-3">{event.singer_name}</div>
                                 <div className="mt-3 fs-5">التاريخ: {event.date}</div>
