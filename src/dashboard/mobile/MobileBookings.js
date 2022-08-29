@@ -47,7 +47,8 @@ function MobileBookings() {
                         },
                         'total_price': booking.total_price,
                         'payment': booking.payment?.status,
-                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA")
+                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
+                        'tables': booking.tables
                     }
 
                     allBookings.push(bookingTemplate)
@@ -135,8 +136,9 @@ function MobileBookings() {
                                         <th>رقم الحجز</th>
                                         <th>العميل والحفلة</th>
                                         <th>حالة الدفع</th>
+                                        <th>الطاولات</th>
                                         <th>الاجمالي</th>
-                                        <th> مضى عليه </th>
+                                        <th>مضى عليه</th>
                                         <th>خيارات</th>
                                     </tr>
                                 </thead>
@@ -178,6 +180,13 @@ function MobileBookings() {
                                                             </div>
                                                         </div>
                                                     </td> */}
+                                                    <td>
+                                                        {
+                                                            booking.tables.map((table) => (
+                                                                table.number + ','
+                                                            ))
+                                                        }
+                                                    </td>
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
                                                     <td className='text-danger'>

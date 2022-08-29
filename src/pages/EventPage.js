@@ -486,14 +486,6 @@ function EventPage() {
         setSelectedTables(selectedTs)
     }
 
-    // async function getToken() {
-    //     try {
-    //         const res = await axios.
-    //     } catch (error) {
-
-    //     }
-    // }
-
     const navigate = useNavigate()
     // const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
     const toast = useToast()

@@ -48,7 +48,8 @@ function Bookings() {
                         },
                         'total_price': booking.total_price,
                         'payment': booking.payment?.status,
-                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA")
+                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
+                        'tables': booking.tables
                     }
 
                     allBookings.push(bookingTemplate)
@@ -104,8 +105,9 @@ function Bookings() {
                                                 <th className="p-3 fs-7">رقم الحجز</th>
                                                 <th className="p-3 fs-7">العميل والحفلة</th>
                                                 <th className="p-3 fs-7">حالة الدفع</th>
+                                                <th className="p-3 fs-7">الطاولات</th>
                                                 <th className="p-3 fs-7">الاجمالي</th>
-                                                <th className="p-3 fs-7"> مضى عليه </th>
+                                                <th className="p-3 fs-7">مضى عليه</th>
                                                 <th className="p-3 fs-7">خيارات</th>
                                             </tr>
                                         </thead>
@@ -148,6 +150,13 @@ function Bookings() {
                                                             </div>
                                                         </div>
                                                     </td> */}
+                                                            <td>
+                                                                {
+                                                                    booking.tables.map((table)=> (
+                                                                        table.number + ','
+                                                                    ))
+                                                                }
+                                                            </td>
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
                                                             <td className='text-danger'>
