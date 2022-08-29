@@ -7,7 +7,7 @@ function Hero() {
             <div className="d-lg-flex d-none justify-content-between align-items-center mt-5">
                 <div>
                     <div className="mb-3" style={{ fontSize: "67px" }}>جريندر كافيه</div>
-                    <p className="mb-5 text-white" style={{ fontSize: "21px" }}>إستمتع بجلسات قرايندر وأصنع يوماً مميزاً <br />
+                    <p className="mb-5 text-white" style={{ fontSize: "21px" }}>إستمتع بجلسات جريندر وأصنع يوماً مميزاً <br />
                         قهوة, طرب و اكثر...</p>
                     <Link to={'/events'} className={'btn hero-button-secondary'}>
                         قائمة الحفلات
