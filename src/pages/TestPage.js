@@ -241,38 +241,39 @@ function TestPage() {
                         window.location.replace(res.data.url)
                     })
                     .catch((error) => {
-                        if (error.response.data.message) {
-                            return toast({
-                                render: () => (
-                                    <Alert status={'error'} variant='left-accent' color={'black'}>
-                                        <AlertIcon />
-                                        <div className="ps-5 pe-3 fs-7">
-                                            {'أحد الطاولات محجوزة مسبقا'}
-                                        </div>
+                        console.log(error);
+                        // if (error.response.data.message == '') {
+                        //     return toast({
+                        //         render: () => (
+                        //             <Alert status={'error'} variant='left-accent' color={'black'}>
+                        //                 <AlertIcon />
+                        //                 <div className="ps-5 pe-3 fs-7">
+                        //                     {'أحد الطاولات محجوزة مسبقا'}
+                        //                 </div>
 
-                                        <CloseButton onClick={() => toast.closeAll()} />
-                                    </Alert>
+                        //                 <CloseButton onClick={() => toast.closeAll()} />
+                        //             </Alert>
 
-                                ),
-                                duration: 9000,
-                                position: 'top-left',
-                            })
-                        }
-                        return toast({
-                            render: () => (
-                                <Alert status={'error'} variant='left-accent' color={'black'}>
-                                    <AlertIcon />
-                                    <div className="ps-5 pe-3 fs-7">
-                                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
-                                    </div>
+                        //         ),
+                        //         duration: 9000,
+                        //         position: 'top-left',
+                        //     })
+                        // }
+                        // return toast({
+                        //     render: () => (
+                        //         <Alert status={'error'} variant='left-accent' color={'black'}>
+                        //             <AlertIcon />
+                        //             <div className="ps-5 pe-3 fs-7">
+                        //                 {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                        //             </div>
 
-                                    <CloseButton onClick={() => toast.closeAll()} />
-                                </Alert>
+                        //             <CloseButton onClick={() => toast.closeAll()} />
+                        //         </Alert>
 
-                            ),
-                            duration: 9000,
-                            position: 'top-left',
-                        })
+                        //     ),
+                        //     duration: 9000,
+                        //     position: 'top-left',
+                        // })
                     })
             })
             .catch((error) => console.log('payment error: ' + error))
