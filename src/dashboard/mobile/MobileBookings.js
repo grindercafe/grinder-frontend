@@ -15,7 +15,7 @@ function MobileBookings() {
     const [searchKey, setSearchKey] = useState('')
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
     const toast = useToast()
-    const [isDeleted, setIsDeleted] = useState(false)
+    // const [isDeleted, setIsDeleted] = useState(false)
 
 
     useEffect(() => {
@@ -63,7 +63,7 @@ function MobileBookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [isUpdatePaymentLoading, isDeleted])
+    }, [isUpdatePaymentLoading])
 
     const nav = useRef()
     const body = document.getElementById('body')

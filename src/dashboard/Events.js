@@ -40,6 +40,7 @@ function Events() {
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
 
     useEffect(() => {
         async function getEvents() {
@@ -80,7 +81,7 @@ function Events() {
             setIsLoading(false)
         }
         getEvents()
-    }, [isPostEventLoading])
+    }, [isPostEventLoading, isDeleted])
 
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm(
@@ -163,15 +164,44 @@ function Events() {
     }
 
     const handleDelete = async (id) => {
-        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+        setIsDeleted(true)
+        if (window.confirm('هل انت متأكد من حذف الحفلة ؟') == true) {
             try {
                 const response = await axios.delete('/events/' + id)
-                console.log(response.data)
+                return toast({
+                    render: () => (
+                        <Alert status={'success'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'تم حذف الحفلة بنجاح'}
+                            </div>
+    
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+    
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
             } catch (error) {
-                console.log(error)
+                return toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'حصل خطأ ما, يبدو ان احد الحجوزات مرتبطة بهذه الحفلة'}
+                            </div>
+    
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+    
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
             }
-            window.location.reload(false);
         }
+        setIsDeleted(false)
     }
 
     async function updateVisibilty(event_id) {

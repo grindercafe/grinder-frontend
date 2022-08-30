@@ -15,7 +15,7 @@ function Bookings() {
     const [searchKey, setSearchKey] = useState('')
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
     const toast = useToast()
-    const [isDeleted, setIsDeleted] = useState(false)
+    // const [isDeleted, setIsDeleted] = useState(false)
 
     useEffect(() => {
         async function getBookings() {
@@ -63,7 +63,7 @@ function Bookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [isUpdatePaymentLoading, isDeleted])
+    }, [isUpdatePaymentLoading])
 
 
     // const handleDelete = async (id) => {

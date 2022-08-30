@@ -41,6 +41,8 @@ function MobileEvents() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
+    const [isDeleted, setIsDeleted] = useState(false)
+
 
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
 
@@ -62,7 +64,6 @@ function MobileEvents() {
     const handleOpenModal = () => {
         openAddEventModal()
     }
-
 
     const successToast = () => {
         toast({
@@ -100,12 +101,8 @@ function MobileEvents() {
         })
     }
 
-
-
-
     useEffect(() => {
         async function getEvents() {
-
             try {
                 const response = await axios.get('/events')
 
@@ -142,7 +139,7 @@ function MobileEvents() {
             setIsLoading(false)
         }
         getEvents()
-    }, [isPostEventLoading])
+    }, [isPostEventLoading, isDeleted])
 
     const nav = useRef()
     const body = document.getElementById('body')
@@ -185,16 +182,44 @@ function MobileEvents() {
     }
 
     const handleDelete = async (id) => {
-        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+        setIsDeleted(true)
+        if (window.confirm('هل انت متأكد من حذف الحفلة ؟') == true) {
             try {
                 const response = await axios.delete('/events/' + id)
-                console.log(response.data)
+                return toast({
+                    render: () => (
+                        <Alert status={'success'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'تم حذف الحفلة بنجاح'}
+                            </div>
+    
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+    
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
             } catch (error) {
-                console.log(error)
+                return toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'حصل خطأ ما, يبدو ان احد الحجوزات مرتبطة بهذه الحفلة'}
+                            </div>
+    
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+    
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
             }
-            window.location.reload(false);
         }
-
+        setIsDeleted(false)
     }
 
     async function updateVisibilty(event_id) {

@@ -33,7 +33,7 @@ function EventsPage() {
         onTermsAgreementOpen()
         async function getEvents() {
             try {
-                const response = await axios.get('/events')
+                const response = await axios.get('/visible_events')
                 const all_events = []
 
                 for (const singleEvent of response.data.data) {
@@ -57,10 +57,7 @@ function EventsPage() {
                         'price': data.price,
                         'description': data.description
                     }
-
-                    if (event.id != 25 && event.id != 10 && event.id != 13) {
-                        all_events.push(event)
-                    }
+                    all_events.push(event)
                 }
 
                 setEvents(all_events)
