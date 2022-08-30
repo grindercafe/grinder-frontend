@@ -58,7 +58,7 @@ function EventsPage() {
                         'description': data.description
                     }
 
-                    if(event.id != 25 && event.id != 10) {
+                    if (event.id != 25 && event.id != 10 && event.id != 13) {
                         all_events.push(event)
                     }
                 }
