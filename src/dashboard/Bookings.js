@@ -4,16 +4,18 @@ import axios from '../axios'
 import moment from "moment"
 import MobileBookings from "./mobile/MobileBookings"
 import SearchField from "../components/SearchField"
-import { Progress } from '@chakra-ui/react'
 import AuthProvider from "../components/AuthProvider"
 import { Link } from "react-router-dom"
-
+import { Progress, useToast, Alert, AlertIcon, CloseButton } from '@chakra-ui/react'
 
 function Bookings() {
     const [bookings, setBookings] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
+    const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
+    const toast = useToast()
+    const [isDeleted, setIsDeleted] = useState(false)
 
     useEffect(() => {
         async function getBookings() {
@@ -61,9 +63,11 @@ function Bookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [])
+    }, [isUpdatePaymentLoading, isDeleted])
+
 
     const handleDelete = async (id) => {
+        setIsDeleted(true)
         if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
             try {
                 const response = await axios.delete('/bookings/' + id)
@@ -71,9 +75,48 @@ function Bookings() {
             } catch (error) {
                 console.log(error)
             }
-            window.location.reload(false);
         }
+        setIsDeleted(false)
+    }
 
+    async function updatePaymentStatus() {
+        setIsUpdatePaymentLoading(true)
+        try {
+            const response = await axios.get('/update_payment_status')
+            setIsUpdatePaymentLoading(false)
+            return toast({
+                render: () => (
+                    <Alert status={'success'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'تم التحقق'}
+                        </div>
+
+                        <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                    </Alert>
+
+                ),
+                duration: 5000,
+                position: 'top-left',
+            })
+        } catch (error) {
+            setIsUpdatePaymentLoading(false)
+            return toast({
+                render: () => (
+                    <Alert status={'error'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                        </div>
+
+                        <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                    </Alert>
+
+                ),
+                duration: 5000,
+                position: 'top-left',
+            })
+        }
     }
 
     return (
@@ -82,9 +125,16 @@ function Bookings() {
                 <DashboardLayout>
                     <div className="dashboard-content">
                         <div className="fs-3 mb-5">قائمة الحجوزات</div>
-                        <SearchField
-                            onChange={(e) => setSearchKey(e.target.value)}
-                            placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
+                        <div className="d-flex justify-content-between">
+                            <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
+                            <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
+                                {
+                                    isUpdatePaymentLoading ?
+                                        <i className="fas fa-spinner fa-spin"></i>
+                                        : <span>التحقق من الحجوزات المعلّقة</span>
+                                }
+                            </button>
+                        </div>
 
                         <div className="my-5">
                             <div className="table-wrapper">
@@ -153,15 +203,18 @@ function Bookings() {
                                                     </td> */}
                                                             <td>
                                                                 {
-                                                                    booking.tables.map((table)=> (
+                                                                    booking.tables.map((table) => (
                                                                         table.number + ','
                                                                     ))
                                                                 }
                                                             </td>
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
-                                                            <td className='text-danger'>
-                                                                <button onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                            <td>
+                                                                {
+                                                                    booking.payment != 'paid' &&
+                                                                    <button className="text-danger" onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                                }
                                                             </td>
                                                         </tr>
                                                     ))}

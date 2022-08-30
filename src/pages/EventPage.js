@@ -331,6 +331,11 @@ function EventPage() {
     const [selectedTables, setSelectedTables] = useState([])
     const [tablesLoading, setTablesLoading] = useState(true)
     const [error, setError] = useState(false)
+    const navigate = useNavigate()
+    const toast = useToast()
+
+    const [isBookingLoading, setIsBookingLoading] = useState(false)
+    const [isPaymentLoading, setIsPaymentLoading] = useState(false)
 
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -486,14 +491,9 @@ function EventPage() {
         setSelectedTables(selectedTs)
     }
 
-    const navigate = useNavigate()
-    // const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
-    const toast = useToast()
-
-    const [isBookingLoading, setIsBookingLoading] = useState(false)
-
 
     async function onSubmit(data) {
+
         if (selectedTables.length === 0)
             return toast({
                 render: () => (
@@ -516,50 +516,32 @@ function EventPage() {
             'name': data.customer_name,
             'phone_number': data.phone_number
         }
-        setIsBookingLoading(true)
-        axios.post('/payment', paymentData)
-            .then(async (res) => {
-
-                const body = {
-                    'total_price': totalPrice,
-                    'event_id': id,
-                    'tables': selectedTables,
-                    'customer': {
-                        'name': data.customer_name,
-                        'phone_number': data.phone_number,
-                    },
-                    'transactionNo': res.data.transactionNo,
-                }
-
-                await axios.post('/booking', body)
-                    .then((re) => {
-                        window.location.replace(res.data.url)
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                        if (error.response.data.message == 'overlapping') {
-                            return toast({
-                                render: () => (
-                                    <Alert status={'error'} variant='left-accent' color={'black'}>
-                                        <AlertIcon />
-                                        <div className="ps-5 pe-3 fs-7">
-                                            {'أحد الطاولات محجوزة مسبقا'}
-                                        </div>
-
-                                        <CloseButton onClick={() => toast.closeAll()} />
-                                    </Alert>
-
-                                ),
-                                duration: 9000,
-                                position: 'top-left',
-                            })
-                        }
+        try {
+            setIsPaymentLoading(true)
+            const paymentResponse = await axios.post('/payment', paymentData)
+            if (paymentResponse.status === 200) {
+                try {
+                    setIsBookingLoading(true)
+                    const body = {
+                        'total_price': totalPrice,
+                        'event_id': id,
+                        'tables': selectedTables,
+                        'customer': {
+                            'name': data.customer_name,
+                            'phone_number': data.phone_number,
+                        },
+                        'transactionNo': paymentResponse.data.transactionNo,
+                    }
+                    const bookingReponse = await axios.post('/booking', body)
+                    window.location.replace(paymentResponse.data.url)
+                } catch (error) {
+                    if (error.response.data.message == 'overlapping') {
                         return toast({
                             render: () => (
                                 <Alert status={'error'} variant='left-accent' color={'black'}>
                                     <AlertIcon />
                                     <div className="ps-5 pe-3 fs-7">
-                                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                        {'أحد الطاولات محجوزة مسبقا'}
                                     </div>
 
                                     <CloseButton onClick={() => toast.closeAll()} />
@@ -569,11 +551,106 @@ function EventPage() {
                             duration: 9000,
                             position: 'top-left',
                         })
+                    }
+                    return toast({
+                        render: () => (
+                            <Alert status={'error'} variant='left-accent' color={'black'}>
+                                <AlertIcon />
+                                <div className="ps-5 pe-3 fs-7">
+                                    {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                                </div>
+
+                                <CloseButton onClick={() => toast.closeAll()} />
+                            </Alert>
+
+                        ),
+                        duration: 9000,
+                        position: 'top-left',
                     })
+                }
+            }
+        } catch (error) {
+            return toast({
+                render: () => (
+                    <Alert status={'error'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'حصل خطأ ما في جلب صفحة الدفع'}
+                        </div>
+                        <CloseButton onClick={() => toast.closeAll()} />
+                    </Alert>
+
+                ),
+                duration: 9000,
+                position: 'top-left',
             })
-            .catch((error) => console.log('payment error: ' + error))
+        }
 
         setIsBookingLoading(false)
+        setIsPaymentLoading(false)
+
+        // setIsBookingLoading(true)
+        // axios.post('/payment', paymentData)
+        //     .then((res) => {
+        //         setIsPaymentLoading(true)
+
+        //         const body = {
+        //             'total_price': totalPrice,
+        //             'event_id': id,
+        //             'tables': selectedTables,
+        //             'customer': {
+        //                 'name': data.customer_name,
+        //                 'phone_number': data.phone_number,
+        //             },
+        //             'transactionNo': res.data.transactionNo,
+        //         }
+
+        //         axios.post('/booking', body)
+        //             .then((re) => {
+        //                 window.location.replace(res.data.url)
+        //             })
+        //             .catch((error) => {
+
+        //                 if (error.response.data.message == 'overlapping') {
+        //                     return toast({
+        //                         render: () => (
+        //                             <Alert status={'error'} variant='left-accent' color={'black'}>
+        //                                 <AlertIcon />
+        //                                 <div className="ps-5 pe-3 fs-7">
+        //                                     {'أحد الطاولات محجوزة مسبقا'}
+        //                                 </div>
+
+        //                                 <CloseButton onClick={() => toast.closeAll()} />
+        //                             </Alert>
+
+        //                         ),
+        //                         duration: 9000,
+        //                         position: 'top-left',
+        //                     })
+        //                 }
+        //                 return toast({
+        //                     render: () => (
+        //                         <Alert status={'error'} variant='left-accent' color={'black'}>
+        //                             <AlertIcon />
+        //                             <div className="ps-5 pe-3 fs-7">
+        //                                 {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+        //                             </div>
+
+        //                             <CloseButton onClick={() => toast.closeAll()} />
+        //                         </Alert>
+
+        //                     ),
+        //                     duration: 9000,
+        //                     position: 'top-left',
+        //                 })
+        //             })
+        //     })
+        //     .catch((error) => {
+        //         console.log('payment error: ' + error)
+        //     })
+        // setIsBookingLoading(false)
+        // setIsPaymentLoading(false)
+
     }
 
     return (
@@ -623,50 +700,52 @@ function EventPage() {
                             <BsChevronDown className={`arrow ${isBookingDetailsOpen && 'down-arrow'}`} />
                         </div>
                         <Collapse in={isBookingDetailsOpen} animateOpacity>
-                            {
-                                tablesLoading || isLoading ?
-                                    <div>Loading</div> :
-                                    <Box className="background-secondary p-4">
-                                        <div className="position-relative">
-                                            <div className="grid-container" dir="ltr">
-                                                {
-                                                    tables.map((table, index) => (
-                                                        table ?
-                                                            <div
-                                                                key={'number:' + table.number}
-                                                                onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                            <Box className="background-secondary p-4">
+                                {
+                                    tablesLoading || isLoading ?
+                                        <i className="fas fa-spinner fa-spin fs-4"></i>
+                                        : <div>
+                                            <div className="position-relative">
+                                                <div className="grid-container" dir="ltr">
+                                                    {
+                                                        tables.map((table, index) => (
+                                                            table ?
+                                                                <div
+                                                                    key={'number:' + table.number}
+                                                                    onClick={() => table.is_available && toggleSelectedTable(index)} className={`
                                                         text-prime 
                                                         grid-item
                                                         position-relative 
                                                         ${table.selected && 'selected-grid'}
                                                         ${!table.is_available && 'grid-item-disabled'}`}
-                                                            >
-                                                                <img className="seat-img" src={table.img} width={'60%'} alt="" />
-                                                                <div className="seat-id">{table.number}</div>
-                                                            </div> :
-                                                            <div key={index}></div>
-                                                    ))
-                                                }
+                                                                >
+                                                                    <img className="seat-img" src={table.img} width={'60%'} alt="" />
+                                                                    <div className="seat-id">{table.number}</div>
+                                                                </div> :
+                                                                <div key={index}></div>
+                                                        ))
+                                                    }
+                                                </div>
+                                                <div className="stage">
+                                                    المسرح
+                                                </div>
+                                                <div className="entry">
+                                                    المدخل
+                                                </div>
                                             </div>
-                                            <div className="stage">
-                                                المسرح
-                                            </div>
-                                            <div className="entry">
-                                                المدخل
+                                            <div className="container w-75 mt-5">
+                                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                                    <div className="booking-details-label fs-5">عدد المقاعد</div>
+                                                    <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
+                                                </div>
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <div className="booking-details-label fs-5">الإجمالي</div>
+                                                    <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="container w-75 mt-5">
-                                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <div className="booking-details-label fs-5">عدد المقاعد</div>
-                                                <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
-                                            </div>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <div className="booking-details-label fs-5">الإجمالي</div>
-                                                <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
-                                            </div>
-                                        </div>
-                                    </Box>
-                            }
+                                }
+                            </Box>
                         </Collapse>
                     </div>
                     <div className="mt-4">
@@ -720,8 +799,8 @@ function EventPage() {
 
                                     </div>
                                     <button
-                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading}>
-                                        {isBookingLoading ?
+                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
+                                        {isBookingLoading || isPaymentLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
                                             <span className="m-5">إتمام الحجز</span>
                                         }

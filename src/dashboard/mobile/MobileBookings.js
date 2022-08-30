@@ -1,12 +1,10 @@
 import { HiOutlineMenuAlt2 } from 'react-icons/hi'
-import { IoCloseOutline } from 'react-icons/io5'
 import { useRef, useState, useEffect } from "react"
-import { useResolvedPath, useMatch, Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import axios from '../../axios'
 import moment from 'moment'
-import { arabicPeriods } from '../../utils/Helper'
 import MobileSidebar from './MobileSidebar'
-import { Progress } from '@chakra-ui/react'
+import { Progress, useToast, Alert, AlertIcon, CloseButton } from '@chakra-ui/react'
 import SearchField from '../../components/SearchField'
 
 function MobileBookings() {
@@ -15,6 +13,10 @@ function MobileBookings() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
+    const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
+    const toast = useToast()
+    const [isDeleted, setIsDeleted] = useState(false)
+
 
     useEffect(() => {
         async function getBookings() {
@@ -61,7 +63,7 @@ function MobileBookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [])
+    }, [isUpdatePaymentLoading, isDeleted])
 
     const nav = useRef()
     const body = document.getElementById('body')
@@ -81,6 +83,7 @@ function MobileBookings() {
     }, [location])
 
     const handleDelete = async (id) => {
+        setIsDeleted(true)
         if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
             try {
                 const response = await axios.delete('/bookings/' + id)
@@ -88,9 +91,49 @@ function MobileBookings() {
             } catch (error) {
                 console.log(error)
             }
-            window.location.reload(false);
         }
+        setIsDeleted(false)
+    }
 
+
+    async function updatePaymentStatus() {
+        setIsUpdatePaymentLoading(true)
+        try {
+            const response = await axios.get('/update_payment_status')
+            setIsUpdatePaymentLoading(false)
+            return toast({
+                render: () => (
+                    <Alert status={'success'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'تم التحقق'}
+                        </div>
+
+                        <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                    </Alert>
+
+                ),
+                duration: 5000,
+                position: 'top-left',
+            })
+        } catch (error) {
+            setIsUpdatePaymentLoading(false)
+            return toast({
+                render: () => (
+                    <Alert status={'error'} variant='left-accent' color={'black'}>
+                        <AlertIcon />
+                        <div className="ps-5 pe-3 fs-7">
+                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                        </div>
+
+                        <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                    </Alert>
+
+                ),
+                duration: 5000,
+                position: 'top-left',
+            })
+        }
     }
 
 
@@ -113,6 +156,7 @@ function MobileBookings() {
                             placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
                     </div>
 
+                    <button className='btn add-event-btn' onClick={updatePaymentStatus}>التحقق من الحجوزات المعلّقة</button>
 
                     <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
 
@@ -155,7 +199,7 @@ function MobileBookings() {
                                                     booking.id.toString().includes(searchKey) ||
                                                     booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase()) ||
                                                     booking.event.singer_name.toLowerCase().includes(searchKey.toLowerCase())
-                                                    ) {
+                                                ) {
                                                     return booking
                                                 }
                                             }).map((booking) => (
@@ -192,8 +236,11 @@ function MobileBookings() {
                                                     </td>
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
-                                                    <td className='text-danger'>
-                                                        <button onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                    <td>
+                                                        {
+                                                            booking.payment != 'paid' &&
+                                                            <button className='text-danger' onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                        }
                                                     </td>
                                                 </tr>
                                             ))
