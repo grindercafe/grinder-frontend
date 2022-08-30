@@ -82,18 +82,18 @@ function MobileBookings() {
         body.style.overflow = 'auto'
     }, [location])
 
-    const handleDelete = async (id) => {
-        setIsDeleted(true)
-        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
-            try {
-                const response = await axios.delete('/bookings/' + id)
-                console.log(response.data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        setIsDeleted(false)
-    }
+    // const handleDelete = async (id) => {
+    //     setIsDeleted(true)
+    //     if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+    //         try {
+    //             const response = await axios.delete('/bookings/' + id)
+    //             console.log(response.data)
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    //     }
+    //     setIsDeleted(false)
+    // }
 
 
     async function updatePaymentStatus() {
@@ -183,7 +183,7 @@ function MobileBookings() {
                                         <th>الطاولات</th>
                                         <th>الاجمالي</th>
                                         <th>مضى عليه</th>
-                                        <th>خيارات</th>
+                                        {/* <th>خيارات</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -236,12 +236,12 @@ function MobileBookings() {
                                                     </td>
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
-                                                    <td>
+                                                    {/* <td>
                                                         {
                                                             booking.payment != 'paid' &&
                                                             <button className='text-danger' onClick={() => handleDelete(booking.id)}>حذف</button>
                                                         }
-                                                    </td>
+                                                    </td> */}
                                                 </tr>
                                             ))
                                     }

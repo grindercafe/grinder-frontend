@@ -66,18 +66,18 @@ function Bookings() {
     }, [isUpdatePaymentLoading, isDeleted])
 
 
-    const handleDelete = async (id) => {
-        setIsDeleted(true)
-        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
-            try {
-                const response = await axios.delete('/bookings/' + id)
-                console.log(response.data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        setIsDeleted(false)
-    }
+    // const handleDelete = async (id) => {
+    //     setIsDeleted(true)
+    //     if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+    //         try {
+    //             const response = await axios.delete('/bookings/' + id)
+    //             console.log(response.data)
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    //     }
+    //     setIsDeleted(false)
+    // }
 
     async function updatePaymentStatus() {
         setIsUpdatePaymentLoading(true)
@@ -161,7 +161,7 @@ function Bookings() {
                                                 <th className="p-3 fs-7">الطاولات</th>
                                                 <th className="p-3 fs-7">الاجمالي</th>
                                                 <th className="p-3 fs-7">مضى عليه</th>
-                                                <th className="p-3 fs-7">خيارات</th>
+                                                {/* <th className="p-3 fs-7">خيارات</th> */}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -213,12 +213,12 @@ function Bookings() {
                                                             </td>
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
-                                                            <td>
+                                                            {/* <td>
                                                                 {
                                                                     booking.payment != 'paid' &&
                                                                     <button className="text-danger" onClick={() => handleDelete(booking.id)}>حذف</button>
                                                                 }
-                                                            </td>
+                                                            </td> */}
                                                         </tr>
                                                     ))}
 
