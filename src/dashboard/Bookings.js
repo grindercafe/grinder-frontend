@@ -6,7 +6,7 @@ import MobileBookings from "./mobile/MobileBookings"
 import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
 import { Link } from "react-router-dom"
-import { Progress, useToast, Alert, AlertIcon, CloseButton } from '@chakra-ui/react'
+import { Progress, useToast, Alert, AlertIcon, CloseButton, Tooltip } from '@chakra-ui/react'
 
 function Bookings() {
     const [bookings, setBookings] = useState([])
@@ -127,13 +127,16 @@ function Bookings() {
                         <div className="fs-3 mb-5">قائمة الحجوزات</div>
                         <div className="d-flex justify-content-between">
                             <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
-                            <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
-                                {
-                                    isUpdatePaymentLoading ?
-                                        <i className="fas fa-spinner fa-spin"></i>
-                                        : <span>التحقق من الحجوزات المعلّقة</span>
-                                }
-                            </button>
+                            <Tooltip className="din-next" hasArrow label='يتحقق الزر من الحجوزات المعلّقة والتي مر عليها اكثر من 5 دقائق لإلغائها' bg='#F3EEE9' color='black' padding={4} placement='right-end'>
+
+                                <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
+                                    {
+                                        isUpdatePaymentLoading ?
+                                            <i className="fas fa-spinner fa-spin"></i>
+                                            : <span>التحقق من الحجوزات المعلّقة</span>
+                                    }
+                                </button>
+                            </Tooltip>
                         </div>
 
                         <div className="my-5">
