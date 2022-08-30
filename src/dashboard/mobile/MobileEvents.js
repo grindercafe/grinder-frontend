@@ -19,6 +19,7 @@ import {
     useToast,
     Alert,
     AlertIcon,
+    Checkbox
 } from '@chakra-ui/react'
 import SearchField from "../../components/SearchField"
 
@@ -99,27 +100,7 @@ function MobileEvents() {
         })
     }
 
-    const onSubmit = async (data) => {
-        setIsPostEventLoading(true)
-        const body = {
-            'date': data.date,
-            'start_time': data.start_time,
-            'end_time': data.end_time,
-            'singer_name': data.singer_name,
-            'singer_img': data.singer_img,
-            'price': data.price,
-        }
 
-        try {
-            const response = await axios.post('/event', body)
-            successToast()
-        } catch (error) {
-            errorToast()
-        }
-
-        handleCloseModal()
-        setIsPostEventLoading(false)
-    }
 
 
     useEffect(() => {
@@ -147,7 +128,8 @@ function MobileEvents() {
                         'end_time': end_time.format('hh:mm'),
                         'singer_name': event.singer_name,
                         'singer_img': event.singer_img,
-                        'price': event.price
+                        'price': event.price,
+                        'is_visible': event.is_visible
                     }
 
                     all_events.push(eventTemplate)
@@ -180,6 +162,28 @@ function MobileEvents() {
     }, [location])
 
 
+    const onSubmit = async (data) => {
+        setIsPostEventLoading(true)
+        const body = {
+            'date': data.date,
+            'start_time': data.start_time,
+            'end_time': data.end_time,
+            'singer_name': data.singer_name,
+            'singer_img': data.singer_img,
+            'price': data.price,
+        }
+
+        try {
+            const response = await axios.post('/event', body)
+            successToast()
+        } catch (error) {
+            errorToast()
+        }
+
+        handleCloseModal()
+        setIsPostEventLoading(false)
+    }
+
     const handleDelete = async (id) => {
         if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
             try {
@@ -191,6 +195,15 @@ function MobileEvents() {
             window.location.reload(false);
         }
 
+    }
+
+    async function updateVisibilty(event_id) {
+        try {
+            const response = await axios.patch('/events/' + event_id + '/update_visibility')
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -231,7 +244,8 @@ function MobileEvents() {
                                         <th>الرقم</th>
                                         <th>التاريخ والوقت</th>
                                         <th>السعر</th>
-                                        <th>الحالة</th>
+                                        <th>إظهار</th>
+                                        <th>خيارات</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -259,6 +273,9 @@ function MobileEvents() {
                                                         {event.start_time} - {event.end_time}
                                                     </td>
                                                     <td>{event.price}</td>
+                                                    <td>
+                                                        <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
+                                                    </td>
                                                     <td className='text-danger'>
                                                         <button onClick={() => handleDelete(event.id)}>حذف</button>
                                                     </td>

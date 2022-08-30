@@ -17,7 +17,8 @@ import {
     CloseButton,
     useToast,
     Alert,
-    AlertIcon
+    AlertIcon,
+    Checkbox
 } from '@chakra-ui/react'
 import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
@@ -65,7 +66,8 @@ function Events() {
                         'end_time': end_time.format('hh:mm'),
                         'singer_name': event.singer_name,
                         'singer_img': event.singer_img,
-                        'price': event.price
+                        'price': event.price,
+                        'is_visible': event.is_visible
                     }
 
                     all_events.push(eventTemplate)
@@ -170,7 +172,15 @@ function Events() {
             }
             window.location.reload(false);
         }
+    }
 
+    async function updateVisibilty(event_id) {
+        try {
+            const response = await axios.patch('/events/' + event_id + '/update_visibility')
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -204,6 +214,7 @@ function Events() {
                                                 <th>الرقم</th>
                                                 <th>التاريخ والوقت</th>
                                                 <th>السعر</th>
+                                                <th>إظهار</th>
                                                 <th>خيارات</th>
                                             </tr>
                                         </thead>
@@ -220,7 +231,7 @@ function Events() {
                                                         else if (event.id.toString().includes(searchKey)) {
                                                             return event
                                                         }
-                                                    }).map((event) => (
+                                                    }).map((event, index) => (
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
                                                                 {event.singer_name} <br />
@@ -231,6 +242,9 @@ function Events() {
                                                                 {event.start_time} - {event.end_time}
                                                             </td>
                                                             <td>{event.price}</td>
+                                                            <td>
+                                                                <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
+                                                            </td>
                                                             <td className='text-danger'>
                                                                 <button onClick={() => handleDelete(event.id)}>حذف</button>
                                                             </td>

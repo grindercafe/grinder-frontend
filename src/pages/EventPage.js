@@ -328,6 +328,7 @@ function EventPage() {
     )
     const { isOpen: isPaymentFormOpen, onToggle: onTogglePaymentForm } = useDisclosure()
     const [bookings, setBookings] = useState([])
+    const [unavailableTables, setUnavailableTables] = useState([])
     const [selectedTables, setSelectedTables] = useState([])
     const [tablesLoading, setTablesLoading] = useState(true)
     const [error, setError] = useState(false)
@@ -346,7 +347,6 @@ function EventPage() {
     // get event
     useEffect(() => {
         async function getEvent() {
-
             try {
                 const response = await axios.get('/events/' + id)
 
@@ -367,17 +367,18 @@ function EventPage() {
                     'singer_img': data.singer_img,
                     'price': data.price,
                     'description': data.description,
-                    'bookings': data.bookings
+                    'bookings': data.bookings,
+                    'unavailableTables': data.unavailableTables
                 }
 
                 setEvent(event)
                 setBookings(event.bookings)
+                setUnavailableTables(event.unavailableTables)
             } catch (error) {
                 if (error.response.status == 404)
                     navigate('/not-found')
                 setError(true)
             }
-
             setIsLoading(false)
         }
         getEvent()
@@ -412,6 +413,12 @@ function EventPage() {
                                     return
                                 }
                             });
+                        })
+
+                        unavailableTables.forEach(unavailableTable => {
+                            if (data[count].id == unavailableTable.id) {
+                                data[count]['is_available'] = false
+                            }
                         })
                         t.push(data[count])
                         count++
