@@ -87,7 +87,7 @@ function MobileCustomers() {
                                         <th>الرقم</th>
                                         <th>الاسم</th>
                                         <th>رقم الهاتف</th>
-                                        <th>عدد الحجوزات</th>
+                                        <th>عدد الحجوزات المدفوعة</th>
                                     </tr>
                                 </thead>
                                 <tbody>

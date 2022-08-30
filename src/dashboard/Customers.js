@@ -71,7 +71,7 @@ function Customers() {
                                                                 <td>{customer.id}#</td>
                                                                 <td>الاسم: {customer.name}</td>
                                                                 <td>{customer.phone_number}</td>
-                                                                <td>عدد الحجوزات: {customer.num_of_bookings}</td>
+                                                                <td>عدد الحجوزات المدفوعة: {customer.num_of_bookings}</td>
                                                             </tr>
                                                         ))}
 
