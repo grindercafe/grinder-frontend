@@ -333,7 +333,7 @@ function EventPage() {
     const [error, setError] = useState(false)
 
 
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
 
@@ -424,7 +424,7 @@ function EventPage() {
 
         setTimeout(() => {
             setTablesLoading(false)
-        }, 2000)
+        }, 3000)
     }, [event])
 
     const isEmptyPlace = (index) => {
@@ -490,6 +490,8 @@ function EventPage() {
     // const [isPostBookingLoading, setIsPostBookingLoading] = useState(false)
     const toast = useToast()
 
+    const [isBookingLoading, setIsBookingLoading] = useState(false)
+
 
     async function onSubmit(data) {
         if (selectedTables.length === 0)
@@ -514,9 +516,10 @@ function EventPage() {
             'name': data.customer_name,
             'phone_number': data.phone_number
         }
-
+        setIsBookingLoading(true)
         axios.post('/payment', paymentData)
             .then(async (res) => {
+
                 const body = {
                     'total_price': totalPrice,
                     'event_id': id,
@@ -570,6 +573,7 @@ function EventPage() {
             })
             .catch((error) => console.log('payment error: ' + error))
 
+        setIsBookingLoading(false)
     }
 
     return (
@@ -716,8 +720,8 @@ function EventPage() {
 
                                     </div>
                                     <button
-                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isSubmitting}>
-                                        {isSubmitting ?
+                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading}>
+                                        {isBookingLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
                                             <span className="m-5">إتمام الحجز</span>
                                         }
