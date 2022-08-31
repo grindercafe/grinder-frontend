@@ -267,7 +267,7 @@ function Events() {
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
                                                                 {/* <Link to={`/dashboard/events/${event.id}`} className='text-primary'> */}
-                                                                    {event.singer_name}
+                                                                {event.singer_name}
                                                                 {/* </Link> */}
                                                                 <br />
                                                                 {event.id}#
@@ -281,7 +281,9 @@ function Events() {
                                                                 <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
                                                             </td>
                                                             <td>
-                                                                <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}><HiOutlineTrash size={20} /></button> <br />
+                                                                <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}>
+                                                                    <HiOutlineTrash size={20} />
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     ))

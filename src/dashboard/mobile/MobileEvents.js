@@ -22,6 +22,7 @@ import {
     Checkbox
 } from '@chakra-ui/react'
 import SearchField from "../../components/SearchField"
+import { HiOutlineTrash } from 'react-icons/hi'
 
 
 const schema = yup.object().shape({
@@ -302,7 +303,9 @@ function MobileEvents() {
                                                         <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
                                                     </td>
                                                     <td>
-                                                        <button className='text-danger' onClick={() => handleDelete(event.id)}>حذف</button> <br />
+                                                        <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}>
+                                                            <HiOutlineTrash size={20} />
+                                                        </button>
                                                         {/* <Link to={`/dashboard/events/${event.id}`} className='text-info'>التفاصيل</Link> */}
                                                     </td>
                                                 </tr>
