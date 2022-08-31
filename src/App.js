@@ -1,10 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import EventsPage from "./pages/EventsPage"
 import OurLocationPage from "./pages/OurLocationPage"
 import TestPage from "./pages/TestPage"
-import Dashboard from "./dashboard/DashboardLayout"
 import Events from './dashboard/Events'
 import Customers from './dashboard/Customers'
 import Bookings from './dashboard/Bookings'
@@ -28,7 +27,7 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:id" element={<EventPage />} />
           <Route path="/location" element={<OurLocationPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Navigate to={'/dashboard/events'} />} />
           <Route path="/dashboard/events" element={<Events />} />
           <Route path="/dashboard/events/:id" element={<EventDetails />} />
           <Route path="/dashboard/customers" element={<Customers />} />
