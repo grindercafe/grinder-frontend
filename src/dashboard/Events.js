@@ -22,7 +22,8 @@ import {
 } from '@chakra-ui/react'
 import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+import { HiOutlineTrash } from "react-icons/hi"
 
 const schema = yup.object().shape({
     'singer_name': yup.string().required(),
@@ -242,11 +243,11 @@ function Events() {
                                     <table className="table">
                                         <thead>
                                             <tr>
-                                                <th>الرقم</th>
-                                                <th>التاريخ والوقت</th>
-                                                <th>السعر</th>
-                                                <th>إظهار</th>
-                                                <th>خيارات</th>
+                                                <th className="p-3 fs-7">الرقم</th>
+                                                <th className="p-3 fs-7">التاريخ والوقت</th>
+                                                <th className="p-3 fs-7">السعر</th>
+                                                <th className="p-3 fs-7">إظهار</th>
+                                                <th className="p-3 fs-7">خيارات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -265,7 +266,10 @@ function Events() {
                                                     }).map((event, index) => (
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
-                                                                {event.singer_name} <br />
+                                                                {/* <Link to={`/dashboard/events/${event.id}`} className='text-primary'> */}
+                                                                    {event.singer_name}
+                                                                {/* </Link> */}
+                                                                <br />
                                                                 {event.id}#
                                                             </td>
                                                             <td>
@@ -277,8 +281,7 @@ function Events() {
                                                                 <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
                                                             </td>
                                                             <td>
-                                                                <button className='text-danger' onClick={() => handleDelete(event.id)}>حذف</button> <br />
-                                                                {/* <Link to={`/dashboard/events/${event.id}`} className='text-info'>التفاصيل</Link> */}
+                                                                <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}><HiOutlineTrash size={20} /></button> <br />
                                                             </td>
                                                         </tr>
                                                     ))

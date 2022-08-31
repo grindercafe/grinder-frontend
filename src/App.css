@@ -1119,3 +1119,12 @@ td {
 .event-summary img {
    max-height: 400px;
 }
+
+.delete-icon {
+    color: red;
+    transition: 150ms;
+}
+
+.delete-icon:hover {
+    color: rgba(255, 0, 0, 0.551);
+}

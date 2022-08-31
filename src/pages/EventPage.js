@@ -348,7 +348,7 @@ function EventPage() {
     useEffect(() => {
         async function getEvent() {
             try {
-                const response = await axios.get('/events/' + id)
+                const response = await axios.get('/visible_events/' + id)
 
                 const data = response.data.data
 
