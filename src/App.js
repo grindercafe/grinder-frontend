@@ -15,6 +15,7 @@ import { HomePage } from "./pages/HomePage";
 import EventPage from "./pages/EventPage";
 import ScrollToTop from "./ScrollToTop";
 import Login from "./dashboard/Login";
+import EventDetails from './dashboard/EventDetails'
 
 
 function App() {
@@ -29,12 +30,13 @@ function App() {
           <Route path="/location" element={<OurLocationPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/events" element={<Events />} />
+          <Route path="/dashboard/events/:id" element={<EventDetails />} />
           <Route path="/dashboard/customers" element={<Customers />} />
           <Route path="/dashboard/bookings" element={<Bookings />} />
           <Route path="/bookings/:uuid" element={<Booking />} />
           <Route path="/dashboard/login" element={<Login />} />
-          <Route path="*" element={<NotFoundPage />} />
           <Route path="/test" element={<TestPage /> } />
+          <Route path="*" element={<NotFoundPage />} />
           {/*<Route path="/events/:id" element={<Event />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/bookings/:id" element={<Booking />} />

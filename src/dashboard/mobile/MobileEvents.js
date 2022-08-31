@@ -1,7 +1,7 @@
 import { HiOutlineMenuAlt2 } from 'react-icons/hi'
 import { IoCloseOutline } from 'react-icons/io5'
 import { useRef, useState, useEffect } from "react"
-import { useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import axios from '../../axios'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
@@ -193,10 +193,10 @@ function MobileEvents() {
                             <div className="ps-5 pe-3 fs-7">
                                 {'تم حذف الحفلة بنجاح'}
                             </div>
-    
+
                             <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
                         </Alert>
-    
+
                     ),
                     duration: 5000,
                     position: 'top-left',
@@ -209,10 +209,10 @@ function MobileEvents() {
                             <div className="ps-5 pe-3 fs-7">
                                 {'حصل خطأ ما, يبدو ان احد الحجوزات مرتبطة بهذه الحفلة'}
                             </div>
-    
+
                             <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
                         </Alert>
-    
+
                     ),
                     duration: 5000,
                     position: 'top-left',
@@ -301,8 +301,9 @@ function MobileEvents() {
                                                     <td>
                                                         <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
                                                     </td>
-                                                    <td className='text-danger'>
-                                                        <button onClick={() => handleDelete(event.id)}>حذف</button>
+                                                    <td>
+                                                        <button className='text-danger' onClick={() => handleDelete(event.id)}>حذف</button> <br />
+                                                        {/* <Link to={`/dashboard/events/${event.id}`} className='text-info'>التفاصيل</Link> */}
                                                     </td>
                                                 </tr>
                                             ))
