@@ -158,7 +158,6 @@ function Events() {
             const response = await axios.post('/event', body)
             successToast()
         } catch (error) {
-            console.log(error);
             errorToast()
         }
         handleCloseModal()
@@ -170,7 +169,7 @@ function Events() {
         if (window.confirm('هل انت متأكد من حذف الحفلة ؟') == true) {
             try {
                 const response = await axios.delete('/events/' + id)
-                return toast({
+                toast({
                     render: () => (
                         <Alert status={'success'} variant='left-accent' color={'black'}>
                             <AlertIcon />
@@ -186,7 +185,7 @@ function Events() {
                     position: 'top-left',
                 })
             } catch (error) {
-                return toast({
+                toast({
                     render: () => (
                         <Alert status={'error'} variant='left-accent' color={'black'}>
                             <AlertIcon />
@@ -263,14 +262,13 @@ function Events() {
                                                         else if (event.id.toString().includes(searchKey)) {
                                                             return event
                                                         }
-                                                    }).map((event, index) => (
+                                                    }).map((event) => (
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
+                                                                {event.id}# <br />
                                                                 {/* <Link to={`/dashboard/events/${event.id}`} className='text-primary'> */}
-                                                                {event.singer_name}
+                                                                    {event.singer_name}
                                                                 {/* </Link> */}
-                                                                <br />
-                                                                {event.id}#
                                                             </td>
                                                             <td>
                                                                 {event.date} <br />

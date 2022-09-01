@@ -7,6 +7,8 @@ import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
 import { Link } from "react-router-dom"
 import { Progress, useToast, Alert, AlertIcon, CloseButton, Tooltip } from '@chakra-ui/react'
+import { HiOutlineTrash } from "react-icons/hi"
+
 
 function Bookings() {
     const [bookings, setBookings] = useState([])
@@ -15,7 +17,7 @@ function Bookings() {
     const [searchKey, setSearchKey] = useState('')
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
     const toast = useToast()
-    // const [isDeleted, setIsDeleted] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
 
     useEffect(() => {
         async function getBookings() {
@@ -63,7 +65,7 @@ function Bookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [isUpdatePaymentLoading])
+    }, [isUpdatePaymentLoading, isDeleted])
 
 
     // const handleDelete = async (id) => {
@@ -79,12 +81,53 @@ function Bookings() {
     //     setIsDeleted(false)
     // }
 
+    const handleDelete = async (id) => {
+        setIsDeleted(true)
+        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+            try {
+                const response = await axios.delete('/bookings/' + id)
+                toast({
+                    render: () => (
+                        <Alert status={'success'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'تم حذف الحجز بنجاح'}
+                            </div>
+
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            } catch (error) {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'حصل خطأ ما'}
+                            </div>
+
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            }
+        }
+        setIsDeleted(false)
+    }
+
     async function updatePaymentStatus() {
         setIsUpdatePaymentLoading(true)
         try {
             const response = await axios.get('/update_payment_status')
             setIsUpdatePaymentLoading(false)
-            return toast({
+            toast({
                 render: () => (
                     <Alert status={'success'} variant='left-accent' color={'black'}>
                         <AlertIcon />
@@ -101,7 +144,7 @@ function Bookings() {
             })
         } catch (error) {
             setIsUpdatePaymentLoading(false)
-            return toast({
+            toast({
                 render: () => (
                     <Alert status={'error'} variant='left-accent' color={'black'}>
                         <AlertIcon />
@@ -161,7 +204,7 @@ function Bookings() {
                                                 <th className="p-3 fs-7">الطاولات</th>
                                                 <th className="p-3 fs-7">الاجمالي</th>
                                                 <th className="p-3 fs-7">مضى عليه</th>
-                                                {/* <th className="p-3 fs-7">خيارات</th> */}
+                                                <th className="p-3 fs-7">خيارات</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -213,12 +256,14 @@ function Bookings() {
                                                             </td>
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
-                                                            {/* <td>
+                                                            <td>
                                                                 {
                                                                     booking.payment != 'paid' &&
-                                                                    <button className="text-danger" onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                                    <button className="text-danger" onClick={() => handleDelete(booking.id)}>
+                                                                        <HiOutlineTrash size={20} />
+                                                                    </button>
                                                                 }
-                                                            </td> */}
+                                                            </td>
                                                         </tr>
                                                     ))}
 

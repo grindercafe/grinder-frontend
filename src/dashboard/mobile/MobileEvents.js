@@ -127,7 +127,7 @@ function MobileEvents() {
                         'singer_name': event.singer_name,
                         'singer_img': event.singer_img,
                         'price': event.price,
-                        'is_visible': event.is_visible
+                        'is_visible': event.is_visible,
                     }
 
                     all_events.push(eventTemplate)
@@ -169,12 +169,15 @@ function MobileEvents() {
             'singer_name': data.singer_name,
             'singer_img': data.singer_img,
             'price': data.price,
+            'description': data.description
         }
 
         try {
             const response = await axios.post('/event', body)
             successToast()
         } catch (error) {
+            console.log(error)
+
             errorToast()
         }
 
@@ -187,7 +190,7 @@ function MobileEvents() {
         if (window.confirm('هل انت متأكد من حذف الحفلة ؟') == true) {
             try {
                 const response = await axios.delete('/events/' + id)
-                return toast({
+                toast({
                     render: () => (
                         <Alert status={'success'} variant='left-accent' color={'black'}>
                             <AlertIcon />
@@ -203,7 +206,7 @@ function MobileEvents() {
                     position: 'top-left',
                 })
             } catch (error) {
-                return toast({
+                toast({
                     render: () => (
                         <Alert status={'error'} variant='left-accent' color={'black'}>
                             <AlertIcon />
@@ -291,8 +294,10 @@ function MobileEvents() {
 
                                                 <tr key={event.id} className="table-card fs-7">
                                                     <td>
-                                                        {event.singer_name} <br />
-                                                        {event.id}#
+                                                        {event.id}# <br />
+                                                        <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
+                                                            {event.singer_name}
+                                                        </Link>
                                                     </td>
                                                     <td>
                                                         {event.date} <br />
@@ -360,6 +365,9 @@ function MobileEvents() {
 
                                         </div>
                                     </div>
+
+                                    <label htmlFor="description" className="form-label mt-4"> وصف الحفلة</label>
+                                        <textarea {...register('description')} className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
 
                                     <div className="d-flex justify-content-between align-items-center mt-4">
                                         <label htmlFor="singer-img" className="form-label">صورة الفنان</label>

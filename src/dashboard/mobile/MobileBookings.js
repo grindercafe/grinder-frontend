@@ -6,6 +6,8 @@ import moment from 'moment'
 import MobileSidebar from './MobileSidebar'
 import { Progress, useToast, Alert, AlertIcon, CloseButton } from '@chakra-ui/react'
 import SearchField from '../../components/SearchField'
+import { HiOutlineTrash } from "react-icons/hi"
+
 
 function MobileBookings() {
 
@@ -15,7 +17,7 @@ function MobileBookings() {
     const [searchKey, setSearchKey] = useState('')
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
     const toast = useToast()
-    // const [isDeleted, setIsDeleted] = useState(false)
+    const [isDeleted, setIsDeleted] = useState(false)
 
 
     useEffect(() => {
@@ -63,7 +65,7 @@ function MobileBookings() {
             setIsLoading(false)
         }
         getBookings()
-    }, [isUpdatePaymentLoading])
+    }, [isUpdatePaymentLoading, isDeleted])
 
     const nav = useRef()
     const body = document.getElementById('body')
@@ -94,6 +96,47 @@ function MobileBookings() {
     //     }
     //     setIsDeleted(false)
     // }
+
+    const handleDelete = async (id) => {
+        setIsDeleted(true)
+        if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
+            try {
+                const response = await axios.delete('/bookings/' + id)
+                toast({
+                    render: () => (
+                        <Alert status={'success'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'تم حذف الحجز بنجاح'}
+                            </div>
+
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            } catch (error) {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'حصل خطأ ما'}
+                            </div>
+
+                            <CloseButton position={'absolute'} left={'2'} onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            }
+        }
+        setIsDeleted(false)
+    }
 
 
     async function updatePaymentStatus() {
@@ -183,7 +226,7 @@ function MobileBookings() {
                                         <th>الطاولات</th>
                                         <th>الاجمالي</th>
                                         <th>مضى عليه</th>
-                                        {/* <th>خيارات</th> */}
+                                        <th>خيارات</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -236,12 +279,14 @@ function MobileBookings() {
                                                     </td>
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
-                                                    {/* <td>
+                                                    <td>
                                                         {
                                                             booking.payment != 'paid' &&
-                                                            <button className='text-danger' onClick={() => handleDelete(booking.id)}>حذف</button>
+                                                            <button className='text-danger' onClick={() => handleDelete(booking.id)}>
+                                                                <HiOutlineTrash size={20} />
+                                                            </button>
                                                         }
-                                                    </td> */}
+                                                    </td>
                                                 </tr>
                                             ))
                                     }

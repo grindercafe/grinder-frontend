@@ -809,7 +809,7 @@ function EventPage() {
                                         className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
                                         {isBookingLoading || isPaymentLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
-                                            <span className="m-5">إتمام الحجز</span>
+                                            <span className="m-5">الإستمرار للدفع</span>
                                         }
                                     </button>
                                 </form>

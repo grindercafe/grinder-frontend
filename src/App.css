@@ -796,6 +796,10 @@ td {
     background-color: var(--secondary-hover-color) !important;
 }
 
+.hero-button-secondary:active {
+    background-color: #b69c859f !important;
+}
+
 .hero-button-transparent {
     width: 80%;
     background-color: transparent !important;
@@ -1117,7 +1121,7 @@ td {
 }
 
 .event-summary img {
-   max-height: 400px;
+    max-height: 400px;
 }
 
 .delete-icon {
@@ -1127,4 +1131,124 @@ td {
 
 .delete-icon:hover {
     color: rgba(255, 0, 0, 0.551);
+}
+
+.dashboard-event-info {
+    background-color: var(--dashboard-secondary-color);
+}
+
+.dashboard-event-tables {
+    background-color: var(--dashboard-secondary-color);
+    /* height: ; */
+}
+
+.dashboard-event-info-btn {
+    background-color: #E8DDD4 !important;
+    width: 100%;
+    height: 50px !important;
+    margin-bottom: 1rem;
+}
+
+.dashboard-event-info-btn:hover {
+    background-color: #ddcbbc !important;
+}
+
+.dashboard-event-info-btn:active {
+    background-color: #E8DDD4 !important;
+}
+
+.dashboard-event-save-btn {
+    background-color: var(--dashboard-primary-color) !important;
+    width: 100%;
+    height: 50px !important;
+    margin-top: 2rem;
+}
+
+.dashboard-event-save-btn:hover {
+    background-color: #1f1f1fe2 !important;
+}
+
+.dashboard-event-save-btn:active {
+    background-color: #1f1f1f !important;
+}
+
+.grid-container-dashboard {
+    /* width: 500px;
+    height: 500px; */
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    /* gap: 5px; */
+}
+
+.grid-item-dashboard {
+    text-align: center;
+    display: grid;
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+    background-color: #E7DED7;
+    box-shadow: 0 0 0.3rem 0.1rem rgba(0, 0, 0, 0.25);
+    transition: 150ms;
+}
+
+.grid-item-dashboard:hover {
+    transform: scale(1.05);
+}
+
+.grid-item-disabled-dashboard {
+    text-align: center;
+    cursor: default;
+    background-color: rgba(255, 0, 0, 0.355);
+}
+
+.grid-item-disabled-dashboard:hover {
+    transform: none;
+}
+
+.selected-grid-dashboard {
+    box-shadow: 0px 0px 0px 3px rgba(0, 128, 0, 0.458) inset;
+}
+
+.seat-img-dashboard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.seat-id-dashboard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -65%);
+    font-size: 12px;
+}
+
+.stage-dashboard {
+    height: 40px;
+    width: 23%;
+    background-color: #717171;
+    text-align: center;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 26%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.entry-dashboard {
+    height: 40px;
+    width: 23%;
+    background-color: #717171;
+    text-align: center;
+    color: white;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

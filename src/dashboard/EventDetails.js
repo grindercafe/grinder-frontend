@@ -6,7 +6,7 @@ import { useDisclosure, Collapse, Box } from '@chakra-ui/react'
 import four_seats from '../assets/images/4seats.png'
 import three_seats from '../assets/images/3seats.png'
 import two_seats from '../assets/images/2seats.png'
-import { BsChevronDown } from "react-icons/bs"
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 // import { useForm } from "react-hook-form"
 // import * as yup from 'yup'
 // import { yupResolver } from '@hookform/resolvers/yup'
@@ -18,7 +18,7 @@ import {
     CloseButton,
     useToast
 } from '@chakra-ui/react'
-import Dashboard from "./Dashboard"
+import DashboardLayout from "./DashboardLayout"
 
 function EventDetails() {
     const { id } = useParams()
@@ -64,6 +64,7 @@ function EventDetails() {
                     end_time.add(1, 'day')
 
                 const event = {
+                    'id': data.id,
                     'date': date.format('YYYY-MM-DD'),
                     'start_time': start_time.format('hh:mm'),
                     'end_time': end_time.format('hh:mm'),
@@ -206,106 +207,170 @@ function EventDetails() {
         document.body.style.backgroundColor = '#ffffff'
     }, [])
 
+    const [isVisible, setIsVisible] = useState(false)
+
+    async function updateVisibilty(event_id) {
+        try {
+            const response = await axios.patch('/events/' + event_id + '/update_visibility')
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
-        <div className="">
-            {
-                isLoading &&
-                <div className="container col-lg-8 mt-5 text-center">
-                    <i className="fas fa-spinner fa-spin fs-1"></i>
+        <DashboardLayout>
+            <div className="d-flex justify-content-evenly">
+                <div className="dashboard-event-info p-5">
+                    <div className="mb-4 fs-4">#{event.id}</div>
+                    <div className="mb-4">
+                        <div className="mb-3 fs-5">{event.singer_name}</div>
+                        <div className="mb-2 fs-6">التاريخ: {event.date}</div>
+                        <div className="mb-2 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
+                        <div className="fs-6">السعر: {event.price} ر.س</div>
+                    </div>
+                    <div>
+                        <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
+                            {
+                                event.is_visible ?
+                                    <AiOutlineEye size={25} className="mx-auto" /> :
+                                    <AiOutlineEyeInvisible size={25} className="mx-auto" />
+                            }
+                        </button>
+                        <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button>
+                        <button className="btn dashboard-event-save-btn text-white">حفظ التعديلات</button>
+                    </div>
                 </div>
-            }
-            {
-                error &&
-                <div className="container col-lg-8 mt-5 text-center text-second">
-                    حصل خطأ ما, تأكد من اتصالك بالانترنت.
-                </div>
-            }
-
-            {
-                (!isLoading && !error) &&
-                <div className="col-lg-5 col-12 container-lg">
-                    {/* <div>
-                        <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
-                            cursor: 'pointer'
-                        }} onClick={onToggleEventSummary}>
-                            <div>
-                                ملخص الحفلة
-                            </div>
-                            <BsChevronDown className={`arrow ${isEventSummaryOpen && 'down-arrow'}`} />
-                        </div> */}
-                    {/* <Collapse in={isEventSummaryOpen} animateOpacity> */}
-                    <Box className="background-secondary p-5 event-summary">
-                        {/* <img src={event.singer_img} alt="singer_img" /> */}
-                        <div className="mt-4 fs-3">{event.singer_name}</div>
-                        <div className="mt-3 fs-5">التاريخ: {event.date}</div>
-                        <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
-                        {/* <div className="mt-5 fs-5">{event.description}</div> */}
-                    </Box>
-                    {/* </Collapse>
-                    </div> */}
-                    {/* <div className="mt-4">
-                        <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
-                            cursor: 'pointer'
-                        }} onClick={onToggleBookingDetails}>
-                            <div>
-                                تفاصيل الحجز
-                            </div>
-                            <BsChevronDown className={`arrow ${isBookingDetailsOpen && 'down-arrow'}`} />
+                <div className="dashboard-event-tables p-5">
+                    <div className="position-relative">
+                        <div className="grid-container-dashboard" dir="ltr">
+                            {
+                                tables.map((table, index) => (
+                                    table ?
+                                        <div
+                                            key={'number:' + table.number}
+                                            onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                                                        text-prime
+                                                        grid-item-dashboard
+                                                        position-relative
+                                                        ${table.selected && 'selected-grid-dashboard'}
+                                                        ${!table.is_available && 'grid-item-disabled-dashboard'}`}>
+                                            <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
+                                            <div className="seat-id-dashboard">{table.number}</div>
+                                        </div> :
+                                        <div key={index}></div>
+                                ))
+                            }
                         </div>
-                        <Collapse in={isBookingDetailsOpen} animateOpacity> */}
-                    <Box className="background-secondary p-5">
-                        {
-                            tablesLoading || isLoading ?
-                                <i className="fas fa-spinner fa-spin fs-4"></i>
-                                : <div>
-                                    <div className="position-relative">
-                                        <div className="grid-container" dir="ltr">
-                                            {
-                                                tables.map((table, index) => (
-                                                    table ?
-                                                        <div
-                                                            key={'number:' + table.number}
-                                                            onClick={() => table.is_available && toggleSelectedTable(index)} className={`
-                                                        text-prime 
-                                                        grid-item
-                                                        position-relative 
-                                                        ${table.selected && 'selected-grid'}
-                                                        ${!table.is_available && 'grid-item-disabled'}`}
-                                                        >
-                                                            <img className="seat-img" src={table.img} width={'60%'} alt="" />
-                                                            <div className="seat-id">{table.number}</div>
-                                                        </div> :
-                                                        <div key={index}></div>
-                                                ))
-                                            }
-                                        </div>
-                                        <div className="stage">
-                                            المسرح
-                                        </div>
-                                        <div className="entry">
-                                            المدخل
-                                        </div>
-                                    </div>
-                                    <div className="container w-75 mt-5">
-                                        <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <div className="booking-details-label fs-5">عدد المقاعد</div>
-                                            <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
-                                        </div>
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div className="booking-details-label fs-5">الإجمالي</div>
-                                            <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                        }
-                    </Box>
-                    {/* </Collapse> */}
-                    {/* </div> */}
+                        <div className="stage-dashboard">
+                            المسرح
+                        </div>
+                        <div className="entry-dashboard">
+                            المدخل
+                        </div>
+                    </div>
                 </div>
-
-            }
-        </div>
+            </div>
+        </DashboardLayout>
     )
 }
 
+// <div className="">
+//     {
+//         isLoading &&
+//         <div className="container col-lg-8 mt-5 text-center">
+//             <i className="fas fa-spinner fa-spin fs-1"></i>
+//         </div>
+//     }
+//     {
+//         error &&
+//         <div className="container col-lg-8 mt-5 text-center text-second">
+//             حصل خطأ ما, تأكد من اتصالك بالانترنت.
+//         </div>
+//     }
+
+//     {
+//         (!isLoading && !error) &&
+//         <div className="col-lg-5 col-12 container-lg">
+//             {/* <div>
+//             <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
+//                 cursor: 'pointer'
+//             }} onClick={onToggleEventSummary}>
+//                 <div>
+//                     ملخص الحفلة
+//                 </div>
+//                 <BsChevronDown className={`arrow ${isEventSummaryOpen && 'down-arrow'}`} />
+//             </div> */}
+//             {/* <Collapse in={isEventSummaryOpen} animateOpacity> */}
+//             <Box className="background-secondary p-5 event-summary">
+//                 {/* <img src={event.singer_img} alt="singer_img" /> */}
+//                 <div className="mt-4 fs-3">{event.singer_name}</div>
+//                 <div className="mt-3 fs-5">التاريخ: {event.date}</div>
+//                 <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
+//                 {/* <div className="mt-5 fs-5">{event.description}</div> */}
+//             </Box>
+//             {/* </Collapse>
+//         </div> */}
+//             {/* <div className="mt-4">
+//             <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
+//                 cursor: 'pointer'
+//             }} onClick={onToggleBookingDetails}>
+//                 <div>
+//                     تفاصيل الحجز
+//                 </div>
+//                 <BsChevronDown className={`arrow ${isBookingDetailsOpen && 'down-arrow'}`} />
+//             </div>
+// <Collapse in={isBookingDetailsOpen} animateOpacity> */}
+// <Box className="background-secondary p-5">
+//     {
+//         tablesLoading || isLoading ?
+//             <i className="fas fa-spinner fa-spin fs-4"></i>
+//             : <div>
+//                 <div className="position-relative">
+//                     <div className="grid-container" dir="ltr">
+//                         {
+//                             tables.map((table, index) => (
+//                                 table ?
+//                                     <div
+//                                         key={'number:' + table.number}
+//                                         onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+//                                 text-prime 
+//                                 grid-item
+//                                 position-relative 
+//                                 ${table.selected && 'selected-grid'}
+//                                 ${!table.is_available && 'grid-item-disabled'}`}
+//                                     >
+//                                         <img className="seat-img" src={table.img} width={'60%'} alt="" />
+//                                         <div className="seat-id">{table.number}</div>
+//                                     </div> :
+//                                     <div key={index}></div>
+//                             ))
+//                         }
+//                     </div>
+//                     <div className="stage">
+//                         المسرح
+//                     </div>
+//                     <div className="entry">
+//                         المدخل
+//                     </div>
+//                 </div>
+//                 <div className="container w-75 mt-5">
+//                     <div className="d-flex justify-content-between align-items-center mb-3">
+//                         <div className="booking-details-label fs-5">عدد المقاعد</div>
+//                         <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
+//                     </div>
+//                     <div className="d-flex justify-content-between align-items-center">
+//                         <div className="booking-details-label fs-5">الإجمالي</div>
+//                         <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
+//                     </div>
+//                 </div>
+//             </div>
+//     }
+// </Box>
+// {/* </Collapse> */}
+//             {/* </div> */}
+//         </div>
+
+//     }
+// </div>
 export default EventDetails

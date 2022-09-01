@@ -57,7 +57,7 @@ function DashboardLayout({ children }) {
 
 function CustomLink({ to, children }) {
     const resolvedPath = useResolvedPath(to)
-    const isActive = useMatch({ path: resolvedPath.pathname, end: true })
+    const isActive = useMatch({ path: resolvedPath.pathname, end: false })
     return (
         <li className={isActive ? 'active-index' : ''}>
             <Link to={to} className="dashboard-links">
