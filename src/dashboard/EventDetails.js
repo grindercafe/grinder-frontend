@@ -324,7 +324,7 @@ function EventDetails() {
                                                         position-relative 
                                                         ${table.selected && 'selected-grid'}
                                                         ${!table.is_available && 'grid-item-disabled'}
-                                                        ${table.is_hidden && 'grid-item-hidden'}
+                                                        ${table.is_hidden && 'grid-item-hidden-dashboard'}
 
                                                         `}
                                                 >
