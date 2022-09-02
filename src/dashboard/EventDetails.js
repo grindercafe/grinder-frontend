@@ -320,16 +320,16 @@ function EventDetails() {
                                                     key={'number:' + table.number}
                                                     onClick={() => table.is_available && toggleSelectedTable(index)} className={`
                                                         text-prime 
-                                                        grid-item-dashboard
+                                                        grid-item
                                                         position-relative 
-                                                        ${table.selected && 'selected-grid-dashboard'}
-                                                        ${!table.is_available && 'grid-item-disabled-dashboard'}
-                                                        ${table.is_hidden && 'grid-item-hidden-dashboard'}
+                                                        ${table.selected && 'selected-grid'}
+                                                        ${!table.is_available && 'grid-item-disabled'}
+                                                        ${table.is_hidden && 'grid-item-hidden'}
 
                                                         `}
                                                 >
                                                     <img className="seat-img" src={table.img} width={'60%'} alt="" />
-                                                    <div className="seat-id-dashboard">{table.number}</div>
+                                                    <div className="seat-id">{table.number}</div>
                                                 </div> :
                                                 <div key={index}></div>
                                         ))
