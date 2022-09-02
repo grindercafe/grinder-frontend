@@ -235,7 +235,7 @@ function EventDetails() {
                                 }
                             </button> */}
                             {/* <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button> */}
-                            <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white">
+                            <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white" disabled={isHideLoading}>
                                 {
                                     isHideLoading ?
                                         <i className="fas fa-spinner fa-spin"></i> :
@@ -344,7 +344,7 @@ function EventDetails() {
                             </div>
                     }
 
-                    <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white">
+                    <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white" disabled={isHideLoading}>
                         {
                             isHideLoading ?
                                 <i className="fas fa-spinner fa-spin"></i> :
