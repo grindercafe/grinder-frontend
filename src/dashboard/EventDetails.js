@@ -1,21 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 import moment from "moment"
-import Layout from "../components/Layout"
-import { useDisclosure, Collapse, Box } from '@chakra-ui/react'
+import { useDisclosure } from '@chakra-ui/react'
 import four_seats from '../assets/images/4seats.png'
 import three_seats from '../assets/images/3seats.png'
 import two_seats from '../assets/images/2seats.png'
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 // import { useForm } from "react-hook-form"
 // import * as yup from 'yup'
 // import { yupResolver } from '@hookform/resolvers/yup'
 // import axios from 'axios'
 import axios from '../axios'
 import {
-    Alert,
-    AlertIcon,
-    CloseButton,
     useToast
 } from '@chakra-ui/react'
 import DashboardLayout from "./DashboardLayout"
@@ -26,27 +21,19 @@ function EventDetails() {
     const [tables, setTables] = useState([])
     const [event, setEvent] = useState({})
     const [isLoading, setIsLoading] = useState(true)
-    const { isOpen: isEventSummaryOpen, onToggle: onToggleEventSummary } = useDisclosure()
-    const { isOpen: isBookingDetailsOpen, onToggle: onToggleBookingDetails } = useDisclosure(
-        // { defaultIsOpen: true }
-    )
-    const { isOpen: isPaymentFormOpen, onToggle: onTogglePaymentForm } = useDisclosure()
     const [bookings, setBookings] = useState([])
     const [unavailableTables, setUnavailableTables] = useState([])
     const [selectedTables, setSelectedTables] = useState([])
+    const [removedTables, setRemovedTables] = useState([])
     const [tablesLoading, setTablesLoading] = useState(true)
     const [error, setError] = useState(false)
     const navigate = useNavigate()
     const toast = useToast()
-
-    const [isBookingLoading, setIsBookingLoading] = useState(false)
-    // const [isPaymentLoading, setIsPaymentLoading] = useState(false)
+    const [isHideLoading, setIsHideLoading] = useState(false)
 
 
-    // const { register, handleSubmit, formState: { errors } } = useForm({
-    //     resolver: yupResolver(schema)
-    // })
-
+    // const [isBookingLoading, setIsBookingLoading] = useState(false)
+    const [isVisible, setIsVisible] = useState(false)
 
     // get event
     useEffect(() => {
@@ -73,10 +60,12 @@ function EventDetails() {
                     'price': data.price,
                     'description': data.description,
                     'bookings': data.bookings,
-                    'unavailableTables': data.unavailableTables
+                    'unavailableTables': data.unavailableTables,
+                    'is_visible': data.is_visible
                 }
 
                 setEvent(event)
+                setIsVisible(event.is_visible)
                 setBookings(event.bookings)
                 setUnavailableTables(event.unavailableTables)
             } catch (error) {
@@ -87,7 +76,7 @@ function EventDetails() {
             setIsLoading(false)
         }
         getEvent()
-    }, [id])
+    }, [id, isHideLoading])
 
 
     // get tables
@@ -103,6 +92,7 @@ function EventDetails() {
                 for (let index = 0; index < 72; index++) {
                     if (!isEmptyPlace(index)) {
                         data[count]['is_available'] = true
+                        data[count]['is_hidden'] = false
                         data[count]['selected'] = false
                         if (data[count]['capacity'] == 2) {
                             data[count]['img'] = two_seats
@@ -122,7 +112,7 @@ function EventDetails() {
 
                         unavailableTables.forEach(unavailableTable => {
                             if (data[count].id == unavailableTable.id) {
-                                data[count]['is_available'] = false
+                                data[count]['is_hidden'] = true
                             }
                         })
                         t.push(data[count])
@@ -174,104 +164,197 @@ function EventDetails() {
             index === 71
     }
 
-    const [totalCapacity, setTotalCapacity] = useState(0)
-    const [totalPrice, setTotalPrice] = useState(0)
-
     const toggleSelectedTable = (idx) => {
         const ts = [...tables]
         ts[idx].selected = !ts[idx].selected
         setTables(ts)
-        setTotalCapacity((curret) => ts[idx].selected ? curret + ts[idx].capacity : curret - ts[idx].capacity)
-
-        setTotalPrice((prev) =>
-            ts[idx].selected ?
-                (ts[idx].capacity * event.price) + prev :
-                prev - (ts[idx].capacity * event.price)
-        )
 
         selectedTs()
     }
 
     const selectedTs = () => {
         const selectedTs = []
+        const removedTs = []
         tables.map((table) => {
             if (table) {
-                if (table.selected)
+                if (table.selected && !table.is_hidden)
                     selectedTs.push(table.id)
+                if (table.selected && table.is_hidden)
+                    removedTs.push(table.id)
             }
         })
         setSelectedTables(selectedTs)
+        setRemovedTables(removedTs)
     }
 
     useEffect(() => {
         document.body.style.backgroundColor = '#ffffff'
     }, [])
 
-    const [isVisible, setIsVisible] = useState(false)
 
-    async function updateVisibilty(event_id) {
+    // async function updateVisibilty(event_id) {
+    //     setIsVisible((current)=> !current)
+    //     try {
+    //         const response = await axios.patch('/events/' + event_id + '/update_visibility')
+    //         console.log(response.data)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
+
+    async function handleHideTables() {
+        setIsHideLoading(true)
         try {
-            const response = await axios.patch('/events/' + event_id + '/update_visibility')
+            const response = await axios.post('/events/' + id + '/hide_tables', { ids: selectedTables, removed_ids: removedTables })
             console.log(response.data)
         } catch (error) {
             console.log(error)
         }
+        setIsHideLoading(false)
     }
 
+
     return (
-        <DashboardLayout>
-            <div className="d-flex justify-content-evenly">
-                <div className="dashboard-event-info p-5">
+        <>
+            <DashboardLayout>
+                <div className="d-flex justify-content-around">
+                    <div className="dashboard-event-info p-5 col-4">
+                        <div className="mb-4 fs-4">#{event.id}</div>
+                        <div className="mb-4">
+                            <div className="mb-3 fs-5">{event.singer_name}</div>
+                            <div className="mb-2 fs-6">التاريخ: {event.date}</div>
+                            <div className="mb-2 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
+                            <div className="fs-6">السعر: {event.price} ر.س</div>
+                        </div>
+                        <div>
+                            {/* <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
+                                {
+                                    isVisible ?
+                                        <AiOutlineEye size={25} className="mx-auto" /> :
+                                        <AiOutlineEyeInvisible size={25} className="mx-auto" />
+                                }
+                            </button> */}
+                            {/* <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button> */}
+                            <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white">
+                                {
+                                    isHideLoading ?
+                                        <i className="fas fa-spinner fa-spin"></i> :
+                                        <div>حفظ التعديلات</div>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <div className="dashboard-event-tables p-5">
+
+                        {
+                            tablesLoading ?
+                                <i className="fas fa-spinner fa-spin"></i> :
+                                <div className="position-relative">
+                                    <div className="grid-container-dashboard" dir="ltr">
+                                        {
+                                            tables.map((table, index) => (
+                                                table ?
+                                                    <div
+                                                        key={'number:' + table.number}
+                                                        onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                                                            text-prime
+                                                            grid-item-dashboard
+                                                            position-relative
+                                                            ${table.selected && 'selected-grid-dashboard'}
+                                                            ${!table.is_available && 'grid-item-disabled-dashboard'}
+                                                            ${table.is_hidden && 'grid-item-hidden-dashboard'}
+                                                            
+                                                            `}>
+                                                        <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
+                                                        <div className="seat-id-dashboard">{table.number}</div>
+                                                    </div> :
+                                                    <div key={index}></div>
+                                            ))
+                                        }
+                                    </div>
+                                    <div className="stage-dashboard">
+                                        المسرح
+                                    </div>
+                                    <div className="entry-dashboard">
+                                        المدخل
+                                    </div>
+                                </div>
+                        }
+
+                    </div>
+                </div>
+            </DashboardLayout>
+
+            <div className="d-lg-none d-block text-prime">
+                <div className="dashboard-event-info p-5 m-3">
                     <div className="mb-4 fs-4">#{event.id}</div>
                     <div className="mb-4">
-                        <div className="mb-3 fs-5">{event.singer_name}</div>
-                        <div className="mb-2 fs-6">التاريخ: {event.date}</div>
-                        <div className="mb-2 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
+                        <div className="mb-4 fs-4">{event.singer_name}</div>
+                        <div className="mb-3 fs-6">التاريخ: {event.date}</div>
+                        <div className="mb-3 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
                         <div className="fs-6">السعر: {event.price} ر.س</div>
                     </div>
                     <div>
-                        <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
+                        {/* <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
                             {
-                                event.is_visible ?
+                                isVisible ?
                                     <AiOutlineEye size={25} className="mx-auto" /> :
                                     <AiOutlineEyeInvisible size={25} className="mx-auto" />
                             }
-                        </button>
-                        <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button>
-                        <button className="btn dashboard-event-save-btn text-white">حفظ التعديلات</button>
+                        </button> */}
+                        {/* <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button> */}
+
                     </div>
                 </div>
-                <div className="dashboard-event-tables p-5">
-                    <div className="position-relative">
-                        <div className="grid-container-dashboard" dir="ltr">
-                            {
-                                tables.map((table, index) => (
-                                    table ?
-                                        <div
-                                            key={'number:' + table.number}
-                                            onClick={() => table.is_available && toggleSelectedTable(index)} className={`
-                                                        text-prime
+                <div className="dashboard-event-tables p-4 m-3">
+
+                    {
+                        tablesLoading ?
+                            <i className="fas fa-spinner fa-spin"></i> :
+                            <div className="position-relative">
+                                <div className="grid-container" dir="ltr">
+                                    {
+                                        tables.map((table, index) => (
+                                            table ?
+                                                <div
+                                                    key={'number:' + table.number}
+                                                    onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                                                        text-prime 
                                                         grid-item-dashboard
-                                                        position-relative
+                                                        position-relative 
                                                         ${table.selected && 'selected-grid-dashboard'}
-                                                        ${!table.is_available && 'grid-item-disabled-dashboard'}`}>
-                                            <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
-                                            <div className="seat-id-dashboard">{table.number}</div>
-                                        </div> :
-                                        <div key={index}></div>
-                                ))
-                            }
-                        </div>
-                        <div className="stage-dashboard">
-                            المسرح
-                        </div>
-                        <div className="entry-dashboard">
-                            المدخل
-                        </div>
-                    </div>
+                                                        ${!table.is_available && 'grid-item-disabled-dashboard'}
+                                                        ${table.is_hidden && 'grid-item-hidden-dashboard'}
+
+                                                        `}
+                                                >
+                                                    <img className="seat-img" src={table.img} width={'60%'} alt="" />
+                                                    <div className="seat-id-dashboard">{table.number}</div>
+                                                </div> :
+                                                <div key={index}></div>
+                                        ))
+                                    }
+                                </div>
+                                <div className="stage">
+                                    المسرح
+                                </div>
+                                <div className="entry">
+                                    المدخل
+                                </div>
+                            </div>
+                    }
+
+                    <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white">
+                        {
+                            isHideLoading ?
+                                <i className="fas fa-spinner fa-spin"></i> :
+                                <div>حفظ التعديلات</div>
+                        }
+                    </button>
+
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     )
 }
 

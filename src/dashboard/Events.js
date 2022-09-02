@@ -266,9 +266,9 @@ function Events() {
                                                         <tr key={event.id} className="table-card fs-7">
                                                             <td>
                                                                 {event.id}# <br />
-                                                                {/* <Link to={`/dashboard/events/${event.id}`} className='text-primary'> */}
+                                                                <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
                                                                     {event.singer_name}
-                                                                {/* </Link> */}
+                                                                </Link>
                                                             </td>
                                                             <td>
                                                                 {event.date} <br />

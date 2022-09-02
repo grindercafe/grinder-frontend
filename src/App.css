@@ -966,6 +966,27 @@ td {
     .seat-id {
         font-size: 7px !important;
     }
+
+    .grid-item-dashboard {
+        height: 30px;
+    }
+
+    .stage-dashboard {
+        height: 30px !important;
+        font-size: 13px;
+        ;
+    }
+
+    .entry-dashboard {
+        height: 30px !important;
+        font-size: 13px;
+    }
+
+    .seat-id-dashboard {
+        font-size: 10px !important;
+        transform: translate(-50%, -50%) !important;
+
+    }
 }
 
 .grid-item:hover {
@@ -1204,6 +1225,10 @@ td {
 
 .grid-item-disabled-dashboard:hover {
     transform: none;
+}
+
+.grid-item-hidden-dashboard {
+    background-color: #8cc7ff94;
 }
 
 .selected-grid-dashboard {
