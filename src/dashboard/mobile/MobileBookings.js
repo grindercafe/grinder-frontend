@@ -7,6 +7,7 @@ import MobileSidebar from './MobileSidebar'
 import { Progress, useToast, Alert, AlertIcon, CloseButton } from '@chakra-ui/react'
 import SearchField from '../../components/SearchField'
 import { HiOutlineTrash } from "react-icons/hi"
+import Pagination from "react-js-pagination"
 
 
 function MobileBookings() {
@@ -18,54 +19,58 @@ function MobileBookings() {
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
     const toast = useToast()
     const [isDeleted, setIsDeleted] = useState(false)
+    const [meta, setMeta] = useState({})
 
+    async function getBookings(pageNumber = 1) {
+        try {
+            const response = await axios.get(`/bookings?page=${pageNumber}&search=${searchKey}`)
+
+            setMeta(response.data.meta)
+
+            const allBookings = []
+
+            response.data.data.forEach(booking => {
+                const date = moment(booking.event?.date)
+                const start_time = moment(booking.event?.start_time)
+                const end_time = moment(booking.event?.end_time)
+
+                if (end_time.isBefore(start_time)) {
+                    end_time.add(1, 'day')
+                }
+
+                const bookingTemplate = {
+                    'id': booking.id,
+                    'booking_number': booking.booking_number,
+                    'event': {
+                        'id': booking.event?.id,
+                        'date': date.format('YYYY-MM-DD'),
+                        'start_time': start_time.format('hh:mm'),
+                        'end_time': end_time.format('hh:mm'),
+                        'singer_name': booking.event?.singer_name,
+                    },
+                    'customer': {
+                        'id': booking.customer?.id,
+                        'name': booking.customer?.name,
+                        'phone_number': booking.customer?.phone_number
+                    },
+                    'total_price': booking.total_price,
+                    'payment': booking.payment?.status,
+                    'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
+                    'tables': booking.tables
+                }
+
+                allBookings.push(bookingTemplate)
+            })
+            setBookings(allBookings)
+        } catch (error) {
+            setError(true)
+        }
+        setIsLoading(false)
+    }
 
     useEffect(() => {
-        async function getBookings() {
-
-            try {
-                const response = await axios.get('/bookings')
-                const allBookings = []
-
-                response.data.data.forEach(booking => {
-
-                    const date = moment(booking.event?.date)
-                    const start_time = moment(booking.event?.start_time)
-                    const end_time = moment(booking.event?.end_time)
-
-                    if (end_time.isBefore(start_time)) {
-                        end_time.add(1, 'day')
-                    }
-
-                    const bookingTemplate = {
-                        'id': booking.id,
-                        'booking_number': booking.booking_number,
-                        'event': {
-                            'id': booking.event?.id,
-                            'singer_name': booking.event?.singer_name,
-                        },
-                        'customer': {
-                            'id': booking.customer?.id,
-                            'name': booking.customer?.name,
-                            'phone_number': booking.customer?.phone_number
-                        },
-                        'total_price': booking.total_price,
-                        'payment': booking.payment?.status,
-                        'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
-                        'tables': booking.tables
-                    }
-
-                    allBookings.push(bookingTemplate)
-
-                });
-                setBookings(allBookings)
-            } catch (error) {
-                setError(true)
-            }
-            setIsLoading(false)
-        }
         getBookings()
-    }, [isUpdatePaymentLoading, isDeleted])
+    }, [isUpdatePaymentLoading, isDeleted, searchKey])
 
     const nav = useRef()
     const body = document.getElementById('body')
@@ -205,7 +210,7 @@ function MobileBookings() {
 
                 </div>
                 <div className='dashboard-content-mobile'>
-                    <div className="table-wrapper">
+                    <div className="table-wrapper-mobile">
                         {
                             isLoading && <Progress size='xs' isIndeterminate />
                         }
@@ -220,33 +225,25 @@ function MobileBookings() {
                             <table className="table mobile-table">
                                 <thead>
                                     <tr>
-                                        <th>رقم الحجز</th>
-                                        <th>العميل والحفلة</th>
-                                        <th>حالة الدفع</th>
-                                        <th>الطاولات</th>
-                                        <th>الاجمالي</th>
-                                        <th>مضى عليه</th>
-                                        <th>خيارات</th>
+                                        <th className="p-3 fs-8">#</th>
+                                        <th className="p-3 fs-8">رقم الحجز</th>
+                                        <th className="p-3 fs-8">العميل والحفلة</th>
+                                        <th className="p-3 fs-8">حالة الدفع</th>
+                                        <th className="p-3 fs-8">الطاولات</th>
+                                        <th className="p-3 fs-8">الاجمالي</th>
+                                        <th className="p-3 fs-8">مضى عليه</th>
+                                        <th className="p-3 fs-8">خيارات</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
                                         bookings.length === 0 ?
                                             <div className="text-center text-muted">
-                                                لا توجد حجوزات بعد
+                                                لا توجد حجوزات 
                                             </div> :
-                                            bookings.filter((booking) => {
-                                                if (searchKey === '')
-                                                    return booking
-                                                else if (
-                                                    booking.id.toString().includes(searchKey) ||
-                                                    booking.customer.phone_number.toLowerCase().includes(searchKey.toLowerCase()) ||
-                                                    booking.event.singer_name.toLowerCase().includes(searchKey.toLowerCase())
-                                                ) {
-                                                    return booking
-                                                }
-                                            }).map((booking) => (
+                                            bookings.map((booking, index) => (
                                                 <tr key={booking.id} className="table-card fs-7">
+                                                    <td>{index + meta.from}</td>
                                                     <td>
                                                         {booking.id}#
                                                     </td>
@@ -272,8 +269,8 @@ function MobileBookings() {
                                                     </td> */}
                                                     <td>
                                                         {
-                                                            booking.tables.map((table) => (
-                                                                table.number + ','
+                                                            booking.tables.map((table, index) => (
+                                                                table.number + (booking.tables.length - 1 != index && '|')
                                                             ))
                                                         }
                                                     </td>
@@ -295,6 +292,27 @@ function MobileBookings() {
                         }
 
                     </div>
+                    {
+                        (!isLoading && !error) &&
+                        <div className="mt-4 me-4 mobile-pagination">
+                            <Pagination
+                                activePage={meta.current_page}
+                                totalItemsCount={meta.total}
+                                itemsCountPerPage={meta.per_page}
+                                onChange={(pageNumber) => getBookings(pageNumber)}
+                                itemClass="c-page-item"
+                                linkClass="c-page-link"
+                                activeClass="c-active"
+                                firstPageText={'First'}
+                                lastPageText={'Last'}
+                                linkClassLast={'c-page-link-last'}
+                                linkClassFirst={'c-page-link-last'}
+                                hideDisabled={true}
+                                pageRangeDisplayed={6}
+                            // hideNavigation={true}
+                            />
+                        </div>
+                    }
                 </div>
             </div>
         </>

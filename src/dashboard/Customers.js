@@ -5,6 +5,7 @@ import MobileCustomers from "./mobile/MobileCustomers"
 import SearchField from "../components/SearchField"
 import { Progress } from '@chakra-ui/react'
 import AuthProvider from "../components/AuthProvider"
+import Pagination from "react-js-pagination"
 
 function Customers() {
 
@@ -12,19 +13,22 @@ function Customers() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
+    const [meta, setMeta] = useState({})
+
+    async function getCustomers(pageNumber = 1) {
+        try {
+            const response = await axios.get(`/customers?page=${pageNumber}&search=${searchKey}`)
+            setCustomers(response.data.data)
+            setMeta(response.data.meta)
+        } catch (error) {
+            setError(true)
+        }
+        setIsLoading(false)
+    }
 
     useEffect(() => {
-        async function getCustomers() {
-            try {
-                const response = await axios.get('/customers')
-                setCustomers(response.data.data)
-            } catch (error) {
-                setError(true)
-            }
-            setIsLoading(false)
-        }
         getCustomers()
-    }, [])
+    }, [searchKey])
 
     return (
         <>
@@ -49,37 +53,56 @@ function Customers() {
                                 {
                                     (!isLoading && !error) &&
                                     <table className="table">
+                                        <thead>
+                                            <tr>
+                                                <th className="p-3 fs-7">#</th>
+                                                <th className="p-3 fs-7">الاسم</th>
+                                                <th className="p-3 fs-7">رقم الهاتف</th>
+                                                <th className="p-3 fs-7">عدد الحجوزات المدفوعة</th>
+                                            </tr>
+                                        </thead>
                                         <tbody>
 
                                             {
                                                 customers.length === 0 ?
                                                     <div className="text-center text-muted">
-                                                        لا يوجد عملاء بعد
+                                                        لا يوجد عملاء
                                                     </div> :
-                                                    customers.filter((customer) => {
-                                                        if (searchKey === '') {
-                                                            return customer
-                                                        }
-                                                        else if (
-                                                            customer.name.toLowerCase().includes(searchKey.toLowerCase()) ||
-                                                            customer.phone_number.includes(searchKey)) {
-                                                            return customer
-                                                        }
-                                                    })
-                                                        .map((customer) => (
-                                                            <tr key={customer.id} className="table-card fs-7">
-                                                                <td>{customer.id}#</td>
-                                                                <td>الاسم: {customer.name}</td>
-                                                                <td>{customer.phone_number}</td>
-                                                                <td>عدد الحجوزات المدفوعة: {customer.num_of_bookings}</td>
-                                                            </tr>
-                                                        ))}
+                                                    customers.map((customer, index) => (
+                                                        <tr key={customer.id} className="table-card fs-7">
+                                                            <td>{meta.from + (index)}</td>
+                                                            <td>الاسم: {customer.name}</td>
+                                                            <td>{customer.phone_number}</td>
+                                                            <td>{customer.num_of_bookings}</td>
+                                                        </tr>
+                                                    ))}
 
                                         </tbody>
                                     </table>
                                 }
 
                             </div>
+                            {
+                                (!isLoading && !error) &&
+                                <div className="mt-4 me-4">
+                                    <Pagination
+                                        activePage={meta.current_page}
+                                        totalItemsCount={meta.total}
+                                        itemsCountPerPage={meta.per_page}
+                                        onChange={(pageNumber) => getCustomers(pageNumber)}
+                                        itemClass="c-page-item"
+                                        linkClass="c-page-link"
+                                        activeClass="c-active"
+                                        firstPageText={'First'}
+                                        lastPageText={'Last'}
+                                        linkClassLast={'c-page-link-last'}
+                                        linkClassFirst={'c-page-link-last'}
+                                        hideDisabled={true}
+                                        pageRangeDisplayed={6}
+                                    // hideNavigation={true}
+                                    />
+                                </div>
+                            }
                         </div>
                     </div>
                 </DashboardLayout>

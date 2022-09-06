@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import axios from '../axios'
 import Layout from "../components/Layout"
-import { Alert, AlertIcon, Box, CloseButton, AlertDescription, AlertTitle, useDisclosure, Tooltip } from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, CloseButton, useDisclosure } from '@chakra-ui/react'
 import moment from "moment"
 
 const s = [1, 1, 1, 1, 1, 1, 1, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]

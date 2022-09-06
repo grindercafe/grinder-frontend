@@ -24,6 +24,8 @@ import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
 import { Link } from "react-router-dom"
 import { HiOutlineTrash } from "react-icons/hi"
+import Pagination from "react-js-pagination"
+
 
 const schema = yup.object().shape({
     'singer_name': yup.string().required(),
@@ -43,47 +45,52 @@ function Events() {
     const [searchKey, setSearchKey] = useState('')
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
     const [isDeleted, setIsDeleted] = useState(false)
+    const [meta, setMeta] = useState({})
+
+
+    async function getEvents(pageNumber = 1) {
+        try {
+            const response = await axios.get(`/events?page=${pageNumber}&search=${searchKey}`)
+
+            setMeta(response.data.meta)
+
+            const all_events = []
+
+            response.data.data.forEach(event => {
+
+                const date = moment(event.date)
+                const start_time = moment(event.start_time)
+                const end_time = moment(event.end_time)
+
+                if (end_time.isBefore(start_time)) {
+                    end_time.add(1, 'day')
+                }
+
+                const eventTemplate = {
+                    'id': event.id,
+                    'date': date.format('YYYY-MM-DD'),
+                    'start_time': start_time.format('hh:mm'),
+                    'end_time': end_time.format('hh:mm'),
+                    'singer_name': event.singer_name,
+                    'singer_img': event.singer_img,
+                    'price': event.price,
+                    'is_visible': event.is_visible
+                }
+
+                all_events.push(eventTemplate)
+
+            })
+            setEvents(all_events)
+        } catch (error) {
+            console.log(error);
+            setError(true)
+        }
+        setIsLoading(false)
+    }
 
     useEffect(() => {
-        async function getEvents() {
-
-            try {
-                const response = await axios.get('/events')
-
-                const all_events = []
-
-                response.data.data.forEach(event => {
-
-                    const date = moment(event.date)
-                    const start_time = moment(event.start_time)
-                    const end_time = moment(event.end_time)
-
-                    if (end_time.isBefore(start_time)) {
-                        end_time.add(1, 'day')
-                    }
-
-                    const eventTemplate = {
-                        'id': event.id,
-                        'date': date.format('YYYY-MM-DD'),
-                        'start_time': start_time.format('hh:mm'),
-                        'end_time': end_time.format('hh:mm'),
-                        'singer_name': event.singer_name,
-                        'singer_img': event.singer_img,
-                        'price': event.price,
-                        'is_visible': event.is_visible
-                    }
-
-                    all_events.push(eventTemplate)
-
-                })
-                setEvents(all_events)
-            } catch (error) {
-                setError(true)
-            }
-            setIsLoading(false)
-        }
         getEvents()
-    }, [isPostEventLoading, isDeleted])
+    }, [isPostEventLoading, isDeleted, searchKey])
 
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm(
@@ -222,7 +229,7 @@ function Events() {
                         <div className="fs-3 mb-5">قائمة الحفلات</div>
 
                         <div className="d-flex justify-content-between">
-                            <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder={'ابحث برقم الحفلة'} />
+                            <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder={'ابحث باسم الفنان'} />
                             <button className="btn btn-transparent border-prime fs-6 w-25" onClick={handleOpenModal}>اضافة حفلة</button>
                         </div>
                         <div className="my-5">
@@ -242,7 +249,8 @@ function Events() {
                                     <table className="table">
                                         <thead>
                                             <tr>
-                                                <th className="p-3 fs-7">الرقم</th>
+                                                <th className="p-3 fs-7">#</th>
+                                                <th className="p-3 fs-7">الرقم/الاسم</th>
                                                 <th className="p-3 fs-7">التاريخ والوقت</th>
                                                 <th className="p-3 fs-7">السعر</th>
                                                 <th className="p-3 fs-7">إظهار</th>
@@ -253,17 +261,11 @@ function Events() {
                                             {
                                                 events.length === 0 ?
                                                     <div className="text-center text-muted">
-                                                        لا توجد حفلات بعد
+                                                        لا توجد حفلات
                                                     </div> :
-                                                    events.filter((event) => {
-                                                        if (searchKey === '') {
-                                                            return event
-                                                        }
-                                                        else if (event.id.toString().includes(searchKey)) {
-                                                            return event
-                                                        }
-                                                    }).map((event) => (
+                                                    events.map((event, index) => (
                                                         <tr key={event.id} className="table-card fs-7">
+                                                            <td>{ meta.from + index }</td>
                                                             <td>
                                                                 {event.id}# <br />
                                                                 <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
@@ -291,6 +293,27 @@ function Events() {
                                     </table>
                                 }
                             </div>
+                            {
+                                (!isLoading && !error) &&
+                                <div className="mt-4 me-4">
+                                    <Pagination
+                                        activePage={meta.current_page}
+                                        totalItemsCount={meta.total}
+                                        itemsCountPerPage={meta.per_page}
+                                        onChange={(pageNumber) => getEvents(pageNumber)}
+                                        itemClass="c-page-item"
+                                        linkClass="c-page-link"
+                                        activeClass="c-active"
+                                        firstPageText={'First'}
+                                        lastPageText={'Last'}
+                                        linkClassLast={'c-page-link-last'}
+                                        linkClassFirst={'c-page-link-last'}
+                                        hideDisabled={true}
+                                        pageRangeDisplayed={6}
+                                    // hideNavigation={true}
+                                    />
+                                </div>
+                            }
                         </div>
                     </div>
 

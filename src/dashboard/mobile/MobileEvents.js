@@ -23,6 +23,8 @@ import {
 } from '@chakra-ui/react'
 import SearchField from "../../components/SearchField"
 import { HiOutlineTrash } from 'react-icons/hi'
+import Pagination from "react-js-pagination"
+
 
 
 const schema = yup.object().shape({
@@ -43,8 +45,7 @@ function MobileEvents() {
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const [isDeleted, setIsDeleted] = useState(false)
-
-
+    const [meta, setMeta] = useState({})
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm(
@@ -102,45 +103,46 @@ function MobileEvents() {
         })
     }
 
-    useEffect(() => {
-        async function getEvents() {
-            try {
-                const response = await axios.get('/events')
+    async function getEvents(pageNumber = 1) {
+        try {
+            const response = await axios.get(`/events?page=${pageNumber}&search=${searchKey}`)
+            setMeta(response.data.meta)
+            const all_events = []
 
-                const all_events = []
+            response.data.data.forEach(event => {
 
-                response.data.data.forEach(event => {
+                const date = moment(event.date)
+                const start_time = moment(event.start_time)
+                const end_time = moment(event.end_time)
 
-                    const date = moment(event.date)
-                    const start_time = moment(event.start_time)
-                    const end_time = moment(event.end_time)
+                if (end_time.isBefore(start_time)) {
+                    end_time.add(1, 'day')
+                }
 
-                    if (end_time.isBefore(start_time)) {
-                        end_time.add(1, 'day')
-                    }
+                const eventTemplate = {
+                    'id': event.id,
+                    'date': date.format('YYYY-MM-DD'),
+                    'start_time': start_time.format('hh:mm'),
+                    'end_time': end_time.format('hh:mm'),
+                    'singer_name': event.singer_name,
+                    'singer_img': event.singer_img,
+                    'price': event.price,
+                    'is_visible': event.is_visible,
+                }
 
-                    const eventTemplate = {
-                        'id': event.id,
-                        'date': date.format('YYYY-MM-DD'),
-                        'start_time': start_time.format('hh:mm'),
-                        'end_time': end_time.format('hh:mm'),
-                        'singer_name': event.singer_name,
-                        'singer_img': event.singer_img,
-                        'price': event.price,
-                        'is_visible': event.is_visible,
-                    }
+                all_events.push(eventTemplate)
 
-                    all_events.push(eventTemplate)
-
-                })
-                setEvents(all_events)
-            } catch (error) {
-                setError(true)
-            }
-            setIsLoading(false)
+            })
+            setEvents(all_events)
+        } catch (error) {
+            setError(true)
         }
+        setIsLoading(false)
+    }
+
+    useEffect(() => {
         getEvents()
-    }, [isPostEventLoading, isDeleted])
+    }, [isPostEventLoading, isDeleted, searchKey])
 
     const nav = useRef()
     const body = document.getElementById('body')
@@ -248,14 +250,14 @@ function MobileEvents() {
                         </button>
                     </div>
                     <SearchField onChange={(e) => setSearchKey(e.target.value)}
-                        placeholder={'ابحث برقم الحفلة'} />
+                        placeholder={'ابحث باسم الفنان'} />
 
                     <button className='btn add-event-btn' onClick={handleOpenModal}>إضافة حفلة</button>
 
                     <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
                 </div>
                 <div className='dashboard-content-mobile'>
-                    <div className="table-wrapper">
+                    <div className="table-wrapper-mobile">
                         {
                             isLoading && <Progress size='xs' isIndeterminate />
                         }
@@ -270,6 +272,7 @@ function MobileEvents() {
                             <table className="table mobile-table">
                                 <thead>
                                     <tr>
+                                        <th>#</th>
                                         <th>الرقم</th>
                                         <th>التاريخ والوقت</th>
                                         <th>السعر</th>
@@ -281,18 +284,12 @@ function MobileEvents() {
                                     {
                                         events.length === 0 ?
                                             <div className="text-center text-muted">
-                                                لا توجد حفلات بعد
+                                                لا توجد حفلات
                                             </div> :
-                                            events.filter((event) => {
-                                                if (searchKey === '') {
-                                                    return event
-                                                }
-                                                else if (event.id.toString().includes(searchKey)) {
-                                                    return event
-                                                }
-                                            }).map((event) => (
+                                            events.map((event, index) => (
 
                                                 <tr key={event.id} className="table-card fs-7">
+                                                    <td>{meta.from + index}</td>
                                                     <td>
                                                         {event.id}# <br />
                                                         <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
@@ -322,6 +319,27 @@ function MobileEvents() {
                         }
 
                     </div>
+                    {
+                        (!isLoading && !error) &&
+                        <div className="mt-4 me-4 mobile-pagination">
+                            <Pagination
+                                activePage={meta.current_page}
+                                totalItemsCount={meta.total}
+                                itemsCountPerPage={meta.per_page}
+                                onChange={(pageNumber) => getEvents(pageNumber)}
+                                itemClass="c-page-item"
+                                linkClass="c-page-link"
+                                activeClass="c-active"
+                                firstPageText={'First'}
+                                lastPageText={'Last'}
+                                linkClassLast={'c-page-link-last'}
+                                linkClassFirst={'c-page-link-last'}
+                                hideDisabled={true}
+                                pageRangeDisplayed={6}
+                            // hideNavigation={true}
+                            />
+                        </div>
+                    }
                 </div>
                 <Modal isOpen={isOpen} size={'xl'} closeOnOverlayClick={false}>
                     <ModalOverlay backdropFilter='blur(8px)' />
@@ -367,7 +385,7 @@ function MobileEvents() {
                                     </div>
 
                                     <label htmlFor="description" className="form-label mt-4"> وصف الحفلة</label>
-                                        <textarea {...register('description')} className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
+                                    <textarea {...register('description')} className="form-control mb-2" name="description" id="description" cols="5" rows="3"></textarea>
 
                                     <div className="d-flex justify-content-between align-items-center mt-4">
                                         <label htmlFor="singer-img" className="form-label">صورة الفنان</label>

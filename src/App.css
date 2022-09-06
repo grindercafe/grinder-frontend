@@ -149,7 +149,8 @@ header .nav-menu-btn:hover {
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
+    height: 8px;
 }
 
 /* Track */
@@ -579,9 +580,14 @@ th {
 }
 
 .table-wrapper {
-    height: 420px;
+    height: 50vh;
     overflow-y: scroll;
     border: #1F1F1F solid 1px;
+}
+
+.table-wrapper-mobile {
+    height: 80%;
+    overflow: scroll;
 }
 
 
@@ -657,7 +663,7 @@ td {
 }
 
 .dashboard-header-mobile {
-    height: 15rem;
+    height: 35%;
     background-color: var(--dashboard-secondary-color);
     padding: 2rem;
 }
@@ -738,7 +744,7 @@ td {
 }
 
 .dashboard-content-mobile {
-    height: 70%;
+    height: 65%;
 }
 
 .test-flex {
@@ -1276,4 +1282,42 @@ td {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.c-page-item {
+    background-color: var(--dashboard-secondary-hover-color);
+    /* border: #1F1F1F solid 1px; */
+    margin-left: .5rem;
+    padding: .1rem .7rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: 200ms;
+}
+
+.c-page-item:hover {
+    background-color: var(--secondary-hover-color);
+}
+
+.c-active {
+    background-color: #b19a84;
+}
+
+.c-page-link {
+    color: #1F1F1F;
+}
+
+.c-page-link:hover {
+    color: #1F1F1F;
+}
+
+.c-page-link-last {
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-pagination {
+    display: flex;
+    justify-content: center;
 }
