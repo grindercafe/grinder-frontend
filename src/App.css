@@ -1149,6 +1149,10 @@ td {
 
 .event-summary img {
     max-height: 400px;
+    width: 100%;
+    object-fit: cover;
+    object-position: 0 20%;
+
 }
 
 .delete-icon {

@@ -9,6 +9,8 @@ import { Link } from "react-router-dom"
 import { Progress, useToast, Alert, AlertIcon, CloseButton, Tooltip } from '@chakra-ui/react'
 import { HiOutlineTrash } from "react-icons/hi"
 import Pagination from "react-js-pagination"
+import 'moment/min/locales.min'
+
 
 
 function Bookings() {
@@ -56,7 +58,7 @@ function Bookings() {
                     },
                     'total_price': booking.total_price,
                     'payment': booking.payment?.status,
-                    'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
+                    'created_at': moment(booking.created_at),
                     'tables': booking.tables,
                     'uuid': booking.uuid,
                     'token': booking.token
@@ -258,7 +260,7 @@ function Bookings() {
                                                                 }
                                                             </td>
                                                             <td>{booking.total_price} ر.س</td>
-                                                            <td>{booking.created_at}</td>
+                                                            <td>{booking.created_at.locale('ar').fromNow('false')}</td>
                                                             <td>
                                                                 {
                                                                     booking.payment == 'paid' &&

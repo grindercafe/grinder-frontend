@@ -11,6 +11,7 @@ import {
     ModalContent,
     ModalOverlay
 } from '@chakra-ui/react'
+import { arabicDays } from "../utils/Helper"
 
 function EventsPage() {
 
@@ -49,9 +50,9 @@ function EventsPage() {
 
                     const event = {
                         'id': data.id,
-                        'date': date.format('DD-MM-YYYY'),
-                        'start_time': start_time.format('hh:mmA'),
-                        'end_time': end_time.format('hh:mmA'),
+                        'date': date,
+                        'start_time': start_time,
+                        'end_time': end_time,
                         'singer_name': data.singer_name,
                         'singer_img': data.singer_img,
                         'price': data.price,
@@ -135,8 +136,8 @@ function EventsPage() {
                                                 <div className="ms-4" style={{ fontSize: '23px' }}>{event.singer_name}</div>
                                                 <div style={{ fontSize: '20px' }}>{event.price} ر.س</div>
                                             </div>
-                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التاريخ / {event.date}</div>
-                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التوقيت / {event.start_time} إلى {event.end_time}</div>
+                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التاريخ / {event.date.format('YYYY/MM/DD')} , {arabicDays(event.date.format('dddd'))}</div>
+                                            <div className="mb-2 fw-bold" style={{ fontSize: '15px' }}>التوقيت / {event.start_time.format('hh:mmA')} إلى {event.end_time.format('hh:mmA')}</div>
                                             <div className="mb-4 din-next" style={{ fontSize: '15px' }}>
                                                 {event.description}
                                             </div>

@@ -1,5 +1,5 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import moment from "moment"
 import Layout from "../components/Layout"
 import { useDisclosure, Collapse, Box } from '@chakra-ui/react'
@@ -18,6 +18,7 @@ import {
     CloseButton,
     useToast
 } from '@chakra-ui/react'
+import { arabicDays } from "../utils/Helper"
 
 const t = [
     {
@@ -318,13 +319,14 @@ const schema = yup.object().shape({
 })
 
 function EventPage() {
+    const customer_info = useRef(null)
     const [tables, setTables] = useState([])
     const { id } = useParams()
     const [event, setEvent] = useState({})
     const [isLoading, setIsLoading] = useState(true)
     const { isOpen: isEventSummaryOpen, onToggle: onToggleEventSummary } = useDisclosure()
     const { isOpen: isBookingDetailsOpen, onToggle: onToggleBookingDetails } = useDisclosure(
-        // { defaultIsOpen: true }
+        { defaultIsOpen: true }
     )
     const { isOpen: isPaymentFormOpen, onToggle: onTogglePaymentForm } = useDisclosure()
     const [bookings, setBookings] = useState([])
@@ -360,7 +362,7 @@ function EventPage() {
                     end_time.add(1, 'day')
 
                 const event = {
-                    'date': date.format('YYYY-MM-DD'),
+                    'date': date,
                     'start_time': start_time.format('hh:mm'),
                     'end_time': end_time.format('hh:mm'),
                     'singer_name': data.singer_name,
@@ -660,6 +662,14 @@ function EventPage() {
 
     }
 
+    const executeScroll = () => customer_info.current.scrollIntoView()
+
+    const handleNextStep = () => {
+        onToggleBookingDetails()
+        onTogglePaymentForm()
+        executeScroll()
+    }
+
     return (
         <Layout>
             {
@@ -690,8 +700,12 @@ function EventPage() {
                         <Collapse in={isEventSummaryOpen} animateOpacity>
                             <Box className="background-secondary p-5 event-summary">
                                 <img src={event.singer_img} alt="singer_img" />
-                                <div className="mt-4 fs-3">{event.singer_name}</div>
-                                <div className="mt-3 fs-5">التاريخ: {event.date}</div>
+                                <div className="d-flex justify-content-between">
+                                    <div className="mt-4 fs-3">{event.singer_name}</div>
+                                    <div className="mt-4 fs-4">{event.price} ر.س/للمقعد</div>
+                                </div>
+                                <div className="mt-3 fs-5">اليوم: {arabicDays(event.date.format('dddd'))}</div>
+                                <div className="mt-3 fs-5">التاريخ: {event.date.format('YYYY/MM/DD')}</div>
                                 <div className="mt-2 fs-5">التوقيت: {event.start_time} - {event.end_time}</div>
                                 <div className="mt-5 fs-5">{event.description}</div>
                             </Box>
@@ -742,6 +756,11 @@ function EventPage() {
                                             </div>
                                             <div className="container w-75 mt-5">
                                                 <div className="d-flex justify-content-between align-items-center mb-3">
+                                                    * يتم احتساب السعر الإجمالي بناءً على عدد المقاعد (مقعدين على الأقل)
+                                                </div>
+                                            </div>
+                                            <div className="container w-75 mt-5">
+                                                <div className="d-flex justify-content-between align-items-center mb-3">
                                                     <div className="booking-details-label fs-5">عدد المقاعد</div>
                                                     <div className="booking-details-value">{totalCapacity} <span className="fs-7">مقعد</span></div>
                                                 </div>
@@ -750,12 +769,15 @@ function EventPage() {
                                                     <div className="booking-details-value">{totalPrice} <span className="fs-7">ر.س</span></div>
                                                 </div>
                                             </div>
+                                            <button onClick={handleNextStep} className="btn btn-secondary w-100 p-2 mt-5 fs-5">
+                                                <span className="m-5">التالي</span>
+                                            </button>
                                         </div>
                                 }
                             </Box>
                         </Collapse>
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4" ref={customer_info}>
                         <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
                             cursor: 'pointer'
                         }} onClick={onTogglePaymentForm}>
@@ -806,7 +828,7 @@ function EventPage() {
 
                                     </div>
                                     <button
-                                        className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
+                                        className="btn btn-primary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
                                         {isBookingLoading || isPaymentLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
                                             <span className="m-5">الإستمرار للدفع</span>
