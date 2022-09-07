@@ -57,7 +57,9 @@ function Bookings() {
                     'total_price': booking.total_price,
                     'payment': booking.payment?.status,
                     'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
-                    'tables': booking.tables
+                    'tables': booking.tables,
+                    'uuid': booking.uuid,
+                    'token': booking.token
                 }
 
                 allBookings.push(bookingTemplate)
@@ -211,6 +213,7 @@ function Bookings() {
                                                 <th className="p-3 fs-7">الطاولات</th>
                                                 <th className="p-3 fs-7">الاجمالي</th>
                                                 <th className="p-3 fs-7">مضى عليه</th>
+                                                <th className="p-3 fs-7">التذكرة</th>
                                                 <th className="p-3 fs-7">خيارات</th>
                                             </tr>
                                         </thead>
@@ -218,12 +221,12 @@ function Bookings() {
                                             {
                                                 bookings.length === 0 ?
                                                     <div className="text-center text-muted">
-                                                        لا توجد حجوزات 
+                                                        لا توجد حجوزات
                                                     </div> :
                                                     bookings.map((booking, index) => (
 
                                                         <tr key={booking.id} className="table-card fs-7">
-                                                            <td>{ meta.from + (index) }</td>
+                                                            <td>{meta.from + (index)}</td>
                                                             <td>
                                                                 {booking.id}#
                                                             </td>
@@ -257,6 +260,11 @@ function Bookings() {
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
                                                             <td>
+                                                                <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                                    التذكرة
+                                                                </Link>
+                                                            </td>
+                                                            <td>
                                                                 {
                                                                     booking.payment != 'paid' &&
                                                                     <button className="text-danger" onClick={() => handleDelete(booking.id)}>
@@ -276,21 +284,21 @@ function Bookings() {
                                 (!isLoading && !error) &&
                                 <div className="mt-4">
                                     <Pagination
-                                    activePage={meta.current_page}
-                                    totalItemsCount={meta.total ? meta.total : 0}
-                                    itemsCountPerPage={meta.per_page}
-                                    onChange={(pageNumber) => getBookings(pageNumber)}
-                                    itemClass="c-page-item"
-                                    linkClass="c-page-link"
-                                    activeClass="c-active"
-                                    firstPageText={'First'}
-                                    lastPageText={'Last'}
-                                    linkClassLast={'c-page-link-last'}
-                                    linkClassFirst={'c-page-link-last'}
-                                    hideDisabled={true}
-                                    pageRangeDisplayed={6}
+                                        activePage={meta.current_page}
+                                        totalItemsCount={meta.total ? meta.total : 0}
+                                        itemsCountPerPage={meta.per_page}
+                                        onChange={(pageNumber) => getBookings(pageNumber)}
+                                        itemClass="c-page-item"
+                                        linkClass="c-page-link"
+                                        activeClass="c-active"
+                                        firstPageText={'First'}
+                                        lastPageText={'Last'}
+                                        linkClassLast={'c-page-link-last'}
+                                        linkClassFirst={'c-page-link-last'}
+                                        hideDisabled={true}
+                                        pageRangeDisplayed={6}
                                     // hideNavigation={true}
-                                />
+                                    />
                                 </div>
                             }
 

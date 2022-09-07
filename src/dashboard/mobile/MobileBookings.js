@@ -56,7 +56,9 @@ function MobileBookings() {
                     'total_price': booking.total_price,
                     'payment': booking.payment?.status,
                     'created_at': moment(booking.created_at).format("YYYY-MM-DD hh:mmA"),
-                    'tables': booking.tables
+                    'tables': booking.tables,
+                    'uuid': booking.uuid,
+                    'token': booking.token
                 }
 
                 allBookings.push(bookingTemplate)
@@ -232,6 +234,7 @@ function MobileBookings() {
                                         <th className="p-3 fs-8">الطاولات</th>
                                         <th className="p-3 fs-8">الاجمالي</th>
                                         <th className="p-3 fs-8">مضى عليه</th>
+                                        <th className="p-3 fs-8">التذكرة</th>
                                         <th className="p-3 fs-8">خيارات</th>
                                     </tr>
                                 </thead>
@@ -276,6 +279,11 @@ function MobileBookings() {
                                                     </td>
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
+                                                    <td>
+                                                        <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                            التذكرة
+                                                        </Link>
+                                                    </td>
                                                     <td>
                                                         {
                                                             booking.payment != 'paid' &&

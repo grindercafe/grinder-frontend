@@ -75,6 +75,13 @@ function Booking() {
                         <div>#{booking.id}</div>
                     </div>
                     <div className="d-flex justify-content-between align-items-center p-4">
+                        <div className="fs-5">العميل</div>
+                        <div>
+                            <div>{booking.customer?.name}</div>
+                            <div>{booking.customer?.phone_number}</div>
+                        </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center p-4">
                         <div className="fs-5">التاريخ</div>
                         <div>{moment(booking.event?.date).format("YYYY/MM/DD")}</div>
                     </div>
