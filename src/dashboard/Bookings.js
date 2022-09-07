@@ -260,9 +260,12 @@ function Bookings() {
                                                             <td>{booking.total_price} ر.س</td>
                                                             <td>{booking.created_at}</td>
                                                             <td>
-                                                                <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
-                                                                    التذكرة
-                                                                </Link>
+                                                                {
+                                                                    booking.payment == 'paid' &&
+                                                                    <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                                        التذكرة
+                                                                    </Link>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 {

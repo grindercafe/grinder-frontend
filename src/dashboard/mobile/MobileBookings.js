@@ -242,7 +242,7 @@ function MobileBookings() {
                                     {
                                         bookings.length === 0 ?
                                             <div className="text-center text-muted">
-                                                لا توجد حجوزات 
+                                                لا توجد حجوزات
                                             </div> :
                                             bookings.map((booking, index) => (
                                                 <tr key={booking.id} className="table-card fs-7">
@@ -280,9 +280,12 @@ function MobileBookings() {
                                                     <td>{booking.total_price} ر.س</td>
                                                     <td>{booking.created_at}</td>
                                                     <td>
-                                                        <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
-                                                            التذكرة
-                                                        </Link>
+                                                        {
+                                                            booking.payment == 'paid' &&
+                                                            <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                                التذكرة
+                                                            </Link>
+                                                        }
                                                     </td>
                                                     <td>
                                                         {
