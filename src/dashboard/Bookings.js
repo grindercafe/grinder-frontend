@@ -22,7 +22,6 @@ function Bookings() {
     const [meta, setMeta] = useState({})
 
     async function getBookings(pageNumber = 1) {
-        console.log(searchKey)
         setIsLoading(true)
         try {
             const response = await axios.get(`/bookings?page=${pageNumber}&search=${searchKey}`)
