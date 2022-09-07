@@ -13,7 +13,7 @@ import Pagination from "react-js-pagination"
 
 function Bookings() {
     const [bookings, setBookings] = useState([])
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(false)
     const [searchKey, setSearchKey] = useState('')
     const [isUpdatePaymentLoading, setIsUpdatePaymentLoading] = useState(false)
@@ -22,6 +22,8 @@ function Bookings() {
     const [meta, setMeta] = useState({})
 
     async function getBookings(pageNumber = 1) {
+        console.log(searchKey)
+        setIsLoading(true)
         try {
             const response = await axios.get(`/bookings?page=${pageNumber}&search=${searchKey}`)
 
@@ -276,7 +278,7 @@ function Bookings() {
                                 <div className="mt-4">
                                     <Pagination
                                     activePage={meta.current_page}
-                                    totalItemsCount={meta.total}
+                                    totalItemsCount={meta.total ? meta.total : 0}
                                     itemsCountPerPage={meta.per_page}
                                     onChange={(pageNumber) => getBookings(pageNumber)}
                                     itemClass="c-page-item"
