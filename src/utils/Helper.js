@@ -1,14 +1,14 @@
 export function arabicPeriods(period) {
     if (period === 'AM')
-        return 'صباحاً'
-    return 'مساءً'
+        return 'ص'
+    return 'م'
 }
 
 export function arabicDays(day) {
     switch (day) {
         case 'Sunday':
             return 'الأحد'
-        case 'Monady':
+        case 'Monday':
             return 'الاثنين'
         case 'Tuesday':
             return 'الثلاثاء'
