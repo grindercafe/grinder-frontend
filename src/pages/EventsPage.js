@@ -75,31 +75,6 @@ function EventsPage() {
 
     return (
         <Layout child={'events'}>
-            {/* Agreement Modal */}
-            <Modal isOpen={isTermsAgreementOpen} size={'lg'} closeOnOverlayClick={false} >
-                <ModalOverlay backdropFilter='blur(8px)' />
-                <ModalContent>
-                    <ModalBody className="background-primary">
-                        <div className="terms-and-conditions">
-                            <div className='text-center fs-3 my-5'>الشروط والأحكام</div>
-
-                            <ul className='pe-3'>
-                                <li>الرجاء التأكد من الوقت المختار والوصف قبل اجراء الحجز.</li>
-                                <li>المبالغ المدفوعة غير قابلة للاسترجاع.</li>
-                                <li>لا يمكن إلغاء الحجز</li>
-                                <li>جميع الأسعار تشمل ضريبة تقديم منتجات التبغ 100% بالإضافة الى 15% ضريبة القيمة المضافة.</li>
-                                <li>الرجاء التقيد بالوقت المحدد لأن الطاولة ستكون محجوزة لعملاء آخرين قبل وبعد وقتكم المحدد.</li>
-                                <li>غير مسموح للاطفال ولمن تقل اعمارهم عن 18 سنة بالدخول.</li>
-                            </ul>
-
-                            <div className="d-flex justify-content-center">
-                                <button onClick={handleAgreeButton} className='btn btn-secondary w-50 p-3 fs-5 mb-5'>موافق</button>
-                            </div>
-                        </div>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-
             <div className="page-title-text">
                 قائمة الحفلات
             </div>
@@ -154,6 +129,31 @@ function EventsPage() {
                     }
                 </div>
             }
+
+            {/* Agreement Modal */}
+            <Modal isOpen={isTermsAgreementOpen} size={'lg'} closeOnOverlayClick={false} >
+                <ModalOverlay backdropFilter='blur(8px)' />
+                <ModalContent>
+                    <ModalBody className="background-primary">
+                        <div className="terms-and-conditions">
+                            <div className='text-center fs-3 my-5'>الشروط والأحكام</div>
+
+                            <ul className='pe-3'>
+                                <li>الرجاء التأكد من الوقت المختار والوصف قبل اجراء الحجز.</li>
+                                <li>المبالغ المدفوعة غير قابلة للاسترجاع.</li>
+                                <li>لا يمكن إلغاء الحجز</li>
+                                <li>جميع الأسعار تشمل ضريبة تقديم منتجات التبغ 100% بالإضافة الى 15% ضريبة القيمة المضافة.</li>
+                                <li>الرجاء التقيد بالوقت المحدد لأن الطاولة ستكون محجوزة لعملاء آخرين قبل وبعد وقتكم المحدد.</li>
+                                <li>غير مسموح للاطفال ولمن تقل اعمارهم عن 18 سنة بالدخول.</li>
+                            </ul>
+
+                            <div className="d-flex justify-content-center">
+                                <button onClick={handleAgreeButton} className='btn btn-secondary w-50 p-3 fs-5 mb-5'>موافق</button>
+                            </div>
+                        </div>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </Layout>
     )
 }

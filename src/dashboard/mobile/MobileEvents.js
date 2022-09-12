@@ -1,7 +1,7 @@
 import { HiOutlineMenuAlt2 } from 'react-icons/hi'
 import { IoCloseOutline } from 'react-icons/io5'
 import { useRef, useState, useEffect } from "react"
-import { Link, Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import axios from '../../axios'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
@@ -47,6 +47,8 @@ function MobileEvents() {
     const [isDeleted, setIsDeleted] = useState(false)
     const [meta, setMeta] = useState({})
     const [isPostEventLoading, setIsPostEventLoading] = useState(false)
+
+    const navigate = useNavigate()
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm(
         { resolver: yupResolver(schema) }
@@ -237,6 +239,10 @@ function MobileEvents() {
         }
     }
 
+    const handleRowClick = (id) => {
+        navigate(`/dashboard/events/${id}`)
+    }
+
     return (
         <>
             <div className='dashboard-mobile din-next'>
@@ -288,13 +294,11 @@ function MobileEvents() {
                                             </div> :
                                             events.map((event, index) => (
 
-                                                <tr key={event.id} className="table-card fs-7">
+                                                <tr role={'button'} onClick={() => handleRowClick(event.id)} key={event.id} className="table-card fs-7">
                                                     <td>{meta.from + index}</td>
                                                     <td>
                                                         {event.id}# <br />
-                                                        <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
-                                                            {event.singer_name}
-                                                        </Link>
+                                                        {event.singer_name}
                                                     </td>
                                                     <td>
                                                         {event.date} <br />
@@ -412,7 +416,7 @@ function MobileEvents() {
 
                                             {isPostEventLoading ?
                                                 <i className="fas fa-spinner fa-spin"></i> :
-                                                <span className="m-5">إضافة</span>
+                                                <span>إضافة</span>
                                             }
                                         </button>
                                     </div>

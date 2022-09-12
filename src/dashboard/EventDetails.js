@@ -1,19 +1,35 @@
-import { useNavigate, useParams } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useNavigate, useParams, Link, useMatch, useResolvedPath, useLocation } from "react-router-dom"
+import { useState, useEffect, useRef } from "react"
 import moment from "moment"
-import { useDisclosure } from '@chakra-ui/react'
 import four_seats from '../assets/images/4seats.png'
 import three_seats from '../assets/images/3seats.png'
 import two_seats from '../assets/images/2seats.png'
-// import { useForm } from "react-hook-form"
-// import * as yup from 'yup'
-// import { yupResolver } from '@hookform/resolvers/yup'
-// import axios from 'axios'
 import axios from '../axios'
 import {
-    useToast
+    CloseButton,
+    useToast,
+    Alert,
+    AlertIcon,
+    Skeleton
 } from '@chakra-ui/react'
 import DashboardLayout from "./DashboardLayout"
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import Dashboard from './Dashboard'
+import { logout } from '../Auth'
+import logo from '../assets/images/black-logo.png'
+import MobileSidebar from './mobile/MobileSidebar'
+import { HiOutlineMenuAlt2 } from "react-icons/hi"
+
+const schema = yup.object().shape({
+    'singer_name': yup.string().required(),
+    'singer_img': yup.string().required(),
+    'date': yup.string().required(),
+    'start_time': yup.string().required(),
+    'end_time': yup.string().required(),
+    'price': yup.number().required()
+})
 
 function EventDetails() {
     const { id } = useParams()
@@ -30,7 +46,15 @@ function EventDetails() {
     const navigate = useNavigate()
     const toast = useToast()
     const [isHideLoading, setIsHideLoading] = useState(false)
+    const [isPostEventLoading, setIsPostEventLoading] = useState(false)
 
+
+
+    const { register, handleSubmit, formState: { errors, dirtyFields, isDirty }, setValue } = useForm(
+        {
+            resolver: yupResolver(schema)
+        }
+    )
 
     // const [isBookingLoading, setIsBookingLoading] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
@@ -53,8 +77,8 @@ function EventDetails() {
                 const event = {
                     'id': data.id,
                     'date': date.format('YYYY-MM-DD'),
-                    'start_time': start_time.format('hh:mm'),
-                    'end_time': end_time.format('hh:mm'),
+                    'start_time': start_time.format('HH:mm'),
+                    'end_time': end_time.format('HH:mm'),
                     'singer_name': data.singer_name,
                     'singer_img': data.singer_img,
                     'price': data.price,
@@ -63,6 +87,16 @@ function EventDetails() {
                     'unavailableTables': data.unavailableTables,
                     'is_visible': data.is_visible
                 }
+
+                setValue('singer_name', event.singer_name)
+                setValue('singer_img', event.singer_img)
+                setValue('date', event.date)
+                setValue('start_time', event.start_time)
+                setValue('end_time', event.end_time)
+                setValue('description', event.description)
+                setValue('price', event.price)
+
+
 
                 setEvent(event)
                 setIsVisible(event.is_visible)
@@ -202,61 +236,227 @@ function EventDetails() {
     //     }
     // }
 
+    const handleLogout = () => {
+        logout()
+        navigate('/dashboard/login')
+    }
+
     async function handleHideTables() {
         setIsHideLoading(true)
         try {
             const response = await axios.post('/events/' + id + '/hide_tables', { ids: selectedTables, removed_ids: removedTables })
-            console.log(response.data)
+            successToast()
         } catch (error) {
-            console.log(error)
+            errorToast()
         }
         setIsHideLoading(false)
     }
 
+    const successToast = () => {
+        toast({
+            render: () => (
+                <Alert status={'success'} variant='left-accent' color={'black'}>
+                    <AlertIcon />
+                    <div className="ps-5 pe-3 fs-7">
+                        {'تم التعديل بنجاح'}
+                    </div>
+
+                    <CloseButton onClick={() => toast.closeAll()} />
+                </Alert>
+
+            ),
+            duration: 20000,
+            position: 'top-left',
+        })
+    }
+
+    const errorToast = () => {
+        toast({
+            render: () => (
+                <Alert status={'error'} variant='left-accent' color={'black'}>
+                    <AlertIcon />
+                    <div className="ps-5 pe-3 fs-7">
+                        {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                    </div>
+
+                    <CloseButton onClick={() => toast.closeAll()} />
+                </Alert>
+
+            ),
+            duration: 5000,
+            position: 'top-left',
+        })
+    }
+
+    function dirtyValues(dirtyFields, allValues) {
+        // If *any* item in an array was modified, the entire array must be submitted, because there's no way to indicate
+        // "placeholders" for unchanged elements. `dirtyFields` is `true` for leaves.
+        if (dirtyFields === true || Array.isArray(dirtyFields))
+            return allValues;
+        // Here, we have an object
+        return Object.fromEntries(Object.keys(dirtyFields).map(key => [key, dirtyValues(dirtyFields[key], allValues[key])]));
+    }
+
+    const onSubmit = async (data) => {
+        setIsPostEventLoading(true)
+
+        const body = {
+            'date': data.date,
+            'start_time': data.start_time,
+            'end_time': data.end_time,
+            'singer_name': data.singer_name,
+            'singer_img': data.singer_img,
+            'price': data.price,
+            'description': data.description
+        }
+
+        if (Object.keys(dirtyFields).length) {
+            try {
+                const response = await axios.put(`/events/${id}`, dirtyValues(dirtyFields, body))
+                console.log(response.data)
+                successToast()
+            } catch (error) {
+                errorToast()
+            }
+        }
+        setIsPostEventLoading(false)
+    }
+
+    const nav = useRef()
+    const body = document.getElementById('body')
+    const location = useLocation()
+
+    const toggleNavbar = () => {
+        nav.current.classList.toggle('show-navbar')
+        if (nav.current.classList.contains('show-navbar')) {
+            body.style.overflow = "hidden"
+        } else {
+            body.style.overflow = "auto"
+        }
+    }
+
+    useEffect(() => {
+        body.style.overflow = 'auto'
+    }, [location])
+
 
     return (
         <>
-            <DashboardLayout>
-                <div className="d-flex justify-content-around">
-                    <div className="dashboard-event-info p-5 col-4">
-                        <div className="mb-4 fs-4">#{event.id}</div>
-                        <div className="mb-4">
-                            <div className="mb-3 fs-5">{event.singer_name}</div>
-                            <div className="mb-2 fs-6">التاريخ: {event.date}</div>
-                            <div className="mb-2 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
-                            <div className="fs-6">السعر: {event.price} ر.س</div>
-                        </div>
-                        <div>
-                            {/* <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
-                                {
-                                    isVisible ?
-                                        <AiOutlineEye size={25} className="mx-auto" /> :
-                                        <AiOutlineEyeInvisible size={25} className="mx-auto" />
-                                }
-                            </button> */}
-                            {/* <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button> */}
-                            <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white" disabled={isHideLoading}>
-                                {
-                                    isHideLoading ?
-                                        <i className="fas fa-spinner fa-spin"></i> :
-                                        <div>حفظ التعديلات</div>
-                                }
+            <Dashboard>
+                <div>
+                    <div className='pt-5 px-5 bg-white d-lg-none'>
+                        <div className='d-flex justify-content-between'>
+                            <div className='dashboard-title-mobile'>
+                                معلومات الحجز
+                            </div>
+                            <button className="dashboard-menu-btn dashoboard-nav-btn" onClick={toggleNavbar}>
+                                <HiOutlineMenuAlt2 size={'2rem'} />
                             </button>
                         </div>
+                        <MobileSidebar nav={nav} toggleNavbar={toggleNavbar} />
                     </div>
-                    <div className="dashboard-event-tables p-5">
+                    <div className="d-lg-flex">
+                        <div className="sidebar d-none d-lg-block">
+                            <Link to={'/'}>
+                                <img src={logo} alt="logo" className='' />
+                            </Link>
+                            <ul>
+                                <CustomLink to={'/dashboard/events'}>الحفلات</CustomLink>
+                                <CustomLink to={'/dashboard/customers'}>العملاء</CustomLink>
+                                <CustomLink to={'/dashboard/bookings'}>الحجوزات</CustomLink>
+                            </ul>
+                            <div>
+                                <button onClick={handleLogout} className="text-danger text-decoration-none">تسجيل الخروج</button>
+                            </div>
+                        </div>
+                        <div className='col-lg-8 sidebar-content din-next p-5 p-lg-0'>
+                            <div className="d-lg-flex d-block justify-content-around">
+                                <div className="dashboard-event-info p-4 col-lg-4 mb-5 mb-lg-0">
+                                    <div className="mb-4 fs-2">{event.id}#</div>
+                                    <div className="mb-4">
+                                        <form onSubmit={handleSubmit(onSubmit)} className="add-event-form">
+                                            <input
+                                                {...register('singer_name')}
+                                                id='singer_name' type={"text"} className={`form-control mb-3 ${errors.singer_name && 'error-border'}`} disabled={isLoading} />
+                                            {errors.singer_name && <p className='error-message'>اسم الفنان مطلوب</p>}
 
-                        {
-                            tablesLoading ?
-                                <i className="fas fa-spinner fa-spin"></i> :
-                                <div className="position-relative">
-                                    <div className="grid-container-dashboard" dir="ltr">
-                                        {
-                                            tables.map((table, index) => (
-                                                table ?
-                                                    <div
-                                                        key={'number:' + table.number}
-                                                        onClick={() => table.is_available && toggleSelectedTable(index)} className={`
+                                            <input
+                                                {...register('date')}
+                                                name='date' id='date' type={'date'} className={`form-control mb-3 ${errors.date && 'error-border'}`} disabled={isLoading} />
+                                            {errors.date && <p className='error-message'>التاريخ مطلوب</p>}
+
+                                            <input
+                                                {...register('start_time')}
+                                                name='start_time' id='start_time' type={'time'} className={`form-control mb-3 ${errors.start_time && 'error-border'}`} disabled={isLoading} />
+                                            {errors.start_time && <p className='error-message'>وقت البداية مطلوب</p>}
+
+                                            <input
+                                                {...register('end_time')}
+                                                name='end_time' id='end_time' type={'time'} className={`form-control mb-3 ${errors.end_time && 'error-border'}`} disabled={isLoading} />
+                                            {errors.end_time && <p className='error-message'>وقت النهاية مطلوب</p>}
+
+                                            <textarea {...register('description')} className="form-control mb-3" name="description" id="description" cols="5" rows="3" disabled={isLoading}></textarea>
+
+                                            <input
+                                                {...register('singer_img')}
+                                                name='singer_img' id='singer_img' type={'url'} className={`form-control mb-3 ${errors.singer_img && 'error-border'}`} disabled={isLoading} dir="ltr" />
+                                            {errors.singer_img && <p className='error-message'>{errors.singer_img.message}</p>}
+
+                                            <input
+                                                {...register('price')}
+                                                name='price' id='price' type={'number'} className={`form-control mb-3 ${errors.price && 'error-border'}`} disabled={isLoading} dir="ltr" />
+                                            {errors.price && <p className='error-message'>السعر مطلوب</p>}
+
+                                            <div className="mt-4">
+                                                <button
+                                                    className="btn hero-btn-primary"
+                                                    disabled={isPostEventLoading || !Object.keys(dirtyFields).length}
+                                                >
+
+                                                    {isPostEventLoading ?
+                                                        <i className="fas fa-spinner fa-spin"></i> :
+                                                        <span>حفظ التعديلات</span>
+                                                    }
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div className="dashboard-event-tables p-lg-5 p-1">
+                                    {
+                                        tablesLoading ?
+                                            <div className="position-relative">
+                                                <div className="grid-container-dashboard" dir="ltr">
+                                                    {
+                                                        [...Array(72)].map((item, index) => (
+                                                            !isEmptyPlace(index) ? <div
+                                                                key={index}
+                                                                className={`
+                                                    text-prime
+                                                    grid-item-dashboard
+                                                    position-relative
+                                                    default-cursor
+                                                    `}>
+                                                                <Skeleton />
+                                                            </div> : <div></div>
+                                                        ))
+                                                    }
+                                                </div>
+                                                <div className="stage-dashboard">
+                                                    المسرح
+                                                </div>
+                                                <div className="entry-dashboard">
+                                                    المدخل
+                                                </div>
+                                            </div> :
+                                            <div className="position-relative">
+                                                <div className="grid-container-dashboard" dir="ltr">
+                                                    {
+                                                        tables.map((table, index) => (
+                                                            table ?
+                                                                <div
+                                                                    key={'number:' + table.number}
+                                                                    onClick={() => table.is_available && toggleSelectedTable(index)} className={`
                                                             text-prime
                                                             grid-item-dashboard
                                                             position-relative
@@ -265,96 +465,50 @@ function EventDetails() {
                                                             ${table.is_hidden && 'grid-item-hidden-dashboard'}
                                                             
                                                             `}>
-                                                        <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
-                                                        <div className="seat-id-dashboard">{table.number}</div>
-                                                    </div> :
-                                                    <div key={index}></div>
-                                            ))
-                                        }
-                                    </div>
-                                    <div className="stage-dashboard">
-                                        المسرح
-                                    </div>
-                                    <div className="entry-dashboard">
-                                        المدخل
-                                    </div>
-                                </div>
-                        }
-
-                    </div>
-                </div>
-            </DashboardLayout>
-
-            <div className="d-lg-none d-block text-prime">
-                <div className="dashboard-event-info p-5 m-3">
-                    <div className="mb-4 fs-4">#{event.id}</div>
-                    <div className="mb-4">
-                        <div className="mb-4 fs-4">{event.singer_name}</div>
-                        <div className="mb-3 fs-6">التاريخ: {event.date}</div>
-                        <div className="mb-3 fs-6">التوقيت: {event.start_time} إلى {event.end_time}</div>
-                        <div className="fs-6">السعر: {event.price} ر.س</div>
-                    </div>
-                    <div>
-                        {/* <button className="btn dashboard-event-info-btn" onClick={() => updateVisibilty(event.id)}>
-                            {
-                                isVisible ?
-                                    <AiOutlineEye size={25} className="mx-auto" /> :
-                                    <AiOutlineEyeInvisible size={25} className="mx-auto" />
-                            }
-                        </button> */}
-                        {/* <button className="btn dashboard-event-info-btn text-danger">حذف الحفلة</button> */}
-
-                    </div>
-                </div>
-                <div className="dashboard-event-tables p-4 m-3">
-
-                    {
-                        tablesLoading ?
-                            <i className="fas fa-spinner fa-spin"></i> :
-                            <div className="position-relative">
-                                <div className="grid-container" dir="ltr">
-                                    {
-                                        tables.map((table, index) => (
-                                            table ?
-                                                <div
-                                                    key={'number:' + table.number}
-                                                    onClick={() => table.is_available && toggleSelectedTable(index)} className={`
-                                                        text-prime 
-                                                        grid-item
-                                                        position-relative 
-                                                        ${table.selected && 'selected-grid'}
-                                                        ${!table.is_available && 'grid-item-disabled'}
-                                                        ${table.is_hidden && 'grid-item-hidden-dashboard'}
-
-                                                        `}
-                                                >
-                                                    <img className="seat-img" src={table.img} width={'60%'} alt="" />
-                                                    <div className="seat-id">{table.number}</div>
-                                                </div> :
-                                                <div key={index}></div>
-                                        ))
+                                                                    <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
+                                                                    <div className="seat-id-dashboard">{table.number}</div>
+                                                                </div> :
+                                                                <div key={index}></div>
+                                                        ))
+                                                    }
+                                                </div>
+                                                <div className="stage-dashboard">
+                                                    المسرح
+                                                </div>
+                                                <div className="entry-dashboard">
+                                                    المدخل
+                                                </div>
+                                            </div>
                                     }
-                                </div>
-                                <div className="stage">
-                                    المسرح
-                                </div>
-                                <div className="entry">
-                                    المدخل
+                                    <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white" disabled={isHideLoading || !selectedTables.length && !removedTables.length}>
+                                        {
+                                            isHideLoading ?
+                                                <i className="fas fa-spinner fa-spin"></i> :
+                                                <div>حفظ التعديلات</div>
+                                        }
+                                    </button>
                                 </div>
                             </div>
-                    }
-
-                    <button onClick={handleHideTables} className="btn dashboard-event-save-btn text-white" disabled={isHideLoading}>
-                        {
-                            isHideLoading ?
-                                <i className="fas fa-spinner fa-spin"></i> :
-                                <div>حفظ التعديلات</div>
-                        }
-                    </button>
-
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </Dashboard>
+
+
+
         </>
+    )
+}
+
+function CustomLink({ to, children }) {
+    const resolvedPath = useResolvedPath(to)
+    const isActive = useMatch({ path: resolvedPath.pathname, end: false })
+    return (
+        <li className={isActive ? 'active-index' : ''}>
+            <Link to={to} className="dashboard-links">
+                {children}
+            </Link>
+        </li>
     )
 }
 

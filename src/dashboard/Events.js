@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react'
 import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { HiOutlineTrash } from "react-icons/hi"
 import Pagination from "react-js-pagination"
 
@@ -220,6 +220,11 @@ function Events() {
             console.log(error)
         }
     }
+    const navigate = useNavigate()
+
+    const handleRowClick = (id)=> {
+        navigate(`/dashboard/events/${id}`)
+    }
 
     return (
         <>
@@ -264,13 +269,11 @@ function Events() {
                                                         لا توجد حفلات
                                                     </div> :
                                                     events.map((event, index) => (
-                                                        <tr key={event.id} className="table-card fs-7">
-                                                            <td>{ meta.from + index }</td>
+                                                        <tr role={'button'} onClick={()=> handleRowClick(event.id)} key={event.id} className="table-card fs-7">
+                                                            <td>{meta.from + index}</td>
                                                             <td>
                                                                 {event.id}# <br />
-                                                                <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
-                                                                    {event.singer_name}
-                                                                </Link>
+                                                                {event.singer_name}
                                                             </td>
                                                             <td>
                                                                 {event.date} <br />
@@ -287,6 +290,7 @@ function Events() {
                                                             </td>
                                                         </tr>
                                                     ))
+                                                    // to={`/dashboard/events/${event.id}`} className='text-primary'
                                             }
 
                                         </tbody>
@@ -390,7 +394,7 @@ function Events() {
 
                                                 {isPostEventLoading ?
                                                     <i className="fas fa-spinner fa-spin"></i> :
-                                                    <span className="m-5">إضافة</span>
+                                                    <span>إضافة</span>
                                                 }
                                             </button>
                                         </div>

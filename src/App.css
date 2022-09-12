@@ -568,10 +568,12 @@ input::-webkit-inner-spin-button {
     font-size: 0.6rem !important;
 }
 
-.sidebar-content {
-    margin-right: 3rem;
-    margin-top: 3rem;
-}
+@media only screen and (min-width: 1000px) {
+    .sidebar-content {
+        margin-right: 3rem;
+        margin-top: 3rem;
+    }
+} 
 
 th {
     position: sticky;
@@ -1221,6 +1223,10 @@ td {
     background-color: #E7DED7;
     box-shadow: 0 0 0.3rem 0.1rem rgba(0, 0, 0, 0.25);
     transition: 150ms;
+}
+
+.default-cursor {
+    cursor: default !important;
 }
 
 .grid-item-dashboard:hover {

@@ -425,7 +425,7 @@ function TestPage() {
                                         className="btn btn-secondary w-100 p-2 mt-5 fs-5" disabled={isSubmitting}>
                                         {isSubmitting ?
                                             <i className="fas fa-spinner fa-spin"></i> :
-                                            <span className="m-5">إتمام الحجز</span>
+                                            <span>إتمام الحجز</span>
                                         }
                                     </button>
                                 </form>

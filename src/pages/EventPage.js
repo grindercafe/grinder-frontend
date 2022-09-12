@@ -770,7 +770,7 @@ function EventPage() {
                                                 </div>
                                             </div>
                                             <button onClick={handleNextStep} className="btn btn-secondary w-100 p-2 mt-5 fs-5">
-                                                <span className="m-5">التالي</span>
+                                                <span>التالي</span>
                                             </button>
                                         </div>
                                 }
@@ -831,7 +831,7 @@ function EventPage() {
                                         className="btn btn-primary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
                                         {isBookingLoading || isPaymentLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
-                                            <span className="m-5">الإستمرار للدفع</span>
+                                            <span>الإستمرار للدفع</span>
                                         }
                                     </button>
                                 </form>

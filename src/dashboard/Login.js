@@ -148,7 +148,7 @@ function Login() {
                         <button className='btn btn-primary mx-auto' disabled={isPostLoading}>
                             {isPostLoading ?
                                 <i className="fas fa-spinner fa-spin"></i> :
-                                <span className="m-5">تسجيل الدخول</span>
+                                <span>تسجيل الدخول</span>
                             }
                         </button>
                     </form>

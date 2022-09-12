@@ -3,7 +3,6 @@ import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom"
 import { useRef } from "react"
 import Dashboard from './Dashboard'
 import { logout } from '../Auth'
-import AuthProvider from '../components/AuthProvider'
 
 function DashboardLayout({ children }) {
     const navigate = useNavigate()
