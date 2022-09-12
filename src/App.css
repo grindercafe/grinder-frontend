@@ -1331,3 +1331,7 @@ td {
     display: flex;
     justify-content: center;
 }
+
+.is_visible_checkbox {
+    z-index: 1;
+}

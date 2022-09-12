@@ -47,6 +47,8 @@ function Events() {
     const [isDeleted, setIsDeleted] = useState(false)
     const [meta, setMeta] = useState({})
 
+    const [checked, setChecked] = useState(true)
+
 
     async function getEvents(pageNumber = 1) {
         try {
@@ -151,23 +153,25 @@ function Events() {
 
     const onSubmit = async (data) => {
         setIsPostEventLoading(true)
-        const body = {
-            'date': data.date,
-            'start_time': data.start_time,
-            'end_time': data.end_time,
-            'singer_name': data.singer_name,
-            'singer_img': data.singer_img,
-            'price': data.price,
-            'description': data.description
-        }
+        console.log(data);
+        // const body = {
+        //     'date': data.date,
+        //     'start_time': data.start_time,
+        //     'end_time': data.end_time,
+        //     'singer_name': data.singer_name,
+        //     'singer_img': data.singer_img,
+        //     'price': data.price,
+        //     'description': data.description,
+        //     'is_visible': data.is_visible
+        // }
 
-        try {
-            const response = await axios.post('/event', body)
-            successToast()
-        } catch (error) {
-            errorToast()
-        }
-        handleCloseModal()
+        // try {
+        //     const response = await axios.post('/event', body)
+        //     successToast()
+        // } catch (error) {
+        //     errorToast()
+        // }
+        // handleCloseModal()
         setIsPostEventLoading(false)
     }
 
@@ -269,11 +273,13 @@ function Events() {
                                                         لا توجد حفلات
                                                     </div> :
                                                     events.map((event, index) => (
-                                                        <tr role={'button'} onClick={()=> handleRowClick(event.id)} key={event.id} className="table-card fs-7">
+                                                        <tr key={event.id} className="table-card fs-7">
                                                             <td>{meta.from + index}</td>
                                                             <td>
                                                                 {event.id}# <br />
-                                                                {event.singer_name}
+                                                                <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
+                                                                    {event.singer_name}
+                                                                </Link>
                                                             </td>
                                                             <td>
                                                                 {event.date} <br />
@@ -281,7 +287,7 @@ function Events() {
                                                             </td>
                                                             <td>{event.price}</td>
                                                             <td>
-                                                                <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'}></Checkbox>
+                                                                <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'} className='is_visible_checkbox' />
                                                             </td>
                                                             <td>
                                                                 <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}>
@@ -385,6 +391,12 @@ function Events() {
                                                 name='price' id='price' type={'number'} className={`form-control w-50 ${errors.price && 'error-border'}`} dir="ltr" />
                                         </div>
                                         {errors.price && <p className='error-message'>السعر مطلوب</p>}
+
+                                        
+                                        <div className="d-flex justify-content-between align-items-center mt-4">
+                                            <label htmlFor="is_visible" className="form-label">إظهار</label>
+                                            <input {...register('is_visible')} onChange={()=> setChecked(!checked)} type="checkbox" className="form-check-input" name="is_visible" id="is_visible" defaultChecked={checked} />
+                                        </div>
 
                                         <div className="nebras mt-5">
                                             <button

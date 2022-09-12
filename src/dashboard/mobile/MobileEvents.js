@@ -294,11 +294,13 @@ function MobileEvents() {
                                             </div> :
                                             events.map((event, index) => (
 
-                                                <tr role={'button'} onClick={() => handleRowClick(event.id)} key={event.id} className="table-card fs-7">
+                                                <tr key={event.id} className="table-card fs-7">
                                                     <td>{meta.from + index}</td>
                                                     <td>
                                                         {event.id}# <br />
-                                                        {event.singer_name}
+                                                        <Link to={`/dashboard/events/${event.id}`} className='text-primary'>
+                                                            {event.singer_name}
+                                                        </Link>
                                                     </td>
                                                     <td>
                                                         {event.date} <br />
