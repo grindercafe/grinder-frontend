@@ -278,7 +278,7 @@ function MobileBookings() {
                                                         }
                                                     </td>
                                                     <td>{booking.total_price} ر.س</td>
-                                                    <td>{booking.created_at.fromNow()}</td>
+                                                    <td>{booking.created_at.locale('ar').fromNow('false')}</td>
                                                     <td>
                                                         {
                                                             booking.payment == 'paid' &&
