@@ -361,44 +361,44 @@ function EventPage() {
         resolver: yupResolver(schema)
     })
 
+    async function getEvent() {
+        try {
+            const response = await axios.get('/visible_events/' + id)
+
+            const data = response.data.data
+
+            const date = moment(data.date)
+            const start_time = moment(data.start_time)
+            const end_time = moment(data.end_time)
+
+            if (end_time.isBefore(start_time))
+                end_time.add(1, 'day')
+
+            const event = {
+                'date': date,
+                'start_time': start_time.format('hh:mm'),
+                'end_time': end_time.format('hh:mm'),
+                'singer_name': data.singer_name,
+                'singer_img': data.singer_img,
+                'price': data.price,
+                'description': data.description,
+                'bookings': data.bookings,
+                'unavailableTables': data.unavailableTables
+            }
+
+            setEvent(event)
+            setBookings(event.bookings)
+            setUnavailableTables(event.unavailableTables)
+        } catch (error) {
+            if (error.response.status == 404)
+                navigate('/not-found')
+            setError(true)
+        }
+        setIsLoading(false)
+    }
 
     // get event
     useEffect(() => {
-        async function getEvent() {
-            try {
-                const response = await axios.get('/visible_events/' + id)
-
-                const data = response.data.data
-
-                const date = moment(data.date)
-                const start_time = moment(data.start_time)
-                const end_time = moment(data.end_time)
-
-                if (end_time.isBefore(start_time))
-                    end_time.add(1, 'day')
-
-                const event = {
-                    'date': date,
-                    'start_time': start_time.format('hh:mm'),
-                    'end_time': end_time.format('hh:mm'),
-                    'singer_name': data.singer_name,
-                    'singer_img': data.singer_img,
-                    'price': data.price,
-                    'description': data.description,
-                    'bookings': data.bookings,
-                    'unavailableTables': data.unavailableTables
-                }
-
-                setEvent(event)
-                setBookings(event.bookings)
-                setUnavailableTables(event.unavailableTables)
-            } catch (error) {
-                if (error.response.status == 404)
-                    navigate('/not-found')
-                setError(true)
-            }
-            setIsLoading(false)
-        }
         getEvent()
     }, [id])
 
@@ -700,7 +700,6 @@ function EventPage() {
                     حصل خطأ ما, تأكد من اتصالك بالانترنت.
                 </div>
             }
-
             {
                 (!isLoading && !error) &&
                 <div className="container col-lg-8">
