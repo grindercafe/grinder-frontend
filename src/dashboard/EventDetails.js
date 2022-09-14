@@ -426,17 +426,16 @@ function EventDetails() {
                                     {
                                         tablesLoading ?
                                             <div className="position-relative">
-                                                <div className="grid-container-dashboard" dir="ltr">
+                                                <div className="grid-container-dashboard-skeleton" dir="ltr">
                                                     {
                                                         [...Array(72)].map((item, index) => (
                                                             !isEmptyPlace(index) ? <div
                                                                 key={index}
                                                                 className={`
-                                                    text-prime
-                                                    grid-item-dashboard
-                                                    position-relative
-                                                    default-cursor
-                                                    `}>
+                                                                    text-prime 
+                                                                    grid-item-dashboard-skeleton
+                                                                    position-relative
+                                                                `}>
                                                                 <Skeleton />
                                                             </div> : <div></div>
                                                         ))
@@ -448,7 +447,8 @@ function EventDetails() {
                                                 <div className="entry-dashboard">
                                                     المدخل
                                                 </div>
-                                            </div> :
+                                            </div>
+                                            :
                                             <div className="position-relative">
                                                 <div className="grid-container-dashboard" dir="ltr">
                                                     {
@@ -465,7 +465,7 @@ function EventDetails() {
                                                             ${table.is_hidden && 'grid-item-hidden-dashboard'}
                                                             
                                                             `}>
-                                                                    <img className="seat-img-dashboard" src={table.img} width={'80%'} alt="" />
+                                                                    <img className="seat-img-dashboard" src={table.img} alt="" />
                                                                     <div className="seat-id-dashboard">{table.number}</div>
                                                                 </div> :
                                                                 <div key={index}></div>

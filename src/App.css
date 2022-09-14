@@ -573,7 +573,15 @@ input::-webkit-inner-spin-button {
         margin-right: 3rem;
         margin-top: 3rem;
     }
-} 
+
+    .grid-item-dashboard-skeleton {
+        width: 40px;
+    }
+
+    .grid-item-dashboard {
+        width: 40px;
+    }
+}
 
 th {
     position: sticky;
@@ -975,14 +983,9 @@ td {
         font-size: 7px !important;
     }
 
-    .grid-item-dashboard {
-        height: 30px;
-    }
-
     .stage-dashboard {
         height: 30px !important;
         font-size: 13px;
-        ;
     }
 
     .entry-dashboard {
@@ -992,7 +995,7 @@ td {
 
     .seat-id-dashboard {
         font-size: 10px !important;
-        transform: translate(-50%, -50%) !important;
+        transform: translate(-50%, -60%) !important;
 
     }
 }
@@ -1107,6 +1110,106 @@ td {
     cursor: default;
 }
 
+.grid-container-dashboard {
+    /* width: 500px;
+    height: 500px; */
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
+    gap: 8px;
+}
+
+.grid-item-dashboard {
+    text-align: center;
+    display: grid;
+    height: 40px;
+    cursor: pointer;
+    background-color: #E7DED7;
+    box-shadow: 0 0 0.3rem 0.1rem rgba(0, 0, 0, 0.25);
+    transition: 150ms;
+}
+
+.default-cursor {
+    cursor: default !important;
+}
+
+.grid-item-dashboard:hover {
+    transform: scale(1.05);
+}
+
+.grid-item-disabled-dashboard {
+    text-align: center;
+    cursor: default;
+    background-color: rgba(255, 0, 0, 0.355);
+}
+
+.grid-item-disabled-dashboard:hover {
+    transform: none;
+}
+
+.grid-item-hidden-dashboard {
+    background-color: #8cc7ff94;
+}
+
+.selected-grid-dashboard {
+    box-shadow: 0px 0px 0px 3px rgba(0, 128, 0, 0.458) inset;
+}
+
+.seat-img-dashboard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35px;
+}
+
+.seat-id-dashboard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 12px;
+}
+
+.stage-dashboard {
+    height: 40px;
+    width: 23%;
+    background-color: #717171;
+    text-align: center;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 26%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.entry-dashboard {
+    height: 40px;
+    width: 23%;
+    background-color: #717171;
+    text-align: center;
+    color: white;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-container-dashboard-skeleton {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto;
+    gap: 8px;
+}
+
+.grid-item-dashboard-skeleton {
+    text-align: center;
+    height: 40px;
+    display: grid;
+}
+
 .social-media-link {
     transition: 200ms;
 }
@@ -1203,95 +1306,6 @@ td {
 
 .dashboard-event-save-btn:active {
     background-color: #1f1f1f !important;
-}
-
-.grid-container-dashboard {
-    /* width: 500px;
-    height: 500px; */
-    display: grid;
-    grid-template-columns: repeat(8, 50px);
-    grid-template-rows: repeat(8, 50px);
-    /* gap: 5px; */
-}
-
-.grid-item-dashboard {
-    text-align: center;
-    display: grid;
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
-    background-color: #E7DED7;
-    box-shadow: 0 0 0.3rem 0.1rem rgba(0, 0, 0, 0.25);
-    transition: 150ms;
-}
-
-.default-cursor {
-    cursor: default !important;
-}
-
-.grid-item-dashboard:hover {
-    transform: scale(1.05);
-}
-
-.grid-item-disabled-dashboard {
-    text-align: center;
-    cursor: default;
-    background-color: rgba(255, 0, 0, 0.355);
-}
-
-.grid-item-disabled-dashboard:hover {
-    transform: none;
-}
-
-.grid-item-hidden-dashboard {
-    background-color: #8cc7ff94;
-}
-
-.selected-grid-dashboard {
-    box-shadow: 0px 0px 0px 3px rgba(0, 128, 0, 0.458) inset;
-}
-
-.seat-img-dashboard {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.seat-id-dashboard {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -65%);
-    font-size: 12px;
-}
-
-.stage-dashboard {
-    height: 40px;
-    width: 23%;
-    background-color: #717171;
-    text-align: center;
-    color: white;
-    position: absolute;
-    top: 0;
-    right: 26%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.entry-dashboard {
-    height: 40px;
-    width: 23%;
-    background-color: #717171;
-    text-align: center;
-    color: white;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .c-page-item {

@@ -22,7 +22,6 @@ function MobileCustomers() {
             const response = await axios.get(`/customers?page=${pageNumber}&search=${searchKey}`)
             setCustomers(response.data.data)
             setMeta(response.data.meta)
-            console.log(response.data.meta);
         } catch (error) {
             setError(true)
         }
