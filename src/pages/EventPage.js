@@ -2,7 +2,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
 import moment from "moment"
 import Layout from "../components/Layout"
-import { useDisclosure, Collapse, Box } from '@chakra-ui/react'
+import { useDisclosure, Collapse, Box, Skeleton } from '@chakra-ui/react'
 import four_seats from '../assets/images/4seats.png'
 import three_seats from '../assets/images/3seats.png'
 import two_seats from '../assets/images/2seats.png'
@@ -324,11 +324,27 @@ function EventPage() {
     const { id } = useParams()
     const [event, setEvent] = useState({})
     const [isLoading, setIsLoading] = useState(true)
-    const { isOpen: isEventSummaryOpen, onToggle: onToggleEventSummary } = useDisclosure()
-    const { isOpen: isBookingDetailsOpen, onToggle: onToggleBookingDetails } = useDisclosure(
-        { defaultIsOpen: true }
-    )
-    const { isOpen: isPaymentFormOpen, onToggle: onTogglePaymentForm } = useDisclosure()
+    const {
+        isOpen: isEventSummaryOpen,
+        onToggle: onToggleEventSummary,
+        onClose: closeEventSummary,
+        onOpen: openEventSummary
+    } = useDisclosure()
+
+    const {
+        isOpen: isBookingDetailsOpen,
+        onToggle: onToggleBookingDetails,
+        onClose: closeBookingDetails,
+        onOpen: openBookingDetails
+    } = useDisclosure({ defaultIsOpen: true })
+
+    const {
+        isOpen: isCustomerInfoOpen,
+        onToggle: onToggleCustomerInfo,
+        onClose: closeCustomerInfo,
+        onOpen: openCustomerInfo
+    } = useDisclosure()
+
     const [bookings, setBookings] = useState([])
     const [unavailableTables, setUnavailableTables] = useState([])
     const [selectedTables, setSelectedTables] = useState([])
@@ -665,8 +681,8 @@ function EventPage() {
     const executeScroll = () => customer_info.current.scrollIntoView()
 
     const handleNextStep = () => {
-        onToggleBookingDetails()
-        onTogglePaymentForm()
+        closeBookingDetails()
+        openCustomerInfo()
         executeScroll()
     }
 
@@ -724,7 +740,30 @@ function EventPage() {
                             <Box className="background-secondary p-4">
                                 {
                                     tablesLoading || isLoading ?
-                                        <i className="fas fa-spinner fa-spin fs-4"></i>
+                                        // <i className="fas fa-spinner fa-spin fs-4"></i>
+                                        <div className="position-relative">
+                                            <div className="grid-container" dir="ltr">
+                                                {
+                                                    [...Array(72)].map((item, index) => (
+                                                        !isEmptyPlace(index) ? <div
+                                                            key={index}
+                                                            className={`
+                                                                    text-prime 
+                                                                    grid-item-skeleton
+                                                                    position-relative
+                                                                `}>
+                                                            <Skeleton />
+                                                        </div> : <div></div>
+                                                    ))
+                                                }
+                                            </div>
+                                            <div className="stage-dashboard">
+                                                المسرح
+                                            </div>
+                                            <div className="entry-dashboard">
+                                                المدخل
+                                            </div>
+                                        </div>
                                         : <div>
                                             <div className="position-relative">
                                                 <div className="grid-container" dir="ltr">
@@ -754,7 +793,7 @@ function EventPage() {
                                                     المدخل
                                                 </div>
                                             </div>
-                                            <div className="container w-75 mt-5">
+                                            <div className="container mt-5">
                                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                                     * يتم احتساب السعر الإجمالي بناءً على عدد المقاعد (مقعدين على الأقل)
                                                 </div>
@@ -780,13 +819,13 @@ function EventPage() {
                     <div className="mt-4" ref={customer_info}>
                         <div className="background-secondary px-5 py-4 fs-4 d-flex justify-content-between align-items-center" style={{
                             cursor: 'pointer'
-                        }} onClick={onTogglePaymentForm}>
+                        }} onClick={onToggleCustomerInfo}>
                             <div>
                                 معلومات الاتصال
                             </div>
-                            <BsChevronDown className={`arrow ${isPaymentFormOpen && 'down-arrow'}`} />
+                            <BsChevronDown className={`arrow ${isCustomerInfoOpen && 'down-arrow'}`} />
                         </div>
-                        <Collapse in={isPaymentFormOpen} animateOpacity>
+                        <Collapse in={isCustomerInfoOpen} animateOpacity>
                             <Box className="background-secondary p-4">
                                 <form onSubmit={handleSubmit(onSubmit)}>
                                     <div>

@@ -952,7 +952,7 @@ td {
 .grid-container {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto auto auto;
-    gap: 8px;
+    gap: 12px;
 }
 
 .grid-item {
@@ -964,8 +964,19 @@ td {
     transition: 150ms;
 }
 
+.grid-item-skeleton {
+    text-align: center;
+    height: 50px;
+    display: grid;
+    background-color: #E7DED7;
+}
+
 @media only screen and (max-width: 800px) {
     .grid-item {
+        height: 30px;
+    }
+
+    .grid-item-skeleton {
         height: 30px;
     }
 
