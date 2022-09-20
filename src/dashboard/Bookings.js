@@ -191,7 +191,7 @@ function Bookings() {
                         <div className="fs-3 mb-5">قائمة الحجوزات</div>
                         <div className="d-flex justify-content-between">
                             <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
-                            <Tooltip className="din-next" hasArrow label='يتحقق الزر من الحجوزات المعلّقة والتي مر عليها اكثر من 5 دقائق لإلغائها' bg='#F3EEE9' color='black' padding={4} placement='right-end'>
+                            {/* <Tooltip className="din-next" hasArrow label='يتحقق الزر من الحجوزات المعلّقة والتي مر عليها اكثر من 5 دقائق لإلغائها' bg='#F3EEE9' color='black' padding={4} placement='right-end'> */}
 
                                 <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
                                     {
@@ -200,7 +200,7 @@ function Bookings() {
                                             : <span>التحقق من الحجوزات المعلّقة</span>
                                     }
                                 </button>
-                            </Tooltip>
+                            {/* </Tooltip> */}
                         </div>
 
                         <div className="my-5">
