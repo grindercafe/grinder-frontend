@@ -454,7 +454,7 @@ function EventPage() {
 
         setTimeout(() => {
             setTablesLoading(false)
-        }, 3000)
+        }, 4000)
     }, [event])
 
     const isEmptyPlace = (index) => {
