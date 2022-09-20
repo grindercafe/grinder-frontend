@@ -264,7 +264,7 @@ function BookingDetails() {
         try {
             const response = await axios.put(`/bookings/${id}/updateTables`,
                 { ids: selectedTables, removed_ids: removedTables })
-
+            console.log(response.data)
             toast({
                 render: () => (
                     <Alert status={'success'} variant='left-accent' color={'black'}>
@@ -281,21 +281,41 @@ function BookingDetails() {
                 position: 'top-left',
             })
         } catch (error) {
-            toast({
-                render: () => (
-                    <Alert status={'error'} variant='left-accent' color={'black'}>
-                        <AlertIcon />
-                        <div className="ps-5 pe-3 fs-7">
-                            {'حصل خطأ ما, حاول مجدداً لاحقاً'}
-                        </div>
+            console.log(error.response);
+            if (error.response.data.message == 'overlapping') {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'أحد الطاولات محجوزة مسبقا'}
+                            </div>
 
-                        <CloseButton onClick={() => toast.closeAll()} />
-                    </Alert>
+                            <CloseButton onClick={() => toast.closeAll()} />
+                        </Alert>
 
-                ),
-                duration: 5000,
-                position: 'top-left',
-            })
+                    ),
+                    duration: 9000,
+                    position: 'top-left',
+                })
+            } else {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'حصل خطأ ما, حاول مجدداً لاحقاً'}
+                            </div>
+
+                            <CloseButton onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            }
+
         }
         setSelectedTables([])
         setRemovedTables([])

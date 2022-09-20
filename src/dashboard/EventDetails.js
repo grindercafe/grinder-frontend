@@ -247,7 +247,26 @@ function EventDetails() {
             const response = await axios.post('/events/' + id + '/hide_tables', { ids: selectedTables, removed_ids: removedTables })
             successToast()
         } catch (error) {
-            errorToast()
+            console.log(error)
+            if (error.response.data.message == 'overlapping') {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'أحد الطاولات محجوزة مسبقا'}
+                            </div>
+
+                            <CloseButton onClick={() => toast.closeAll()} />
+                        </Alert>
+
+                    ),
+                    duration: 9000,
+                    position: 'top-left',
+                })
+            } else {
+                errorToast()
+            }
         }
         setIsHideLoading(false)
     }
