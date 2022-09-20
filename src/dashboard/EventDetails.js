@@ -74,7 +74,7 @@ function EventDetails() {
                 if (end_time.isBefore(start_time))
                     end_time.add(1, 'day')
 
-                const event = {
+                const eventTemplate = {
                     'id': data.id,
                     'date': date.format('YYYY-MM-DD'),
                     'start_time': start_time.format('HH:mm'),
@@ -88,20 +88,20 @@ function EventDetails() {
                     'is_visible': data.is_visible
                 }
 
-                setValue('singer_name', event.singer_name)
-                setValue('singer_img', event.singer_img)
-                setValue('date', event.date)
-                setValue('start_time', event.start_time)
-                setValue('end_time', event.end_time)
-                setValue('description', event.description)
-                setValue('price', event.price)
+                setValue('singer_name', eventTemplate.singer_name)
+                setValue('singer_img', eventTemplate.singer_img)
+                setValue('date', eventTemplate.date)
+                setValue('start_time', eventTemplate.start_time)
+                setValue('end_time', eventTemplate.end_time)
+                setValue('description', eventTemplate.description)
+                setValue('price', eventTemplate.price)
 
 
 
-                setEvent(event)
-                setIsVisible(event.is_visible)
-                setBookings(event.bookings)
-                setUnavailableTables(event.unavailableTables)
+                setEvent(eventTemplate)
+                setIsVisible(eventTemplate.is_visible)
+                setBookings(eventTemplate.bookings)
+                setUnavailableTables(eventTemplate.unavailableTables)
             } catch (error) {
                 if (error.response.status == 404)
                     navigate('/not-found')
@@ -347,7 +347,7 @@ function EventDetails() {
                     <div className='pt-5 px-5 bg-white d-lg-none'>
                         <div className='d-flex justify-content-between'>
                             <div className='dashboard-title-mobile'>
-                                معلومات الحجز
+                                معلومات الحفلة
                             </div>
                             <button className="dashboard-menu-btn dashoboard-nav-btn" onClick={toggleNavbar}>
                                 <HiOutlineMenuAlt2 size={'2rem'} />

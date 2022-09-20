@@ -354,7 +354,7 @@ function EventPage() {
     const toast = useToast()
 
     const [isBookingLoading, setIsBookingLoading] = useState(false)
-    const [isPaymentLoading, setIsPaymentLoading] = useState(false)
+    // const [isPaymentLoading, setIsPaymentLoading] = useState(false)
 
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -541,12 +541,11 @@ function EventPage() {
             'name': data.customer_name,
             'phone_number': data.phone_number
         }
+        setIsBookingLoading(true)
         try {
-            setIsPaymentLoading(true)
             const paymentResponse = await axios.post('/payment', paymentData)
             if (paymentResponse.status === 200) {
                 try {
-                    setIsBookingLoading(true)
                     const body = {
                         'total_price': totalPrice,
                         'event_id': id,
@@ -560,6 +559,7 @@ function EventPage() {
                     const bookingReponse = await axios.post('/booking', body)
                     window.location.replace(paymentResponse.data.url)
                 } catch (error) {
+                    setIsBookingLoading(false)
                     if (error.response.data.message == 'overlapping') {
                         return toast({
                             render: () => (
@@ -595,6 +595,7 @@ function EventPage() {
                 }
             }
         } catch (error) {
+            setIsBookingLoading(false)
             return toast({
                 render: () => (
                     <Alert status={'error'} variant='left-accent' color={'black'}>
@@ -612,69 +613,6 @@ function EventPage() {
         }
 
         setIsBookingLoading(false)
-        setIsPaymentLoading(false)
-
-        // setIsBookingLoading(true)
-        // axios.post('/payment', paymentData)
-        //     .then((res) => {
-        //         setIsPaymentLoading(true)
-
-        //         const body = {
-        //             'total_price': totalPrice,
-        //             'event_id': id,
-        //             'tables': selectedTables,
-        //             'customer': {
-        //                 'name': data.customer_name,
-        //                 'phone_number': data.phone_number,
-        //             },
-        //             'transactionNo': res.data.transactionNo,
-        //         }
-
-        //         axios.post('/booking', body)
-        //             .then((re) => {
-        //                 window.location.replace(res.data.url)
-        //             })
-        //             .catch((error) => {
-
-        //                 if (error.response.data.message == 'overlapping') {
-        //                     return toast({
-        //                         render: () => (
-        //                             <Alert status={'error'} variant='left-accent' color={'black'}>
-        //                                 <AlertIcon />
-        //                                 <div className="ps-5 pe-3 fs-7">
-        //                                     {'أحد الطاولات محجوزة مسبقا'}
-        //                                 </div>
-
-        //                                 <CloseButton onClick={() => toast.closeAll()} />
-        //                             </Alert>
-
-        //                         ),
-        //                         duration: 9000,
-        //                         position: 'top-left',
-        //                     })
-        //                 }
-        //                 return toast({
-        //                     render: () => (
-        //                         <Alert status={'error'} variant='left-accent' color={'black'}>
-        //                             <AlertIcon />
-        //                             <div className="ps-5 pe-3 fs-7">
-        //                                 {'حصل خطأ ما, حاول مجدداً لاحقاً'}
-        //                             </div>
-
-        //                             <CloseButton onClick={() => toast.closeAll()} />
-        //                         </Alert>
-
-        //                     ),
-        //                     duration: 9000,
-        //                     position: 'top-left',
-        //                 })
-        //             })
-        //     })
-        //     .catch((error) => {
-        //         console.log('payment error: ' + error)
-        //     })
-        // setIsBookingLoading(false)
-        // setIsPaymentLoading(false)
 
     }
 
@@ -866,8 +804,8 @@ function EventPage() {
 
                                     </div>
                                     <button
-                                        className="btn btn-primary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading || isPaymentLoading}>
-                                        {isBookingLoading || isPaymentLoading ?
+                                        className="btn btn-primary w-100 p-2 mt-5 fs-5" disabled={isBookingLoading}>
+                                        {isBookingLoading ?
                                             <i className="fas fa-spinner fa-spin"></i> :
                                             <span>الإستمرار للدفع</span>
                                         }

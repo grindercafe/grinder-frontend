@@ -15,6 +15,7 @@ import EventPage from "./pages/EventPage";
 import ScrollToTop from "./ScrollToTop";
 import Login from "./dashboard/Login";
 import EventDetails from './dashboard/EventDetails'
+import BookingDetails from "./dashboard/BookingDetails";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <Route path="/dashboard/events/:id" element={<EventDetails />} />
             <Route path="/dashboard/customers" element={<Customers />} />
             <Route path="/dashboard/bookings" element={<Bookings />} />
+            <Route path="/dashboard/bookings/:id" element={<BookingDetails />} />
             <Route path="/bookings/:uuid" element={<Booking />} />
             <Route path="/dashboard/login" element={<Login />} />
             <Route path="/test" element={<TestPage />} />

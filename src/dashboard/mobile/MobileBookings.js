@@ -1,6 +1,6 @@
 import { HiOutlineMenuAlt2 } from 'react-icons/hi'
 import { useRef, useState, useEffect } from "react"
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import axios from '../../axios'
 import moment from 'moment'
 import MobileSidebar from './MobileSidebar'
@@ -104,7 +104,8 @@ function MobileBookings() {
     //     setIsDeleted(false)
     // }
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, e) => {
+        e.stopPropagation()
         setIsDeleted(true)
         if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
             try {
@@ -186,6 +187,14 @@ function MobileBookings() {
         }
     }
 
+    const noPropagation = e => e.stopPropagation()
+
+    const navigate = useNavigate()
+
+    const handleRowClick = (id) => {
+        navigate(`/dashboard/bookings/${id}`)
+    }
+
 
     return (
         <>
@@ -245,15 +254,15 @@ function MobileBookings() {
                                                 لا توجد حجوزات
                                             </div> :
                                             bookings.map((booking, index) => (
-                                                <tr key={booking.id} className="table-card fs-7">
+                                                <tr key={booking.id} role={'button'} onClick={() => handleRowClick(booking.id)} className="table-card fs-7">
                                                     <td>{index + meta.from}</td>
                                                     <td>
                                                         {booking.id}#
                                                     </td>
                                                     <td>
-                                                        <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'}>
+                                                        <a href={`https://api.whatsapp.com/send/?phone=966${booking.customer.phone_number.substring(1, 10)}&text&type=phone_number&app_absent=0`} className='text-primary' target={'_blank'} onClick={noPropagation}>
                                                             {booking.customer.phone_number}</a> <br />
-                                                        #<Link to={`/events/${booking.event.id}`} className='text-primary'>{booking.event.singer_name}</Link>
+                                                        {booking.event.singer_name}
                                                     </td>
                                                     <td>{booking.payment}</td>
                                                     {/* <td>
@@ -282,7 +291,7 @@ function MobileBookings() {
                                                     <td>
                                                         {
                                                             booking.payment == 'paid' &&
-                                                            <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                            <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`} onClick={noPropagation}>
                                                                 التذكرة
                                                             </Link>
                                                         }
@@ -290,7 +299,7 @@ function MobileBookings() {
                                                     <td>
                                                         {
                                                             booking.payment != 'paid' &&
-                                                            <button className='text-danger' onClick={() => handleDelete(booking.id)}>
+                                                            <button className="text-danger" onClick={(e) => handleDelete(booking.id, e)}>
                                                                 <HiOutlineTrash size={20} />
                                                             </button>
                                                         }

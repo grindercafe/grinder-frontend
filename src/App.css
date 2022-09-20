@@ -552,6 +552,20 @@ input::-webkit-inner-spin-button {
     border-radius: 2px !important;
 }
 
+.form-select {
+    border: 1px solid #1F1F1F !important;
+    border-radius: 0 !important;
+}
+
+.form-select:focus {
+    color: #212529;
+    background-color: #f8fafc;
+    border-color: #8cc8ff;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.138) !important;
+    border-radius: 2px !important;
+}
+
 .w-10 {
     width: 10%;
 }
@@ -1359,4 +1373,30 @@ td {
 
 .is_visible_checkbox {
     z-index: 1;
+}
+
+.grid-item-bookedByMe-dashboard {
+    background-color: rgba(255, 166, 0, 0.685);
+}
+
+.desc-boxes div {
+    font-size: 10px;
+}
+
+.red {
+    height: 15px;
+    width: 15px;
+    background-color: rgba(255, 0, 0, 0.355);
+}
+
+.orange {
+    height: 15px;
+    width: 15px;
+    background-color: rgba(255, 166, 0, 0.685);
+}
+
+.blue {
+    height: 15px;
+    width: 15px;
+    background-color: #8cc7ff94;
 }

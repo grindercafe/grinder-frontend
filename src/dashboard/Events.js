@@ -175,7 +175,8 @@ function Events() {
         setIsPostEventLoading(false)
     }
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, e) => {
+        e.stopPropagation()
         setIsDeleted(true)
         if (window.confirm('هل انت متأكد من حذف الحفلة ؟') == true) {
             try {
@@ -226,7 +227,7 @@ function Events() {
     }
     const navigate = useNavigate()
 
-    const handleRowClick = (id)=> {
+    const handleRowClick = (id) => {
         navigate(`/dashboard/events/${id}`)
     }
 
@@ -290,13 +291,13 @@ function Events() {
                                                                 <Checkbox onChange={() => updateVisibilty(event.id)} defaultChecked={event.is_visible} borderColor={'gray'} className='is_visible_checkbox' />
                                                             </td>
                                                             <td>
-                                                                <button className='delete-icon mb-3' onClick={() => handleDelete(event.id)}>
+                                                                <button className='delete-icon mb-3' onClick={(e) => handleDelete(event.id, e)}>
                                                                     <HiOutlineTrash size={20} />
                                                                 </button>
                                                             </td>
                                                         </tr>
                                                     ))
-                                                    // to={`/dashboard/events/${event.id}`} className='text-primary'
+                                                // to={`/dashboard/events/${event.id}`} className='text-primary'
                                             }
 
                                         </tbody>
@@ -392,10 +393,10 @@ function Events() {
                                         </div>
                                         {errors.price && <p className='error-message'>السعر مطلوب</p>}
 
-                                        
+
                                         <div className="d-flex justify-content-between align-items-center mt-4">
                                             <label htmlFor="is_visible" className="form-label">إظهار</label>
-                                            <input {...register('is_visible')} onChange={()=> setChecked(!checked)} type="checkbox" className="form-check-input" name="is_visible" id="is_visible" defaultChecked={checked} />
+                                            <input {...register('is_visible')} onChange={() => setChecked(!checked)} type="checkbox" className="form-check-input" name="is_visible" id="is_visible" defaultChecked={checked} />
                                         </div>
 
                                         <div className="nebras mt-5">

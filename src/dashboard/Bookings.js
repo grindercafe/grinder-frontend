@@ -5,7 +5,7 @@ import moment from "moment"
 import MobileBookings from "./mobile/MobileBookings"
 import SearchField from "../components/SearchField"
 import AuthProvider from "../components/AuthProvider"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Progress, useToast, Alert, AlertIcon, CloseButton, Tooltip } from '@chakra-ui/react'
 import { HiOutlineTrash } from "react-icons/hi"
 import Pagination from "react-js-pagination"
@@ -90,8 +90,9 @@ function Bookings() {
     //     }
     //     setIsDeleted(false)
     // }
-
-    const handleDelete = async (id) => {
+    
+    const handleDelete = async (id, e) => {
+        e.stopPropagation()
         setIsDeleted(true)
         if (window.confirm('هل انت متأكد من حذف الحجز ؟') == true) {
             try {
@@ -112,6 +113,7 @@ function Bookings() {
                     position: 'top-left',
                 })
             } catch (error) {
+                console.log(error)
                 toast({
                     render: () => (
                         <Alert status={'error'} variant='left-accent' color={'black'}>
@@ -172,6 +174,15 @@ function Bookings() {
         }
     }
 
+    const noPropagation = e => e.stopPropagation()
+
+    const navigate = useNavigate()
+    
+    const handleRowClick = (id)=> {
+        navigate(`/dashboard/bookings/${id}`)
+    }
+
+    
     return (
         <>
             <AuthProvider>
@@ -227,7 +238,7 @@ function Bookings() {
                                                     </div> :
                                                     bookings.map((booking, index) => (
 
-                                                        <tr key={booking.id} className="table-card fs-7">
+                                                        <tr key={booking.id} role={'button'} onClick={()=> handleRowClick(booking.id)} className="table-card fs-7">
                                                             <td>{meta.from + (index)}</td>
                                                             <td>
                                                                 {booking.id}#
@@ -264,7 +275,7 @@ function Bookings() {
                                                             <td>
                                                                 {
                                                                     booking.payment == 'paid' &&
-                                                                    <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`}>
+                                                                    <Link className='text-primary' target={"_blank"} to={`/bookings/${booking.uuid}?token=${booking.token}`} onClick={noPropagation}>
                                                                         التذكرة
                                                                     </Link>
                                                                 }
@@ -272,7 +283,7 @@ function Bookings() {
                                                             <td>
                                                                 {
                                                                     booking.payment != 'paid' &&
-                                                                    <button className="text-danger" onClick={() => handleDelete(booking.id)}>
+                                                                    <button className="text-danger" onClick={(e) => handleDelete(booking.id, e)}>
                                                                         <HiOutlineTrash size={20} />
                                                                     </button>
                                                                 }
