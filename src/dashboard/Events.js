@@ -153,25 +153,24 @@ function Events() {
 
     const onSubmit = async (data) => {
         setIsPostEventLoading(true)
-        console.log(data);
-        // const body = {
-        //     'date': data.date,
-        //     'start_time': data.start_time,
-        //     'end_time': data.end_time,
-        //     'singer_name': data.singer_name,
-        //     'singer_img': data.singer_img,
-        //     'price': data.price,
-        //     'description': data.description,
-        //     'is_visible': data.is_visible
-        // }
+        const body = {
+            'date': data.date,
+            'start_time': data.start_time,
+            'end_time': data.end_time,
+            'singer_name': data.singer_name,
+            'singer_img': data.singer_img,
+            'price': data.price,
+            'description': data.description,
+            'is_visible': data.is_visible
+        }
 
-        // try {
-        //     const response = await axios.post('/event', body)
-        //     successToast()
-        // } catch (error) {
-        //     errorToast()
-        // }
-        // handleCloseModal()
+        try {
+            const response = await axios.post('/event', body)
+            successToast()
+        } catch (error) {
+            errorToast()
+        }
+        handleCloseModal()
         setIsPostEventLoading(false)
     }
 
