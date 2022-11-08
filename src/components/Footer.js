@@ -29,7 +29,7 @@ function Footer() {
                     </div>
                     <div className="text-white din-next">
                         <div className='mb-4'>
-                            يومياً من 09:00 صباحاً إلى 05:00 فجراً
+                            أوقات العمل: مفتوح 24 ساعة
                         </div>
                         <div className='mb-3'>0561567610</div>
                         <div>

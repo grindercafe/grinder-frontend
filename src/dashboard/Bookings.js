@@ -90,7 +90,7 @@ function Bookings() {
     //     }
     //     setIsDeleted(false)
     // }
-    
+
     const handleDelete = async (id, e) => {
         e.stopPropagation()
         setIsDeleted(true)
@@ -177,7 +177,7 @@ function Bookings() {
     const noPropagation = e => e.stopPropagation()
 
     const navigate = useNavigate()
-    
+
     const handleRowClick = (id)=> {
         navigate(`/dashboard/bookings/${id}`)
     }
@@ -193,13 +193,13 @@ function Bookings() {
                             <SearchField onChange={(e) => setSearchKey(e.target.value)} placeholder="ابحث برقم الحجز أو رقم هاتف العميل أو اسم الفنان" />
                             {/* <Tooltip className="din-next" hasArrow label='يتحقق الزر من الحجوزات المعلّقة والتي مر عليها اكثر من 5 دقائق لإلغائها' bg='#F3EEE9' color='black' padding={4} placement='right-end'> */}
 
-                                <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
-                                    {
-                                        isUpdatePaymentLoading ?
-                                            <i className="fas fa-spinner fa-spin"></i>
-                                            : <span>التحقق من الحجوزات المعلّقة</span>
-                                    }
-                                </button>
+                            <button className="btn btn-transparent border-prime fs-6 w-25" onClick={updatePaymentStatus} disabled={isUpdatePaymentLoading}>
+                                {
+                                    isUpdatePaymentLoading ?
+                                        <i className="fas fa-spinner fa-spin"></i>
+                                        : <span>التحقق من الحجوزات المعلّقة</span>
+                                }
+                            </button>
                             {/* </Tooltip> */}
                         </div>
 
@@ -238,7 +238,7 @@ function Bookings() {
                                                     </div> :
                                                     bookings.map((booking, index) => (
 
-                                                        <tr key={booking.id} role={'button'} onClick={()=> handleRowClick(booking.id)} className="table-card fs-7">
+                                                        <tr key={booking.id} role={'button'} onClick={() => handleRowClick(booking.id)} className="table-card fs-7">
                                                             <td>{meta.from + (index)}</td>
                                                             <td>
                                                                 {booking.id}#
