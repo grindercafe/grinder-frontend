@@ -12,7 +12,7 @@ function Hero() {
                     <Link to={'/events'} className={'btn hero-button-secondary'}>
                         قائمة الحفلات
                     </Link>
-                    <a href='https://drive.google.com/file/d/1ou9XHYQZMMdciUHEVDZl4CYd9LVmkQkA/view' target={'_blank'} className='btn hero-button-transparent'>
+                    <a href='https://drive.google.com/file/d/1jaFjX1-dsOpK_7jZNV8UO4yM5kP5XJ8B/view' target={'_blank'} className='btn hero-button-transparent'>
                         قائمة الطعام
                     </a>
                     <Link to={'/location'} className={'btn hero-button-transparent'}>
@@ -34,7 +34,7 @@ function Hero() {
                             <Link to={'/events'} className={'btn hero-btn-primary'}>
                                 قائمة الحفلات
                             </Link>
-                            <a href='https://drive.google.com/file/d/1ou9XHYQZMMdciUHEVDZl4CYd9LVmkQkA/view' target={'_blank'} className='btn hero-btn-transparent'>
+                            <a href='https://drive.google.com/file/d/1jaFjX1-dsOpK_7jZNV8UO4yM5kP5XJ8B/view' target={'_blank'} className='btn hero-btn-transparent'>
                                 قائمة الطعام
                             </a>
                             <Link to={'/location'} className={'btn hero-btn-transparent'}>
