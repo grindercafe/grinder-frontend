@@ -46,13 +46,14 @@ function Login() {
 
         try {
             const csrf = await axios.get('/sanctum/csrf-cookie')
-            console.log('csrf: ', csrf)
+            // console.log('csrf: ', csrf)
             try {
                 const user = await axios.post('/login', body)
-                console.log('user: ', user)
+                // console.log('user: ', user)
                 login()
                 navigate('/dashboard/events')
             } catch (error) {
+                console.log(error)
                 toast({
                     render: () => (
                         <Alert status={'error'} variant='left-accent' color={'black'}>
@@ -86,55 +87,6 @@ function Login() {
             })
         }
 
-        // try {
-        //     const r = await api.get('/sanctum/csrf-cookie')
-        //     console.log(r)
-        // } catch (error) {
-        //     console.log(error);
-        // }
-
-        // api.get('/sanctum/csrf-cookie').then(() => {
-        //     axios.post('/login', body).then((response)=> {
-        //         if(response.data.error) {
-        //             console.log(response.data.error)
-        //         }
-        //         else {
-        //             console.log('success')
-        //         }
-        //     })
-        // })
-        //  try {
-        //     const response = await axios.get('/sanctum/csrf-cookie')
-
-        //     console.log(response.data)
-        //  } catch (error) {
-        //     console.log(error)
-        //  }
-        // reset({ password: '' })
-        // try {
-        //     const body = {
-        //         'username': data.username,
-        //         'password': data.password
-        //     }
-        //     const response = await axios.post('/login', body)
-
-        //     navigate('/dashboard/events')
-        // } catch (error) {
-        // toast({
-        //     render: () => (
-        //         <Alert status={'error'} variant='left-accent' color={'black'}>
-        //             <AlertIcon />
-        //             <div className="ps-5 pe-3 fs-7">
-        //                 {'أحد البيانات المدخلة غير صحيحة'}
-        //             </div>
-        //             <CloseButton onClick={() => toast.closeAll()} />
-        //         </Alert>
-
-        //     ),
-        //     duration: 5000,
-        //     position: 'top-left',
-        // })
-        // }
         setIsPostLoading(false)
     }
 

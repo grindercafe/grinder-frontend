@@ -3,11 +3,12 @@ import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom"
 import { useRef } from "react"
 import Dashboard from './Dashboard'
 import { logout } from '../Auth'
+import axios from '../axios'
 
 function DashboardLayout({ children }) {
     const navigate = useNavigate()
-    const nav = useRef()
-    const body = document.getElementById('body')
+    // const nav = useRef()
+    // const body = document.getElementById('body')
 
     // const toggleNavbar = () => {
     //     nav.current.classList.toggle('show-navbar')
@@ -18,7 +19,13 @@ function DashboardLayout({ children }) {
     //     }
     // }
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            const response = await axios.post('/logout')
+            console.log(response)
+        } catch (error) {
+            console.log(error)
+        }
         logout()
         navigate('/dashboard/login')
     }
