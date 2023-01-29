@@ -21,15 +21,6 @@ const schema = yup.object().shape({
     'password': yup.string().required()
 })
 
-// const api = axios.create({
-//     baseURL: 'http://localhost:8000/api',
-//     headers: {
-//         'X-Requested-With': 'XMLHttpRequest',
-//         'Access-Control-Allow-Origin': true
-//     },
-//     withCredentials: true
-// })
-
 function Login() {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
@@ -53,18 +44,38 @@ function Login() {
             'password': data.password
         }
 
-        if (body.username == process.env.REACT_APP_USERNAME &&
-            body.password == process.env.REACT_APP_PASSWORD) {
+        try {
+            const csrf = await axios.get('/sanctum/csrf-cookie')
+            console.log('csrf: ', csrf)
+            try {
+                const user = await axios.post('/login', body)
+                console.log('user: ', user)
                 login()
                 navigate('/dashboard/events')
-        }
-        else {
+            } catch (error) {
+                toast({
+                    render: () => (
+                        <Alert status={'error'} variant='left-accent' color={'black'}>
+                            <AlertIcon />
+                            <div className="ps-5 pe-3 fs-7">
+                                {'أحد البيانات المدخلة غير صحيحة'}
+                            </div>
+                            <CloseButton onClick={() => toast.closeAll()} />
+                        </Alert>
+    
+                    ),
+                    duration: 5000,
+                    position: 'top-left',
+                })
+            }
+        } catch (error) {
+            console.log(error)
             toast({
                 render: () => (
                     <Alert status={'error'} variant='left-accent' color={'black'}>
                         <AlertIcon />
                         <div className="ps-5 pe-3 fs-7">
-                            {'أحد البيانات المدخلة غير صحيحة'}
+                            {'حصل خطأ ما'}
                         </div>
                         <CloseButton onClick={() => toast.closeAll()} />
                     </Alert>

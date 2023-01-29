@@ -40,7 +40,7 @@ function Header() {
 
                     <Link to={'/events'} className={location.pathname === '/events' ? 'disabled-link':''}>الحفلات</Link>
 
-                    <a href="https://drive.google.com/file/d/1jaFjX1-dsOpK_7jZNV8UO4yM5kP5XJ8B/view" target={"_blank"} className={location.pathname === '/menu' ? 'disabled-link':''}>قائمة الطعام</a>
+                    <a href="https://drive.google.com/file/d/1RiLGPNoBqiMKv9ypcC1p6XZvwRbTtESB/view" target={"_blank"} className={location.pathname === '/menu' ? 'disabled-link':''}>قائمة الطعام</a>
 
                     <Link to={'/location'} className={location.pathname === '/location' ? 'disabled-link':''}>موقعنا</Link>
                 </nav>
